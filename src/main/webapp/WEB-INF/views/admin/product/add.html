@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/plugins/rich-text-editor/richtext.min.css}">
+        <link rel="stylesheet" th:href="@{/resource/css/admin/product/add-edit.css}">
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Add Product</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/product/}">Product index</a></li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-10 m-auto ml-5">
+
+                <!-- Nav tabs -->
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                    <li class="nav-item" role="presentation">
+                        <a class="maintab nav-link active" data-toggle="tab" href="#home" role="tab"
+                           aria-controls="home" aria-selected="true">General</a>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <a class="maintab nav-link" data-toggle="tab" href="#description" role="tab"
+                           aria-controls="messages" aria-selected="false">Description</a>
+                    </li>
+
+
+                    <li class="nav-item" role="presentation">
+                        <a id="image-a" class="nav-link" data-toggle="tab" href="#image" role="tab"
+                           aria-controls="profile" aria-selected="false">Images</a>
+                    </li>
+
+
+                </ul>
+
+
+                <!-- Tab panes -->
+
+                <form id="mainForm" th:action="@{/admin/product/add}" th:object="${product}" method="post"
+                      enctype="multipart/form-data">
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="home" role="tabpanel">
+                            <div th:replace="admin/product/tabs/general :: content"></div>
+
+                        </div>
+
+                        <div class="tab-pane" id="description" role="tabpanel">
+                            <div th:replace="admin/product/tabs/description :: content"></div>
+
+                        </div>
+
+                        <div class="tab-pane" id="image" role="tabpanel">
+                            <div th:replace="admin/product/tabs/images :: content"></div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <input class="btn btn-success" type="submit" value="save">
+                    </div>
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<th:block layout:fragment="addscript">
+
+    <script th:inline="javascript">    // Enable Thymeleaf inlining
+    var defaultImage = [[${product.defaultImage}]]; 	// Behaves just like in HTML
+    </script>
+    <script th:src="@{/resource/plugins/rich-text-editor/jquery.richtext.min.js}"></script>
+    <script th:src="@{/resource/js/admin/product/add-edit.js}"></script>
+</th:block>
+</body>
+</html>

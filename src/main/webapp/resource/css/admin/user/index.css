@@ -1,0 +1,9 @@
+.avatar-container{
+    background-size: cover;
+    height: 100px;
+
+}
+.avatar__img{
+    width: 80%;
+    height: 100%;
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Add Category</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/category/}">Category index</a></li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div>
+            <div class="row">
+                <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-10 ml-5">
+
+
+                <form th:id="mainForm" th:action="@{/admin/category/add}" th:object="${category}" method="post">
+
+
+                    <div class="form-group col-6">
+                        <label>Name</label>
+                        <input class="form-control" type="text" th:field="*{name}" required>
+                        <div th:if="${#fields.hasErrors('name')}"
+                             class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <span th:errors="*{name}"></span>
+                            <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-group col-6">
+                        <label>Parent category</label>
+                        <select class="form-control" th:field="*{parent}">
+                            <option value="1">No parent(root parent)</option>
+                            <thblock th:each="cat : ${categoriesForParentForm}">
+
+                                <option th:value="${cat.id}">[[${cat.name}]]</option>
+                            </thblock>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="add">
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

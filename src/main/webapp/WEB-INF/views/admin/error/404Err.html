@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="page400" class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Error</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/category/}">Back to admin</a></li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <div style="margin:0 auto">
+        <h2 class="text-center" style="color: chocolate" th:text="${message}"></h2>
+
+    </div>
+
+
+</div>
+
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Role</title>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Add Role</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/role/}">Role index</a></li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div>
+            <div class="row">
+                <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid">
+        <form th:action="@{/admin/role/save}" method="post" th:object="${role}">
+            <div class="col-12">
+                <div class="form-group col-3">
+                    <label>Role Name</label>
+                    <input class="form-control" type="text" th:field="*{name}" required>
+                    <div th:if="${#fields.hasErrors('name')}"
+                         class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span th:errors="*{name}"></span>
+                        <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                    </div>
+                </div>
+                <div class="form-group col-3">
+                    <label>Description</label>
+                    <textarea class="form-control" type="text" th:field="*{description}"></textarea>
+                    <div th:if="${#fields.hasErrors('description')}"
+                         class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span th:errors="*{description}"></span>
+                        <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12"><h5> Choose permissions </h5></div>
+
+            <div class="col-12 row flex-column">
+                <div class="col-12"><input id="all-chbx" type="checkbox"> <span>All</span>
+                </div>
+
+                <div th:each="permissioni : ${parentPermissions}" class="card col-6 ">
+                    <div class="card-header ">
+                        <input class="parent_permission_chbx"
+                               type="checkbox" >
+                        <span th:text="${permissioni.name}"></span>
+                    </div>
+                    <div class="card-body row justify-content-around">
+                        <div th:each="permissionSubi : ${permissioni.childs}" class="col-3">
+                            <input class="child_permission_chbx"
+                                   th:value="${permissionSubi.id}" name="permissions" type="checkbox">
+                            <span th:text="${permissionSubi.name}">
+
+                            </span>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            <input type="submit" class="btn btn-success" id="submit-btn" value="Add">
+
+        </form>
+
+
+    </div>
+
+</div>
+
+<th:block layout:fragment="addscript">
+
+    <script th:src="@{/resource/js/admin/role/add-edit.js}"></script>
+</th:block>
+
+</body>
+</html>

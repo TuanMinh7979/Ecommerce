@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/home/home_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="register-login-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <div class="register-form">
+                        <h2>Register</h2>
+                        <form action="" method="post" th:object="${userEntity}">
+                            <div class="group-input">
+                                <label>Username or email address *</label>
+                                <input type="text" th:field="*{username}" id="username" required>
+                                <div th:if="${#fields.hasErrors('username')}"
+                                     class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <span th:errors="*{username}"></span>
+                                    <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                                </div>
+                            </div>
+                            <div class="group-input">
+                                <label>Password </label>
+                                <input type="text" th:field="*{password}" required>
+                                <div th:if="${#fields.hasErrors('password')}"
+                                     class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <span th:errors="*{password}"></span>
+                                    <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                                </div>
+                            </div>
+                            <div class="group-input">
+                                <label>Confirm Password *</label>
+                                <input type="text" name="confirmPassword" required>
+                                <div th:if="${#fields.hasErrors('confirmPassword')}"
+                                     class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <span th:errors="${userEntity.confirmPassword}"></span>
+                                    <div th:replace="comment_fragment/messages :: mes-btn"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="site-btn register-btn">REGISTER</button>
+                        </form>
+                        <div class="switch-login">
+                            <a href="/login" class="or-login">Or Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<th:block layout:fragment="addscript">
+    <script th:src="@{/resource/js/home/index.js}"></script>
+
+</th:block>
+
+</body>
+</html>

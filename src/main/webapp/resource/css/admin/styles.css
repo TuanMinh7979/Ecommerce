@@ -1,0 +1,31 @@
+.tableFixHeight {
+    height: 360px;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.tableFixHeight tr {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+
+#page400{
+
+    background-image: url("../../img/404img.png");
+    background-size: cover;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #28a745;
+    border-color: #3d9970;
+}
+.tr__checkbox{
+
+    width:30px;
+    height: 30px;
+}
+

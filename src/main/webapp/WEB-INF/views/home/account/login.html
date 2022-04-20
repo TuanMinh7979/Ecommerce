@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/home/home_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <br/>
+    <div class="login-form col-5 m-auto">
+        <h2>Login</h2>
+        <form action="" method="post">
+            <div class="group-input">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" required>
+            </div>
+            <div class="group-input">
+                <label for="pass">Password *</label>
+                <input type="text" id="pass" name="password" required>
+            </div>
+            <div class="group-input gi-check">
+                <div class="gi-more">
+                    <label for="save-pass">
+                        Save Password
+                        <input type="checkbox" id="save-pass">
+                        <span class="checkmark"></span>
+                    </label>
+                    <a href="#" class="forget-pass">Forget your Password</a>
+                </div>
+            </div>
+            <button type="submit" class="site-btn login-btn">Sign In</button>
+        </form>
+        <div class="switch-login">
+            <a href="/register" class="or-login">Or Create An Account</a>
+        </div>
+    </div>
+
+    <br/>
+</div>
+<th:block layout:fragment="addscript">
+    <script th:src="@{/resource/js/home/index.js}"></script>
+
+    <script>
+        // var hotsaleSwi = createSwiper("#hotsaleSwi")
+    </script>
+
+</th:block>
+
+</body>
+</html>

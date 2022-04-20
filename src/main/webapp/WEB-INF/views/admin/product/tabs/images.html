@@ -1,0 +1,74 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="row" th:fragment="content" th:remove="tag">
+    <br/>
+    <div class="col-12">
+        <button id="addNewImageExtraBtn" class="btn btn-info ">Add new extra image</button>
+    </div>
+    <br/>
+    <div id="imageWrapper" class="row col-12">
+        <th:block th:if="${product.id!=null}">
+            <div th:id="${mainImageId}" class="col-6">
+                <span>Main</span>
+
+                <div class="image-preview saved-image-preview">
+                    <th:block th:if="${product.mainImageLink!=null}">
+                        <img th:src="${product.mainImageLink}" alt="alt" class="image-preview__img"/>
+                    </th:block>
+
+                    <th:block th:if="${product.mainImageLink==null}">
+                        <img th:src="${product.defaultImage}" alt="alt" class="image-preview__img"/>
+
+                    </th:block>
+
+                </div>
+                <input type="file" name="file" class="file_inp"/>
+                <button class="float-right" id="selectnone-btn">Select default</button>
+            </div>
+        </th:block>
+
+        <th:block th:if="${product.id==null}">
+            <div class="col-6">
+                <span>Main</span>
+
+                <div class="image-preview saved-image-preview">
+                    <th:block th:if="${product.mainImageLink!=null}">
+                        <img th:src="${product.mainImageLink}" alt="alt" class="image-preview__img"/>
+                    </th:block>
+
+                    <th:block th:if="${product.mainImageLink==null}">
+                        <img th:src="${product.defaultImage}" alt="alt" class="image-preview__img"/>
+
+                    </th:block>
+
+                </div>
+                <input type="file" name="file" class="file_inp"/>
+                <button class="float-right" id="selectnone-btn">Select default</button>
+            </div>
+        </th:block>
+
+
+        <th:block th:if="${images != null}" th:each="imagei : ${images}">
+
+            <div th:id="${imagei.id}" class="col-6">
+
+                <span>Extra</span>
+
+                <div class="image-preview saved-image-preview">
+
+                    <i class="close-i fas fa-times"></i>
+                    <img th:src="${imagei.link}" alt="alt" class="image-preview__img"/>
+                </div>
+                <input type="file" name="files" class="file_inp"/>
+
+            </div>
+
+
+
+        </th:block>
+
+
+    </div>
+</div>
+</body>
+</html>

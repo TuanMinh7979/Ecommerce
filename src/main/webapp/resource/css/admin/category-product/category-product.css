@@ -1,0 +1,85 @@
+.attributeWrapper{
+    width: 40%;
+    min-width: 450px;
+
+
+
+    background: white;
+    border-radius: 10px;
+
+}
+
+
+.attributeWrapper .newtask input{
+    width: 75%;
+    height: 45px;
+    font-family: 'Poppins',sans-serif;
+    font-size: 15px;
+    border: 2px solid #d1d3d4;
+    padding: 12px;
+    color: #111111;
+    font-weight: 500;
+
+    border-radius: 5px;
+}
+.attributeWrapper .newtask input:focus{
+    outline: none;
+    border-color: #0d75ec;
+}
+
+.attributeWrapper .newtask button{
+
+    float: right;
+    width: 20%;
+    height: 45px;
+    border-radius: 5px;
+    font-family: 'Poppins',sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    background-color: #0d75ec;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    outline: none;
+}
+.attributeWrapper .tasks{
+    background-color: #ffffff;
+    padding: 10px 5px;
+
+    border-radius: 10px;
+    width: 100%;
+
+}
+.attributeWrapper .task{
+    background-color: #c5e1e6;
+    height: 50px;
+    margin-bottom: 8px;
+    padding: 5px 10px;
+    display: flex;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #939697;
+    cursor: pointer;
+}
+.attributeWrapper .task span{
+    font-family: 'Poppins',sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+}
+.attributeWrapper .task button{
+    background-color: #0a2ea4;
+    color: #ffffff;
+    height: 100%;
+    width: 40px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+table td[class*=col-], table th[class*=col-] {
+    position: static;
+    display: table-cell;
+    float: none;
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/home/home_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+    </th:block>
+</head>
+<body>
+
+<div class="content-wrapper" layout:fragment="content">
+
+</div>
+
+<th:block layout:fragment="addscript">
+    <script th:src="@{/resource/js/home/index.js}"></script>
+
+</th:block>
+
+</body>
+</html></body>

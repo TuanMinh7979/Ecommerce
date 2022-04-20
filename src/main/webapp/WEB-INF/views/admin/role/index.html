@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Role Manage</title>
+    <th:block layout:fragment="addcss">
+
+    </th:block>
+
+</head>
+<body>
+
+
+<div class="content-wrapper" layout:fragment="content">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Role</h1>
+                </div><!-- /.col -->
+
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 ">
+                <div class="row input-group col-4 mb-5" style="margin: 0 auto">
+                    <input id="main-search-inp" type="text" class="form-control" placeholder="Keyword">
+                    <button id="main-search-btn" class="btn btn-danger">Search</button>
+                </div>
+            </div>
+            <div class="col-8 row mb-2">
+
+                <div class="col-3">
+                    <label> Sort By Field</label>
+                    <select id="by-sel" name="sortBy">
+                        <option value="id">id</option>
+                        <option value="name">name</option>
+
+
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label>OrderBy</label>
+
+                    <select id="direction-sel" name="sortDirection">
+                        <option value="asc">ASC</option>
+                        <option value="desc">DESC</option>
+                    </select>
+
+                </div>
+                <div class="col-2">
+                    <label>Limit</label> <input value="5" style="width: 60px" type="number" id="limit-inp">
+                </div>
+                <div class="col-2">
+                    <button id="btn-filter" class="btn btn-success">FILTER</button>
+                </div>
+                <div class="col-2">
+                    <a th:href="@{/admin/role}"
+                       type="reset" class="btn btn-default">
+                        RESET
+                    </a>
+                </div>
+
+
+            </div>
+
+            <div class="col-4"><a th:href="@{/admin/role/add}" class="btn btn-info float-right ">Add</a></div>
+
+
+            <div class="col-12">
+                <table class="table table-bordered tableFixHeight">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th class="col-4">Name</th>
+                        <th class="col-4">Description</th>
+                        <th class="col-3">Action</th>
+
+                    </tr>
+                    </thead>
+                    <tbody id="tabledata" >
+
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col-12"><a th:href="@{/admin/role/api/delete}" id="tag_delete_many"
+                                   class="btn btn-danger float-right ml-2 ">Delete Many</a></div>
+
+
+            <ul id="pagination-demo" class="pagination-sm col-12"></ul>
+        </div>
+    </div>
+</div>
+
+
+<th:block layout:fragment="addscript">
+    <script th:src="@{/resource/js/admin/role/index.js}"></script>
+</th:block>
+</body>
+</html>
