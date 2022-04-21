@@ -1,4 +1,3 @@
-
 function setActiveCheckbox() {
     $(".atb-active-checkbox").each(function () {
 
@@ -12,6 +11,8 @@ function setActiveCheckbox() {
 
 
     })
+
+
 }
 
 
@@ -64,11 +65,9 @@ function removeAttributeByName(name, collection) {
     collection.map((x, index) => {
         if (x["name"] === name) {
             collection.splice(index, 1);
-            return;
+
         }
     });
-
-
     return;
 }
 
@@ -78,7 +77,6 @@ function updateAttribute(newAttribute, collection) {
     collection.map((x, index) => {
         if (x["id"] === newAttribute["id"]) {
             collection[index] = newAttribute;
-            return;
         }
     });
 

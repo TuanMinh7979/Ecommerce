@@ -1,6 +1,7 @@
 package com.tmt.tmdt.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tmt.tmdt.entities.customType.ListToStringConverter;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,9 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "categories")
@@ -31,7 +30,7 @@ public class Category extends BaseEntity implements Serializable {
     private Integer id;
 
     @NotBlank
-    @Size(min = 3)
+    @Size(min = 2)
     private String name;
 
 
@@ -57,6 +56,9 @@ public class Category extends BaseEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private Set<Category> children = new HashSet<>();
+
+
+
 
     public Category(String name) {
         this.name = name;

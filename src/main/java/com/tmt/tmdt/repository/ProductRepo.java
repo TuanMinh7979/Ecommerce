@@ -47,4 +47,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     @Query(value = "from Product  where category.id = :categoryId")
     List<Product> getProductsByCategory(@Param("categoryId") Integer id);
+
+
 }

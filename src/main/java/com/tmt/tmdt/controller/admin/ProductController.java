@@ -177,7 +177,7 @@ public class ProductController {
 
     @PostMapping("api/delete/{id}")
     //call with ajax
-    public ResponseEntity<Long> deleteProduct(@PathVariable("id") Long id) {
+    public ResponseEntity<Long> deleteProduct(@PathVariable("id") Long id) throws IOException {
 
         productService.deleteById(id);
         return new ResponseEntity<>(id, HttpStatus.OK);

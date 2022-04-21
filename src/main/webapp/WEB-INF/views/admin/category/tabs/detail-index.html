@@ -2,9 +2,11 @@
 
 <body>
 <div th:fragment="content" th:remove="tag">
-
-
-    <table id="attribute-table" class="table table-striped table-bordered tableFixHeight ">
+    <!--    <div class="row" style="display: flex; justify-content: flex-end">-->
+    <!--        <button class="btn btn-info" id="launchFilterAttributeBtn">Filter Attributes</button>-->
+    <!--    </div>-->
+    <br/>
+    <table style="marigin-top:20px" id="attribute-table" class="table table-striped table-bordered tableFixHeight ">
         <thead>
         <tr class="col-12">
             <th class="col-1"></th>
@@ -20,14 +22,14 @@
         </tbody>
 
     </table>
-    <input type="hidden" name="attribute" id="attributesHdenInp">
+
     <div class="col-12 d-flex justify-content-end">
         <a style="margin-right: 100px" id="saveallchangeBtn"
            th:href="@{/admin/category/api/{id}/attributes/update(id=${category.id})}"
            class="btn btn-info ">Save All Change</a>
         <button id="addNewAttributeBtn" class="btn btn-info " style="margin-right: 100px">Add attribute</button>
         <button id="tag_delete_many"
-            class="btn btn-danger ">Delete Many
+                class="btn btn-danger ">Delete Many
         </button>
     </div>
 
@@ -124,6 +126,12 @@
                                 <label>Active:</label>
                                 <input class="atrActiveChbx" style="width: 30px; height: 30px" type="checkbox">
                             </div>
+
+                            <div style="margin-top: 10px">
+                                <label>Filter:</label>
+                                <input class="atrFilterChbx" style="width: 30px; height: 30px" type="checkbox">
+                            </div>
+
                             <div style="margin-top: 10px;">
                                 <label>Values: </label>
                                 <div class="newtask">
@@ -145,10 +153,10 @@
         </div>
     </div>
 
-    <!--        Modal-->
+    <!--    FILTER SELECTION    Modal-->
 
 
-    <!--    </th:block>-->
 </div>
+
 </body>
 </html>

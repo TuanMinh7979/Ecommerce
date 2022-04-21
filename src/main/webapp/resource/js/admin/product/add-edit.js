@@ -100,7 +100,6 @@ $(function () {
             })
 
 
-
             $(document).on("click", '.tag_delete_one', function (event) {
                 event.preventDefault();
                 let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
@@ -267,7 +266,7 @@ function loadAttributeToForm(editAttributeBtn) {
 }
 
 
-function saveCurrentFormAttribute(saveFormBtn){
+function saveCurrentFormAttribute(saveFormBtn) {
 
 
     let data = {}
@@ -299,11 +298,44 @@ function saveCurrentFormAttribute(saveFormBtn){
 
 
     let curModal = saveFormBtn.closest(".modal");
+    $(attributeWrapper).find("input[type='text']").val('');
     $(curModal).modal('hide');
     renderDataForAttributeTable(attributeArray);
 
 
 }
+
+//add image as paste way by a ordering
+window.addEventListener("paste", (e) => {
+    if (e.clipboardData.files.length > 0) {
+        let fileinputs = []
+        let curinp;
+        fileinputs = document.querySelectorAll(".file_inp");
+        fileinputs.forEach(function (inp) {
+
+            if ($(inp).parent().find('img').attr("src") === "/resource/img/default.png") {
+                inp.files = e.clipboardData.files;
+                let fileReader = new FileReader();
+
+                fileReader.readAsDataURL(e.clipboardData.files[0]);
+                fileReader.onload = () => {
+                    $(inp).parent().find('img').attr("src", fileReader.result);
+
+                }
+                return;
+            }
+
+
+        })
+        // if (e.clipboardData.files[0].type.startsWith("image/")) {
+        //
+        //
+        //
+        //
+        // }
+
+    }
+});
 
 
 //COMMON METHOD

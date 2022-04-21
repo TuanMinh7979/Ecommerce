@@ -21,5 +21,12 @@ public class Attribute implements Serializable {
     private List<Object> value;
     private int active;
 
+    private int filter;
 
+    public Attribute(String id, String name, List<Object> value, int active) {
+        this.id = id;
+        this.name = name;
+        this.value = value;
+        this.active = active;
+    }
 }

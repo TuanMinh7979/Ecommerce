@@ -1,4 +1,5 @@
 var attributeArray = [];
+var filterSelectedAttributeIdArray = [];
 
 $(function () {
 
@@ -53,6 +54,7 @@ $(function () {
     });
 
 })
+
 
 function saveAllChange(data, url) {
 
@@ -112,7 +114,7 @@ function renderDataForAttributeTable(data) {
                 <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi.id}"></td>
                 <td class="col-5" class="atb-name-inp" ">${atbi.name}</td>
                 <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${atbi.active}"></i>  </td>
-                <td class="col-3">
+                  <td class="col-3">
                     <button class="editAttributeBtn btn btn-default" >Edit</button>
                     <a class="btn btn-danger tag_delete_one"  >Delete</a>
 
@@ -153,11 +155,21 @@ function callAttributeApi(url) {
     });
 }
 
+function isFilter(atbId) {
+    for (let atbi of attributeArray) {
+        if (atbi["id"] === atbId) {
+            return atbi.filter;
+        }
+
+    }
+}
+
 function loadAttributeToForm(editAttributeBtn) {
     let tri = $(editAttributeBtn).parent().parent();
     let triId = tri.find(".atb-iddel-checkbox").val();
     let triName = tri.find("td:nth-child(2)").text();
     let triActive = tri.find(".atb-active-checkbox");
+    let triFilter = isFilter(triId);
 
 
     let editModal = $("#exampleModalCenter2");
@@ -166,8 +178,8 @@ function loadAttributeToForm(editAttributeBtn) {
 
     let isactive = triActive.attr("isactive") == 1 ? true : false;
 
-
     editModal.find(".atrActiveChbx").prop("checked", isactive);
+    editModal.find(".atrFilterChbx").prop("checked", triFilter == 1 ? true : false);
 
 
     let valueList = editModal.find(".tasks");
@@ -204,6 +216,7 @@ function saveCurrentFormAttribute(saveBtn) {
 
     data["name"] = attributeWrapper.find(".atrNameInp").val();
     data["active"] = attributeWrapper.find(".atrActiveChbx").is(":checked") ? 1 : 0;
+    data["filter"] = attributeWrapper.find(".atrFilterChbx").is(":checked") ? 1 : 0;
     let valueArr = [];
     attributeWrapper.find(".atrValueSpan").each(function () {
         valueArr.push($(this).text().replace(/\r?\n|\r/g, " ").trim());
@@ -230,11 +243,34 @@ function saveCurrentFormAttribute(saveBtn) {
     $(curModal).modal('hide');
     renderDataForAttributeTable(attributeArray);
 
+    console.log(attributeArray);
+
 
 }
 
 
-// document.querySelector('#push').onclick = function (event) {
+var generateID = function () {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return Math.random().toString(36).substr(2, 3);
+};
+
+$("#mainForm").data("changed", false);
+
+$("#mainForm").on("change", function () {
+    $(this).data("changed", true);
+});
+$('#mainForm').on('submit', function () {
+    if (!$(this).data("changed")) {
+        alert("Nothing changed!");
+        return false;
+        // Reset variable
+    }
+    // Do whatever you want here
+    // You don't have to prevent submission
+
+});
 
 
 

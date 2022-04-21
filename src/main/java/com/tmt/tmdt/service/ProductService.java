@@ -34,7 +34,7 @@ public interface ProductService {
 
     Page getProducts(Pageable pageable);
 
-    void deleteById(Long id);
+    void deleteById(Long id) throws IOException;
 
     void deleteProducts(Long[] ids);
 

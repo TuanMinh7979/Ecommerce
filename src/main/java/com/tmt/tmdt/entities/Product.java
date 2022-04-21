@@ -39,6 +39,7 @@ public class Product extends BaseEntity implements Serializable {
     private String shortDescription;
 
 
+
     private String fullDescription;
 
 //    private boolean enable;

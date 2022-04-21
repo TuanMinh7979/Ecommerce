@@ -122,7 +122,7 @@ public class CategoryController {
     public String update(Model model, @Valid @ModelAttribute("category") Category category, BindingResult result) {
 
         if (!result.hasErrors()) {
-            categoryService.save(category);
+            categoryService.update(category);
             return "redirect:/admin/category";
         }
         model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRootWithOut(2));
@@ -162,7 +162,7 @@ public class CategoryController {
     @PostMapping("api/{id}/attributes/update")
     @ResponseBody
     public Set<Attribute> updateAttributes(@PathVariable("id") Integer id, @RequestBody List<Attribute> newAttributes) {
-            Set<Attribute> newSetAttributes = newAttributes.stream().collect(Collectors.toSet());
+        Set<Attribute> newSetAttributes = newAttributes.stream().collect(Collectors.toSet());
 
         Category category = categoryService.getCategory(id);
         category.setAttributes(newSetAttributes);
@@ -171,8 +171,6 @@ public class CategoryController {
         return newSetAttributes;
 
     }
-
-
 
 
     //-FOR ATTRIBUTE

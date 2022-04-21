@@ -2,11 +2,13 @@ package com.tmt.tmdt.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.entities.Attribute;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.mapper.ImageMapper;
+import com.tmt.tmdt.repository.ImageRepo;
 import com.tmt.tmdt.repository.ProductRepo;
 import com.tmt.tmdt.service.ImageService;
 import com.tmt.tmdt.service.ProductService;
@@ -34,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final Cloudinary cloudinary;
     private final ProductRepo productRepo;
+
 
     private final UploadService uploadService;
     private final ImageMapper imageMapper;
@@ -102,11 +105,15 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-
     public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException {
         Category category = product.getCategory();
-        product.setAttributes(category.getAttributes());
+        Set<Attribute> fullyAttributes = product.getCategory().getAttributes();
+        product.setAttributes(fullyAttributes.stream()
+                .map(a -> new Attribute(a.getId(), a.getName(), a.getValue(), a.getActive()))
+                .collect(Collectors.toSet()));
+
         Product productSaved = save(product);
+
         productSaved.setCode(TextUtil.generateCode(product.getName(), product.getId()));
         //relation should work in persistence
 
@@ -177,6 +184,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
+        product.setAttributes(getProduct(product.getId()).getAttributes());
         product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
         return productRepo.save(product);
     }
@@ -195,9 +203,15 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws IOException {
         //sql error
         //return null to sign that error happened
+        Product product = productRepo.getProductWithImages(id);
+        Set<Image> images = product.getImages();
+        for (Image image : images) {
+            imageService.deleteById(image.getId());
+        }
+
         productRepo.deleteById(id);
 
     }

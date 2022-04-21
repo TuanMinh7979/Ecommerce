@@ -10,7 +10,30 @@
 </head>
 <body>
 
-<div class="content-wrapper" layout:fragment="content">
+<div class="content-wrapper container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            Filter By:
+        </div>
+        <div class="col-12">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3" th:each="product :${products}">
+
+            <div class="pcard card" style="height: 360px; overflow-y: hidden">
+                <div class="pcard-img card-body" style="background-size: cover;">
+
+                    <img class="img-fluid card-img" th:src="${product.mainImageLink}" alt="">
+                </div>
+                <div class="card-footer ">
+                    <button>XEM NGAY</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 </div>
 

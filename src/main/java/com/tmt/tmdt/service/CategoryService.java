@@ -1,5 +1,6 @@
 package com.tmt.tmdt.service;
 
+import com.tmt.tmdt.entities.Attribute;
 import com.tmt.tmdt.entities.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +18,6 @@ public interface CategoryService {
     Page getCategories(Pageable p);
 
 
-
-
     void deleteById(Integer id);
 
     void deleteCategories(Integer[] ids);
@@ -33,13 +32,14 @@ public interface CategoryService {
     Page<Category> getCategoriesByNameLike(String name, Pageable pageable);
 
 
-
     List<Category> getCategoriesInHierarchicalFromRoot();
 
 
     List<Category> getCategoriesInHierarchicalFromRootWithOut(int i);
 
     Category add(Category category);
+
+    Category update(Category category);
 
     Category save(Category category);
 

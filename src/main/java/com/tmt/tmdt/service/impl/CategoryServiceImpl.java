@@ -1,5 +1,6 @@
 package com.tmt.tmdt.service.impl;
 
+import com.tmt.tmdt.entities.Attribute;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.repository.CategoryRepo;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,17 +47,22 @@ public class CategoryServiceImpl implements CategoryService {
         category.setAttributes(category.getParent().getAttributes());
         Category categorySaved = cateRepository.save(category);
         categorySaved.setCode(TextUtil.generateCode(categorySaved.getName(), Long.valueOf(categorySaved.getId())));
-        return cateRepository.save(category);
+        return save(categorySaved);
+    }
+
+    @Override
+    public Category update(Category category) {
+        category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
+        //set old category attribute
+        category.setAttributes(getCategory(category.getId()).getAttributes());
+        return save(category);
     }
 
     @Override
     public Category save(Category category) {
         //use for update
-        category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
         return cateRepository.save(category);
     }
-
-
 
 
     @Override
