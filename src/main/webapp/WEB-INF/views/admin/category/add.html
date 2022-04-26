@@ -51,12 +51,9 @@
 
                     <div class="form-group col-6">
                         <label>Parent category</label>
-                        <select class="form-control" th:field="*{parent}">
+                        <select class="form-control parent-sel" th:field="*{parent}">
                             <option value="1">No parent(root parent)</option>
-                            <thblock th:each="cat : ${categoriesForParentForm}">
 
-                                <option th:value="${cat.id}">[[${cat.name}]]</option>
-                            </thblock>
 
                         </select>
 
@@ -74,5 +71,12 @@
 
 </div>
 
+
+<th:block layout:fragment="addscript">
+    <script>  var catHierarchical = [];</script>
+
+    <script th:src="@{/resource/js/admin/category/add-edit.js}"></script>
+    <script th:src="@{/resource/js/admin/category-product/category-product.js}"></script>
+</th:block>
 </body>
 </html>

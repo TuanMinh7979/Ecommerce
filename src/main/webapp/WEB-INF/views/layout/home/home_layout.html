@@ -165,13 +165,10 @@
             <div class="nav-depart">
                 <div class="depart-btn">
                     <i class="ti-menu"></i>
-                    <span>All departments</span>
-                    <ul class="depart-hover">
-                        <th:block th:each="cate : ${categoriesForForm}">
-                            <li><a href="${cate.code}" th:text="${cate.name}"></a></li>
-                        </th:block>
+                    <span>Categories</span>
 
-                    </ul>
+                    <div id="jqxMenu" class="depart-hover" >
+                    </div>
                 </div>
             </div>
             <nav class="nav-menu mobile-menu">

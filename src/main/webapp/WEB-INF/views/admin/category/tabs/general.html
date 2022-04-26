@@ -18,11 +18,11 @@
     </div>
 
     <div class="form-group">
-        <select name="parent">
-            <option value="1">No parent</option>
+        <select class="parent-sel" name="parent">
+            <option value="1">No parent(root parent)</option>
 
-            <option th:each="cat : ${categoriesForForm}" th:value="${cat.id}" th:text="${cat.name}"
-                    th:selected="${cat.id==category.parent.id}"></option>
+
+
         </select>
 
     </div>

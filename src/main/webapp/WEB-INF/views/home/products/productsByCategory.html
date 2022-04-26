@@ -11,16 +11,59 @@
 <body>
 
 <div class="content-wrapper container" layout:fragment="content">
-    <div class="row">
+    <div class="row mt-5">
+
         <div class="col-12">
-            Filter By:
+            <h5>Filtering by:</h5>
         </div>
-        <div class="col-12">
+        <div class="col-10 ">
+          
 
         </div>
     </div>
+    <div class="row mt-5">
+
+        <div class="col-12">
+            <h5>Filter By:</h5>
+        </div>
+        <div class="col-10 row list-filter">
+            <div class="col-2" th:each="filterAtb: ${filterAttributes}">
+                <div class="dropdown">
+                    <button th:text="${filterAtb.name}" th:id="${filterAtb.id}" style="border :1px solid #D3D3D3"
+                            class="btn dropdown-toggle"
+                            type="button"
+                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <th:block th:each="valuei : ${filterAtb.value}">
+                            <a class="dropdown-item" th:text="${valuei}" href="#"></a>
+                        </th:block>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h5>Sort By:</h5>
+        </div>
+        <div class="row col-10 list-sort">
+            <button class="col-2">high
+            </button>
+            <button class="col-2">
+                low
+            </button>
+        </div>
+    </div>
+    <br/>
     <div class="row">
-        <div class="col-3" th:each="product :${products}">
+        <div class="col-3" style="margin-top: 10px" th:each="product :${products}">
 
             <div class="pcard card" style="height: 360px; overflow-y: hidden">
                 <div class="pcard-img card-body" style="background-size: cover;">
@@ -39,6 +82,7 @@
 
 <th:block layout:fragment="addscript">
     <script th:src="@{/resource/js/home/index.js}"></script>
+
 
 </th:block>
 

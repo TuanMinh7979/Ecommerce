@@ -1,3 +1,9 @@
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 .pcard {
     /* Add shadows to create the "card" effect */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -10,3 +16,19 @@
 }
 
 /* Add some padding inside the card container */
+.list-filter .active {
+    border: 1px solid orange;
+    color: darkorange;
+}
+
+.list-sort .active {
+
+    border: 1px solid orange;
+    color: darkorange;
+}
+
+.menu__ul__li {
+    font-size: 1.2rem;
+    width: 100%;
+
+}

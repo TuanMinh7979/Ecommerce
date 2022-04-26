@@ -1,7 +1,24 @@
-var attributeArray = [];
-var filterSelectedAttributeIdArray = [];
+var attributesObject = {};
+
 
 $(function () {
+
+    $.ajax({
+        type: "get",
+        url: "/ajax/categoryHierarchical",
+        success: function (data) {
+            catHierarchical = data;
+            renderCatHierarchical();
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load this categories in hierarchical',
+                // text: 'Something went wrong!',
+
+            })
+        }
+    });
 
 
     $('.nav-tabs a').on('shown.bs.tab', function (event) {
@@ -25,27 +42,26 @@ $(function () {
                 event.preventDefault();
                 let checkboxes = $('tr input[type="checkbox"]:checked');
                 for (checkbox of checkboxes) {
-                    let nameToDel = $(checkbox).parent().parent().find("td:nth-child(2)").text();
-                    removeAttributeByName(nameToDel, attributeArray);
+                    let keyToDel = $(this).parent().parent().find(".atb-iddel-checkbox").val();
+                    delete attributesObject[keyToDel];
                     $(checkbox).closest("tr").remove();
-
                 }
-
             });
             $(document).on("click", "#saveallchangeBtn", function (event) {
                 event.preventDefault();
-
-                saveAllChange(attributeArray, $(this).attr("href"));
-
+                saveAllChange(attributesObject, $(this).attr("href"));
             })
 
 
             $(document).on("click", '.tag_delete_one', function (event) {
                 event.preventDefault();
-                let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
-                removeAttributeByName(nameToDel, attributeArray);
+                let keyToDel = $(this).parent().parent().find(".atb-iddel-checkbox").val();
+                // removeAttributeByName(nameToDel, attributesObject);
+                delete attributesObject[keyToDel];
+
                 $(this).closest("tr").remove();
             })
+
 
 
         }
@@ -54,6 +70,17 @@ $(function () {
     });
 
 })
+
+function renderCatHierarchical() {
+    let opts = "";
+    catHierarchical.map(function (cat) {
+
+        opts += `<option value="${cat.id}">${cat.name}</option> `
+
+    })
+    $(".parent-sel").append(opts);
+
+}
 
 
 function saveAllChange(data, url) {
@@ -105,15 +132,14 @@ $(document).on("click", ".editAttributeBtn", function (event) {
 
 function renderDataForAttributeTable(data) {
     let rs = "";
-
-
-    data.map(function (atbi) {
+    for (let atbi in data) {
+        let curAtr = data[atbi];
 
 
         rs += `       <tr class="col-12">
-                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi.id}"></td>
-                <td class="col-5" class="atb-name-inp" ">${atbi.name}</td>
-                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${atbi.active}"></i>  </td>
+                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
+                <td class="col-5" class="atb-name-inp" ">${curAtr.name}</td>
+                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
                   <td class="col-3">
                     <button class="editAttributeBtn btn btn-default" >Edit</button>
                     <a class="btn btn-danger tag_delete_one"  >Delete</a>
@@ -121,8 +147,8 @@ function renderDataForAttributeTable(data) {
                 </td>
 
             </tr>`
-    })
-    // }
+    }
+
 
     $("#tabledata").html(rs);
     setActiveCheckbox();
@@ -138,9 +164,10 @@ function callAttributeApi(url) {
         url: url,
         success: function (data) {
 
-            attributeArray = data;
 
-            renderDataForAttributeTable(data);
+            attributesObject = JSON.parse(data);
+
+            renderDataForAttributeTable(attributesObject);
         },
         error: function () {
             Swal.fire({
@@ -155,37 +182,31 @@ function callAttributeApi(url) {
     });
 }
 
-function isFilter(atbId) {
-    for (let atbi of attributeArray) {
-        if (atbi["id"] === atbId) {
-            return atbi.filter;
-        }
-
-    }
-}
 
 function loadAttributeToForm(editAttributeBtn) {
     let tri = $(editAttributeBtn).parent().parent();
-    let triId = tri.find(".atb-iddel-checkbox").val();
+    let triKey = tri.find(".atb-iddel-checkbox").val();
     let triName = tri.find("td:nth-child(2)").text();
-    let triActive = tri.find(".atb-active-checkbox");
-    let triFilter = isFilter(triId);
 
+
+    let isfilter = attributesObject[`${triKey}`].filter;
+
+    let isactive = tri.find(".atb-active-checkbox").attr("isactive");
+    // let isactive = triActive.attr("isactive");
 
     let editModal = $("#exampleModalCenter2");
-    editModal.find("#atrIdInp").val(triId);
+    editModal.find("#atrIdInp").val(triKey);
     editModal.find(".atrNameInp").val(triName);
 
-    let isactive = triActive.attr("isactive") == 1 ? true : false;
 
-    editModal.find(".atrActiveChbx").prop("checked", isactive);
-    editModal.find(".atrFilterChbx").prop("checked", triFilter == 1 ? true : false);
+    editModal.find(".atrActiveChbx").prop("checked", isactive == 1 ? true : false);
+    editModal.find(".atrFilterChbx").prop("checked", isfilter == 1 ? true : false);
 
 
     let valueList = editModal.find(".tasks");
 
 
-    let currentAttribute = findAttributeById(triId, attributeArray);
+    let currentAttribute = attributesObject[triKey];
 
     if (currentAttribute["value"] != undefined) {
         let rs = "";
@@ -225,25 +246,25 @@ function saveCurrentFormAttribute(saveBtn) {
 
     if (attributeWrapper.find("#atrIdInp").val() !== undefined) {
         //case update
-        data["id"] = attributeWrapper.find("#atrIdInp").val();
-        updateAttribute(data, attributeArray);
+        let keyId = attributeWrapper.find("#atrIdInp").val();
+        updateAttribute(keyId, data, attributesObject);
+        console.log(data);
     } else {
         //case add new attribute -> check if existByName
-        if (existByName(data["name"], attributeArray)) {
+        if (existByName(data["name"], attributesObject)) {
             alert(data["name"] + " is exist!");
         } else {
             //add new
-            data["id"] = generateID();
-            attributeArray.push(data);
+            let curId = generateID()
+            attributesObject[curId] = data;
+
         }
     }
 
 
     let curModal = saveBtn.closest(".modal");
     $(curModal).modal('hide');
-    renderDataForAttributeTable(attributeArray);
-
-    console.log(attributeArray);
+    renderDataForAttributeTable(attributesObject);
 
 
 }

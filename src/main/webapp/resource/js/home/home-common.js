@@ -18,29 +18,6 @@ function createSwiper(selector, numOfSlide) {
     return swiper;
 }
 
-//load content through ajax
-function simpleLoadContentWithGet(url, renderMethod) {
 
-    $.ajax({
-        type: "get",
-        url: url,
-        success: function (data) {
-            if (typeof renderMethod === "function") {
-                renderMethod(data);
-            }
-
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Can not call this Api',
-                // text: 'Something went wrong!',
-
-            })
-        }
-
-
-    });
-}
 
 //load content through ajax

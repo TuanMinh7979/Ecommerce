@@ -2,6 +2,7 @@ var GlobalTotalPage = 1;//flag variable
 var currentPage = 1;
 var activeKeyword = "";
 
+
 function callViewApi(page, limit, sortBy, sortDirection, searchNameTerm) {
 
     let url = "/admin/category/api/viewApi";
@@ -45,8 +46,9 @@ function callViewApi(page, limit, sortBy, sortDirection, searchNameTerm) {
 $(function () {
     //khi tai lai trang thi se call data va paging lai
     callViewApi();
-
 })
+
+
 
 
 function HdleFilterBtn() {

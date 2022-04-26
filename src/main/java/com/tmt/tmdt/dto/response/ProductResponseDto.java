@@ -18,4 +18,5 @@ public class ProductResponseDto {
     private BigDecimal price;
     private float discountPercent;
     private String mainImageLink;
+
 }

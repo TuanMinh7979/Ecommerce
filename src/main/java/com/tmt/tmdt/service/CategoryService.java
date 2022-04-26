@@ -1,6 +1,6 @@
 package com.tmt.tmdt.service;
 
-import com.tmt.tmdt.entities.Attribute;
+import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +42,12 @@ public interface CategoryService {
     Category update(Category category);
 
     Category save(Category category);
+
+    List<CategoryResponseDto> getCategoryResponseDtos();
+
+
+
+
 
 
 }

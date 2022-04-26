@@ -6,14 +6,29 @@
     <title>Title</title>
     <th:block layout:fragment="addcss">
         <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+
+
+
     </th:block>
 </head>
 <body>
-<div class="content-wrapper" layout:fragment="content">
+<div class="content-wrapper container" layout:fragment="content">
     <div class="row">
+        <div class="col-3" style="margin-top: 10px" th:each="product :${products}">
 
+            <div class="pcard card" style="height: 360px; overflow-y: hidden">
+                <div class="pcard-img card-body" style="background-size: cover;">
 
+                    <img class="img-fluid card-img" th:src="${product.mainImageLink}" alt="">
+                </div>
+                <div class="card-footer ">
+                    <button>XEM NGAY</button>
+                </div>
+            </div>
+
+        </div>
     </div>
+
 
 
 </div>
@@ -22,9 +37,7 @@
 <th:block layout:fragment="addscript">
     <script th:src="@{/resource/js/home/index.js}"></script>
 
-    <script>
-        // var hotsaleSwi = createSwiper("#hotsaleSwi")
-    </script>
+
 
 </th:block>
 

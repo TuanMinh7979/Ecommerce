@@ -1,9 +1,7 @@
 package com.tmt.tmdt.controller.admin;
 
 import com.tmt.tmdt.dto.response.ViewResponseApi;
-import com.tmt.tmdt.entities.Attribute;
 import com.tmt.tmdt.entities.Category;
-import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,22 +11,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("admin/category")
 public class CategoryController {
-
 
     private final CategoryService categoryService;
 
@@ -75,7 +68,10 @@ public class CategoryController {
         model.addAttribute("category", category);
 
         List<Category> categoryList = categoryService.getCategoriesInHierarchicalFromRootWithOut(2);
-        model.addAttribute("categoriesForParentForm", categoryService.getCategoriesInHierarchicalFromRootWithOut(2));
+
+
+
+
         return "admin/category/add";
     }
 
@@ -134,7 +130,6 @@ public class CategoryController {
 
     //DELETE
     @PostMapping("api/delete/{id}")
-    @ResponseBody
     //call by ajax
     public ResponseEntity<Integer> deleteCategory(@PathVariable Integer id) {
         categoryService.deleteById(id);
@@ -155,22 +150,23 @@ public class CategoryController {
 
     @GetMapping("api/{id}/attributes")
     @ResponseBody
-    public Set<Attribute> getAttributesByCategoryId(@PathVariable("id") Integer id) {
-        return categoryService.getCategory(id).getAttributes();
+    public String getAttributesByCategoryId(@PathVariable("id") Integer id) {
+        return categoryService.getCategory(id).getAtbs();
     }
 
     @PostMapping("api/{id}/attributes/update")
     @ResponseBody
-    public Set<Attribute> updateAttributes(@PathVariable("id") Integer id, @RequestBody List<Attribute> newAttributes) {
-        Set<Attribute> newSetAttributes = newAttributes.stream().collect(Collectors.toSet());
+    public Category updateAttributes(@PathVariable("id") Integer id, @RequestBody String newAttributes) {
 
+        System.out.println("+++++++++++++++++++++");
         Category category = categoryService.getCategory(id);
-        category.setAttributes(newSetAttributes);
+        category.setAtbs(newAttributes);
         categoryService.save(category);
-
-        return newSetAttributes;
+        return category;
 
     }
+
+
 
 
     //-FOR ATTRIBUTE

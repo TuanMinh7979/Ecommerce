@@ -1,4 +1,4 @@
-package com.tmt.tmdt.entities.customType;
+package com.tmt.tmdt.converter;
 
 import javax.persistence.AttributeConverter;
 import java.util.Arrays;

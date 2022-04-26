@@ -2,7 +2,6 @@ package com.tmt.tmdt.controller.admin;
 
 import com.tmt.tmdt.dto.request.FileRequestDto;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
-import com.tmt.tmdt.entities.Attribute;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.service.CategoryService;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -100,9 +98,9 @@ public class ProductController {
     @PostMapping("add")
 //    @Transactional
     public String addWithImages(Model model,
-                      @RequestParam("file") FileRequestDto mainImageDto,
-                      @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
-                      @Valid @ModelAttribute("product") Product product, BindingResult result) {
+                                @RequestParam("file") FileRequestDto mainImageDto,
+                                @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
+                                @Valid @ModelAttribute("product") Product product, BindingResult result) {
         if (productService.existByName(product.getName())) {
             result.rejectValue("name", "nameIsExist");
         }
@@ -124,12 +122,12 @@ public class ProductController {
 
     @PostMapping(value = "update")
     public String updateWithImages(Model model,
-                         @RequestParam("file") FileRequestDto mainImageDto,
-                         @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
+                                   @RequestParam("file") FileRequestDto mainImageDto,
+                                   @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
 
-                         @RequestParam("delImageIds") String delImageIds,
-                         @Valid @ModelAttribute("product") Product product,
-                         BindingResult result) throws IOException {
+                                   @RequestParam("delImageIds") String delImageIds,
+                                   @Valid @ModelAttribute("product") Product product,
+                                   BindingResult result) throws IOException {
 
 
         if (!result.hasErrors()) {
@@ -196,24 +194,25 @@ public class ProductController {
 
     @GetMapping("api/{id}/attributes")
     @ResponseBody
-    public Set<Attribute> getAttributesByProductId(@PathVariable("id") Long id) {
-        return productService.getProduct(id).getAttributes();
+    public String getAttributesByProductId(@PathVariable("id") Long id) {
+        return productService.getProduct(id).getAtbs();
     }
 
     @PostMapping("api/{id}/attributes/update")
     @ResponseBody
-    public Set<Attribute> updateAttributes(@PathVariable("id") Long id, @RequestBody List<Attribute> newAttributes) {
-        System.out.println("_________________________________"+newAttributes.size());
-        Set<Attribute> newSetAttributes = newAttributes.stream().collect(Collectors.toSet());
+    public String updateAttributes(@PathVariable("id") Long id, @RequestBody String newAttributes) {
+
 
         Product product = productService.getProduct(id);
-        product.setAttributes(newSetAttributes);
+
+        product.setAtbs(newAttributes);
+
+
         productService.save(product);
 
-        return newSetAttributes;
+        return newAttributes;
 
     }
-
 
 
 }

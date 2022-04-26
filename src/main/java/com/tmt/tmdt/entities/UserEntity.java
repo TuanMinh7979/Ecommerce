@@ -2,13 +2,11 @@ package com.tmt.tmdt.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tmt.tmdt.constant.UserStatus;
-import com.tmt.tmdt.entities.customType.ListToStringConverter;
+import com.tmt.tmdt.converter.ListToStringConverter;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;

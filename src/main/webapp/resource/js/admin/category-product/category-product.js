@@ -1,3 +1,5 @@
+
+
 function setActiveCheckbox() {
     $(".atb-active-checkbox").each(function () {
 
@@ -40,54 +42,24 @@ function pushNewRecord(pushAtrBtn) {
     }
 }
 
-function existByName(name, collection) {
-    for (let attribute of collection) {
-
-        if (attribute.name === name) {
+function existByName(name, atbs) {
+    for (let atbi in atbs) {
+        if (atbs[atbi].name === name) {
             return true;
         }
     }
     return false;
 }
 
-function findAttributeById(id, collection) {
-    for (let atri of collection) {
 
-        if (atri["id"] == id) {
-            return atri;
-        }
+function updateAttribute(keyId, newAttribute, atbs) {
+    if (atbs.hasOwnProperty(keyId)) {
+        atbs[keyId] = newAttribute;
+        return;
     }
-    return;
-}
-
-function removeAttributeByName(name, collection) {
-
-    collection.map((x, index) => {
-        if (x["name"] === name) {
-            collection.splice(index, 1);
-
-        }
-    });
-    return;
-}
-
-function updateAttribute(newAttribute, collection) {
-//diffenrence from java , from java we can update a T in List INDEPENDENT OF List
-//bust still affect to LIST
-    collection.map((x, index) => {
-        if (x["id"] === newAttribute["id"]) {
-            collection[index] = newAttribute;
-        }
-    });
 
     return;
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
+
+

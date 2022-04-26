@@ -1,7 +1,7 @@
 package com.tmt.tmdt.repository;
 
+import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
-import com.tmt.tmdt.util.TextUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,6 +24,10 @@ class CategoryRepoTest {
 
     @Test
     public void test() {
+//        List<Category> cateResDto = categoryRepo.getCatForForm();
+//        System.out.println(cateResDto.size());
+//        cateResDto.forEach(c -> System.out.println(c.getNumOfDirectProduct()));
+
 
 //        Category category = categoryRepo.getCategoryWithChilds(3).get();
 //        System.out.println(category.getName());
@@ -87,4 +91,6 @@ class CategoryRepoTest {
 //        categoryRepo.save(gm);
 //
 //    }
+
+
 }

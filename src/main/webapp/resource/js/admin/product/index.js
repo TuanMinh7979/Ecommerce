@@ -75,9 +75,9 @@ function renderData(data) {
 
         rs += `<td class="col-2" >${producti.name}</td>`
         rs += `<td class = "col-1" >${producti.price} </td>`
-        rs += `<td class = "avatar-container col-3" ><img class="avatar__img"src=${producti.mainImageLink} alt="No Image choosed"/> </td>`
+        rs += `<td class = "avatar-container col-4" ><img class="avatar__img"src=${producti.mainImageLink} alt="No Image choosed"/> </td>`
         rs += `<td class="col-2"> ${producti.code}</td>`
-        rs += `<td class="col-1"> ${producti.category.name}</td>`
+        // rs += `<td class="col-1"> ${producti.category.name}</td>`
 
         rs += '<td class="col-2">'
         rs += `<a class="btn btn-default"  href="/admin/product/edit/${producti.id}">Edit</a>`

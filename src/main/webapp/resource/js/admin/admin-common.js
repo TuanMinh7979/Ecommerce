@@ -245,27 +245,7 @@ function changeImage(file, fileInp, mode, delIdsInpId, defaultImage) {
 
 }
 
-//load content through ajax
-function loadContentWithGet(url, renderMethod) {
 
-    $.ajax({
-        type: "get",
-        url: url,
-        success: function (data) {
-            renderMethod(data);
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Can not call this Api',
-                // text: 'Something went wrong!',
-
-            })
-        }
-
-
-    });
-}
 
 //load content through ajax
 

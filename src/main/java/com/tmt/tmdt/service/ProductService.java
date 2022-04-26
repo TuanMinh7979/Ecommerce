@@ -1,6 +1,8 @@
 package com.tmt.tmdt.service;
 
 import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.response.ProductResponseDto;
+import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +42,6 @@ public interface ProductService {
 
     Product getProductWithImages(Long id);
 
-
     List<Product> getProductsByCategory(Integer categoryId);
 
     Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException;
@@ -48,4 +49,11 @@ public interface ProductService {
     Product update(Product product, FileRequestDto file, List<FileRequestDto> files, String ids) throws IOException;
 
     Product save(Product product);
+
+    int countProductByCategory(Integer categoryId);
+
+    List<ProductResponseDto> getProductsByCategoryForHome(Category category);
+
+
+
 }

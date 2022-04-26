@@ -2,13 +2,13 @@ package com.tmt.tmdt.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.tmt.tmdt.dto.request.FileRequestDto;
-import com.tmt.tmdt.entities.Attribute;
+import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.mapper.ImageMapper;
-import com.tmt.tmdt.repository.ImageRepo;
+import com.tmt.tmdt.mapper.ProductMapper;
 import com.tmt.tmdt.repository.ProductRepo;
 import com.tmt.tmdt.service.ImageService;
 import com.tmt.tmdt.service.ProductService;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final Cloudinary cloudinary;
     private final ProductRepo productRepo;
+    private final ProductMapper productMapper;
 
 
     private final UploadService uploadService;
@@ -107,10 +107,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException {
         Category category = product.getCategory();
-        Set<Attribute> fullyAttributes = product.getCategory().getAttributes();
-        product.setAttributes(fullyAttributes.stream()
-                .map(a -> new Attribute(a.getId(), a.getName(), a.getValue(), a.getActive()))
-                .collect(Collectors.toSet()));
+        category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
+
 
         Product productSaved = save(product);
 
@@ -184,21 +182,20 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        product.setAttributes(getProduct(product.getId()).getAttributes());
+//        product.setAttributes(getProduct(product.getId()).getAttributes());
         product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
         return productRepo.save(product);
     }
 
     @Override
     public Product save(Product product) {
-
-        //main use for case not change image
-        //and must be handle for all case that persist to db
-        //use for ,which use,  how often , performance
-
-
         return productRepo.save(product);
 
+    }
+
+    @Override
+    public int countProductByCategory(Integer categoryId) {
+        return productRepo.countProductByCategory(categoryId);
     }
 
 
@@ -212,7 +209,10 @@ public class ProductServiceImpl implements ProductService {
             imageService.deleteById(image.getId());
         }
 
+        Category category = product.getCategory();
+        category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
         productRepo.deleteById(id);
+
 
     }
 
@@ -234,6 +234,36 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProductsByCategory(Integer categoryId) {
         return productRepo.getProductsByCategory(categoryId);
+    }
+
+    @Override
+    public List<ProductResponseDto> getProductsByCategoryForHome(Category category) {
+        List<ProductResponseDto> rs = new ArrayList<>();
+        if (category.getChildren().isEmpty()) {
+            rs = getProductsByCategory(category.getId())
+                    .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
+        } else if (category.getId() == 1) {
+            rs = getProducts().stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
+        } else {
+            List<Category> allChildHasProduct = new ArrayList<>();
+            Queue<Category> queue = new ArrayDeque<>();
+            queue.add(category);
+            Category cat;
+            while (!queue.isEmpty()) {
+                cat = queue.remove();
+                if (!cat.getChildren().isEmpty()) {
+                    queue.addAll(cat.getChildren());
+                }
+                if (cat.getNumOfDirectProduct() > 0) allChildHasProduct.add(cat);
+            }
+            for (Category cateHasProduct : allChildHasProduct) {
+                System.out.println(cateHasProduct.getName());
+                rs.addAll(getProductsByCategory(cateHasProduct.getId())
+                        .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList()));
+            }
+
+        }
+        return rs;
     }
 
 

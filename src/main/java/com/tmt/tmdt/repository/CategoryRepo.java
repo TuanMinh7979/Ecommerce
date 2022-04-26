@@ -1,5 +1,6 @@
 package com.tmt.tmdt.repository;
 
+import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +28,14 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
             nativeQuery = true)
     Page<Category> getCategoriesByNameLike(String name, Pageable pageable);
 
-    @Query("from Category c  where c.id = :id")
-    Optional<Category> getSimpleCategory(@Param("id") Integer id);
-//
-//    @Query("from Category c join fetch c.children")
-//    List<Category> getCategoriesWithChilds();
+    @Query(value = "select new com.tmt.tmdt.dto.response.CategoryResponseDto(cat.id,cat.name, cat.code, cat.parent.id) from Category as cat")
+    List<CategoryResponseDto> getCategoryResponseDtos();
+
+
+
+    @Query(value = "select par.id as id, par.name as name , par.code as code , count(child.id) as numOfDirectSubCat , par.create_at, par.update_at, par.atbs, par.num_of_direct_product ,par.parent_id  from categories par left outer join  categories child on child.parent_id = par.id group by par.id"
+            , nativeQuery = true)
+    List<Category> getCategoriesWithNumDirectSubCat();
 
 
 }
