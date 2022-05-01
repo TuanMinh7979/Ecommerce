@@ -29,7 +29,7 @@ function loadTreeMenu(url) {
         url: url,
         success: function (data) {
 
-            console.log(data);
+
             let arrData = []
             arrData = data;
             let source = builddata(arrData);
@@ -57,15 +57,8 @@ function loadTreeMenu(url) {
 }
 
 
-function renderProductFor(data) {
-    let container = $("#hotsaleSwi").find(".swiper-wrapper");
-    let rs = "";
-    data.map(function (datai) {
-        rs += `<div class="swiper-slide"><img src="${datai.mainImageLink}" alt=""></div>`
-    })
-    container.html(rs);
-    createSwiper("#hotsaleSwi", 3)
-}
+
+
 
 
 

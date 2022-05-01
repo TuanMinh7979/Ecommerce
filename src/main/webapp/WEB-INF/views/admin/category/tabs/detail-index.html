@@ -26,11 +26,15 @@
     <div class="col-12 d-flex justify-content-end">
         <a style="margin-right: 100px" id="saveallchangeBtn"
            th:href="@{/admin/category/api/{id}/attributes/update(id=${category.id})}"
-           class="btn btn-info ">Save All Change</a>
-        <button id="addNewAttributeBtn" class="btn btn-info " style="margin-right: 100px">Add attribute</button>
+           class="btn btn-info ">Save All Changes</a>
+        <button id="addNewAttributeBtn" class="btn btn-outline-dark" style="margin-right: 100px">Add attribute</button>
         <button id="tag_delete_many"
                 class="btn btn-danger ">Delete Many
         </button>
+    </div>
+
+    <div class="col-12 d-flex justify-content-end" style="margin-top: 60px">
+        <button id="editFilterBtn" class="btn btn-outline-dark " >Edit filter</button>
     </div>
 
 
@@ -92,7 +96,7 @@
 
     <!--        Modal-->
 
-    <!-- EDIT Modal -->
+    <!-- EDIT ATTRIBUTE -->
     <div>
         <button id="editModalBtn" style="display:none" type="button" class="btn btn-primary" data-toggle="modal"
                 data-target="#exampleModalCenter2">
@@ -114,13 +118,10 @@
 
 
                         <div class="attributeWrapper">
-                            <div>
-                                <label>Id: </label>
-                                <input id="atrIdInp" type="text"  disabled>
-                            </div>
+
                             <div style="margin-top: 10px">
                                 <label>Name: </label>
-                                <input class="atrNameInp" type="text">
+                                <input class="atrNameInp" type="text" disabled>
                             </div>
                             <div style="margin-top: 10px">
                                 <label>Active:</label>
@@ -153,7 +154,45 @@
         </div>
     </div>
 
-    <!--    FILTER SELECTION    Modal-->
+    <!--    EDIT FILTER OF CATEGORY-->
+
+    <button id="editFilterModalBtn" style="display:none" type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#exampleModalCenter3">
+        Launch demo modal
+    </button>
+
+    <div class="modal fade" id="exampleModalCenter3" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Filter</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div style="padding: 15px; font-size: 1.2rem " class="modal-body">
+
+
+                    <div id="filterWrapper">
+
+<!--                        <div style="margin-top: 10px">-->
+<!--                            <label>Name: </label>-->
+<!--                            <input class="atrNameInp" type="text" disabled>-->
+<!--                        </div>-->
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="saveAtrsBtn btn btn-primary">Update changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 </div>

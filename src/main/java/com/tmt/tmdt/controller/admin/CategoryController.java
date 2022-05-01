@@ -66,12 +66,6 @@ public class CategoryController {
     public String showAddForm(Model model) {
         Category category = new Category();
         model.addAttribute("category", category);
-
-        List<Category> categoryList = categoryService.getCategoriesInHierarchicalFromRootWithOut(2);
-
-
-
-
         return "admin/category/add";
     }
 
@@ -87,7 +81,7 @@ public class CategoryController {
             categoryService.add(category);
             return "redirect:/admin/category";
         }
-        model.addAttribute("categoriesForParentForm", categoryService.getCategoriesInHierarchicalFromRootWithOut(2));
+
 
         return "admin/category/add";
     }
@@ -107,7 +101,6 @@ public class CategoryController {
             category = categoryService.getCategoryByName(idx);
         }
         model.addAttribute("category", category);
-        model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRootWithOut(2));
         return "admin/category/edit";
 
     }
@@ -121,7 +114,6 @@ public class CategoryController {
             categoryService.update(category);
             return "redirect:/admin/category";
         }
-        model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRootWithOut(2));
 
         return "admin/category/edit";
     }
@@ -133,7 +125,6 @@ public class CategoryController {
     //call by ajax
     public ResponseEntity<Integer> deleteCategory(@PathVariable Integer id) {
         categoryService.deleteById(id);
-
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
@@ -157,16 +148,12 @@ public class CategoryController {
     @PostMapping("api/{id}/attributes/update")
     @ResponseBody
     public Category updateAttributes(@PathVariable("id") Integer id, @RequestBody String newAttributes) {
-
-        System.out.println("+++++++++++++++++++++");
         Category category = categoryService.getCategory(id);
         category.setAtbs(newAttributes);
         categoryService.save(category);
         return category;
 
     }
-
-
 
 
     //-FOR ATTRIBUTE

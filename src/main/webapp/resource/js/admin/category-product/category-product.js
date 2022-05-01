@@ -1,5 +1,3 @@
-
-
 function setActiveCheckbox() {
     $(".atb-active-checkbox").each(function () {
 
@@ -42,19 +40,25 @@ function pushNewRecord(pushAtrBtn) {
     }
 }
 
-function existByName(name, atbs) {
-    for (let atbi in atbs) {
-        if (atbs[atbi].name === name) {
-            return true;
-        }
+function existByName(keyName, atbs) {
+    // for (let atbi in atbs) {
+    //     if (atbs[atbi].name === name) {
+    //         return true;
+    //     }
+    // }
+    // return false;
+
+    if (atbs.hasOwnProperty(keyName)) {
+        return true;
     }
+
     return false;
 }
 
 
-function updateAttribute(keyId, newAttribute, atbs) {
-    if (atbs.hasOwnProperty(keyId)) {
-        atbs[keyId] = newAttribute;
+function updateAttribute(keyName, newAttribute, atbs) {
+    if (atbs.hasOwnProperty(keyName)) {
+        atbs[keyName] = newAttribute;
         return;
     }
 

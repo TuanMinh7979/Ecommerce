@@ -1,10 +1,11 @@
 var mode = "";
+var attributesObject = {};
 
-//FOR IMAGES SCREEN
 var numOfImage = 1;
 var MAX_FILE_SIZE = 512000;
 
 $(function () {
+    callCategoriesData();
 
     $("#shorDescription").richText();
     $("#fullDescription").richText();
@@ -18,6 +19,45 @@ $(function () {
             handleSelectDefaultBtn(this, mode, "delImageIds", defaultImage);
         })
 })
+
+//CALL CATEGORIES FOR FORM
+function callCategoriesData() {
+    $.ajax({
+        type: "get",
+        url: "/ajax/hierarchical-category",
+        success: function (data) {
+
+            renderCatHierarchical(data);
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load this categories in hierarchical',
+                // text: 'Something went wrong!',
+
+            })
+        }
+    });
+}
+
+function renderCatHierarchical(data) {
+    let opts = "";
+    data.map(function (cat) {
+
+        if (cat.id != productCategoryId) {
+            opts += `<option value="${cat.id}">${cat.name}</option> `
+
+        } else {
+            opts += `<option value="${cat.id}" selected>${cat.name}</option> `
+        }
+
+
+    })
+    $("#category-sel").append(opts);
+
+}
+
+//CALL CATEGORIES FOR FORM
 
 
 $(document).on("change", ".file_inp", function (event) {
@@ -88,14 +128,14 @@ $(function () {
                 let checkboxes = $('tr input[type="checkbox"]:checked');
                 for (checkbox of checkboxes) {
                     let nameToDel = $(checkbox).parent().parent().find("td:nth-child(2)").text();
-                    removeAttributeByName(nameToDel, attributeArray);
+                    removeAttributeByName(nameToDel, attributesObject);
                     $(checkbox).closest("tr").remove();
 
                 }
             });
             $(document).on("click", "#saveallchangeBtn", function (event) {
                 event.preventDefault();
-                saveAllChange(attributeArray, $(this).attr("href"));
+                saveAllChange(attributesObject, $(this).attr("href"));
 
             })
 
@@ -103,7 +143,7 @@ $(function () {
             $(document).on("click", '.tag_delete_one', function (event) {
                 event.preventDefault();
                 let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
-                removeAttributeByName(nameToDel, attributeArray);
+                removeAttributeByName(nameToDel, attributesObject);
                 $(this).closest("tr").remove();
             })
 
@@ -115,12 +155,6 @@ $(function () {
 
 })
 
-var generateID = function () {
-    // Math.random should be unique because of its seeding algorithm.
-    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-    // after the decimal.
-    return Math.random().toString(36).substr(2, 3);
-};
 
 function saveAllChange(data, url) {
 
@@ -174,13 +208,12 @@ function renderDataForAttributeTable(data) {
     let rs = "";
 
 
-    data.map(function (atbi) {
-
-
+    for (let atbi in data) {
+        let curAtr = data[atbi];
         rs += `       <tr class="col-12">
-                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi.id}"></td>
-                <td class="col-5" class="atb-name-inp" ">${atbi.name}</td>
-                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${atbi.active}"></i>  </td>
+                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
+                <td class="col-5" class="atb-name-inp" ">${atbi}</td>
+                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
                 <td class="col-3">
                     <button class="editAttributeBtn btn btn-default" >Edit</button>
                     <a class="btn btn-danger tag_delete_one"   >Delete</a>
@@ -188,7 +221,7 @@ function renderDataForAttributeTable(data) {
                 </td>
 
             </tr>`
-    })
+    }
     // }
 
     $("#tabledata").html(rs);
@@ -203,10 +236,14 @@ function callAttributeApi(url) {
         type: "get",
         url: url,
         success: function (data) {
+            if (data !== "" && data !== null && data !== undefined) {
+                attributesObject = JSON.parse(data);
+                renderDataForAttributeTable(attributesObject);
+            } else {
 
-            attributeArray = data;
+                alert("This category do not have any attribute");
+            }
 
-            renderDataForAttributeTable(data);
         },
         error: function () {
             Swal.fire({
@@ -226,25 +263,18 @@ function callAttributeApi(url) {
 //COMMON METHOD
 function loadAttributeToForm(editAttributeBtn) {
     let tri = $(editAttributeBtn).parent().parent();
-    let triId = tri.find(".atb-iddel-checkbox").val();
-    let triName = tri.find("td:nth-child(2)").text();
-    let triActive = tri.find(".atb-active-checkbox");
-
+    let triKeyName = tri.find(".atb-iddel-checkbox").val();
+//
+    //-
+    let isactive = tri.find(".atb-active-checkbox").attr("isactive");
 
     let editModal = $("#exampleModalCenter2");
-    editModal.find("#atrIdInp").val(triId);
-    editModal.find(".atrNameInp").val(triName);
-
-    let isactive = triActive.attr("isactive") == 1 ? true : false;
-
-
-    editModal.find(".atrActiveChbx").prop("checked", isactive);
-
+    editModal.find(".atrNameInp").val(triKeyName);
+    editModal.find(".atrActiveChbx").prop("checked", isactive == 1 ? true : false);
 
     let valueList = editModal.find(".tasks");
 
-
-    let currentAttribute = findAttributeById(triId, attributeArray);
+    let currentAttribute = attributesObject[triKeyName];
 
     if (currentAttribute["value"] != undefined) {
         let rs = "";
@@ -273,7 +303,7 @@ function saveCurrentFormAttribute(saveFormBtn) {
     let modalContent = $(saveFormBtn).parent().parent();
     let attributeWrapper = modalContent.find(".attributeWrapper");
 
-    data["name"] = attributeWrapper.find(".atrNameInp").val();
+    let keyname = attributeWrapper.find(".atrNameInp").val();
     data["active"] = attributeWrapper.find(".atrActiveChbx").is(":checked") ? 1 : 0;
     let valueArr = [];
     attributeWrapper.find(".atrValueSpan").each(function () {
@@ -281,26 +311,23 @@ function saveCurrentFormAttribute(saveFormBtn) {
     })
     data["value"] = valueArr;
 
-    if (attributeWrapper.find("#atrIdInp").val() !== undefined) {
-        //case update
-        data["id"] = attributeWrapper.find("#atrIdInp").val();
-        updateAttribute(data, attributeArray);
+    if ($("#exampleModalCenter2").hasClass("show")) {
+        updateAttribute(keyname, data, attributesObject);
+
     } else {
         //case add new attribute -> check if existByName
-        if (existByName(data["name"], attributeArray)) {
-            alert(data["name"] + " is exist!");
+        if (existByName(data["name"], attributesObject)) {
+            alert(keyname + " is exist!");
         } else {
-            //add new
-            data["id"] = generateID();
-            attributeArray.push(data);
+            attributesObject[keyname] = data;
         }
     }
 
 
     let curModal = saveFormBtn.closest(".modal");
-    $(attributeWrapper).find("input[type='text']").val('');
+
     $(curModal).modal('hide');
-    renderDataForAttributeTable(attributeArray);
+    renderDataForAttributeTable(attributesObject);
 
 
 }
@@ -327,12 +354,7 @@ window.addEventListener("paste", (e) => {
 
 
         })
-        // if (e.clipboardData.files[0].type.startsWith("image/")) {
-        //
-        //
-        //
-        //
-        // }
+
 
     }
 });
@@ -341,6 +363,21 @@ window.addEventListener("paste", (e) => {
 //COMMON METHOD
 
 
+$("#mainForm").data("changed", false);
+
+$("#mainForm").on("change", function () {
+    $(this).data("changed", true);
+});
+$('#mainForm').on('submit', function () {
+    if (!$(this).data("changed")) {
+        alert("Nothing changed!");
+        return false;
+        // Reset variable
+    }
+    // Do whatever you want here
+    // You don't have to prevent submission
+
+});
 
 
 

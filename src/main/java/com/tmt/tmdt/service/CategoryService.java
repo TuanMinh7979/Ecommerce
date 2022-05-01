@@ -45,9 +45,11 @@ public interface CategoryService {
 
     List<CategoryResponseDto> getCategoryResponseDtos();
 
+    int getNofSubCatByCategoryId(Integer categoryId);
 
+    List<Category> getSubCategoriesByParentId(Integer parentId);
 
-
+    Category getParentByChildId(Integer childId);
 
 
 }

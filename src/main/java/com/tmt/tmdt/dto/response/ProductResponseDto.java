@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,5 +20,7 @@ public class ProductResponseDto {
     private BigDecimal price;
     private float discountPercent;
     private String mainImageLink;
+    private String code;
+//    private List<String> imageDetailLinks = new ArrayList<>();
 
 }

@@ -4,7 +4,7 @@ var builddata=function (data) {
     // build hierarchical source.
     for (i = 0; i < data.length; i++) {
         var item = data[i];
-        console.log(item)
+
 
         var label = item["name"];
         var parentid = item["parentId"];

@@ -39,8 +39,13 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
             , nativeQuery = true)
     Page<Product> getProductsByCategoryAndNameLike(Long categoryId, String name, Pageable pageable);
 
-    @Query("select p from Product p left join fetch p.images  where p.id= :id")
-    Product getProductWithImages(@Param("id") Long id);
+    @Query("select p from Product p left join fetch p.images where p.id= :id")
+        //dont need join fetch with many to one relation ship if just use cateogyId(in the table product)
+        //data bidding by default we ca have id of category through product.category.id at thymleaf
+    Optional<Product> getProductWithImages(@Param("id") Long id);
+
+    @Query("select p from Product p left join fetch p.images join fetch p.category where p.id = :id")
+    Optional<Product> getProductWithImagesAndCategory(@Param("id") Long id);
 
 
     @Query(value = "select * from products where category_id = ?1",
@@ -49,8 +54,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     @Query(value = "select count(p.id) from Product p where p.category.id= :id")
     int countProductByCategory(@Param("id") Integer categoryId);
-
-
 
 
 }

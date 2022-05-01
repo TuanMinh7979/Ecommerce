@@ -31,11 +31,12 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
     @Query(value = "select new com.tmt.tmdt.dto.response.CategoryResponseDto(cat.id,cat.name, cat.code, cat.parent.id) from Category as cat")
     List<CategoryResponseDto> getCategoryResponseDtos();
 
+    @Query(value = "select count(child.id) as numOfDirectSubCat from categories par left outer join  categories child on child.parent_id = par.id where par.id = ?1 group by par.id", nativeQuery = true)
+    int getNofSubCatByCategoryId(Integer categoryId);
 
+    @Query(value = "from Category c where c.parent.id = :catId")
+    List<Category> getSubCategoriesByParentId(@Param("catId") Integer parentId);
 
-    @Query(value = "select par.id as id, par.name as name , par.code as code , count(child.id) as numOfDirectSubCat , par.create_at, par.update_at, par.atbs, par.num_of_direct_product ,par.parent_id  from categories par left outer join  categories child on child.parent_id = par.id group by par.id"
-            , nativeQuery = true)
-    List<Category> getCategoriesWithNumDirectSubCat();
-
-
+    @Query(value = "select * from categories par where par.id in (select child.parent_id from categories child where child.id= ?1)", nativeQuery = true)
+    Category getParentByChildId(Integer id);
 }

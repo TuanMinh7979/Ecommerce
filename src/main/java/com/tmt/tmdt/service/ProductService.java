@@ -54,6 +54,7 @@ public interface ProductService {
 
     List<ProductResponseDto> getProductsByCategoryForHome(Category category);
 
+    Product getProductWithImagesAndCategory(Long id);
 
 
 }

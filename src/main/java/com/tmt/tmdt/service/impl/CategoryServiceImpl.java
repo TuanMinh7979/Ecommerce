@@ -2,22 +2,16 @@ package com.tmt.tmdt.service.impl;
 
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
-import com.tmt.tmdt.entities.pojo.CatWithNofDirectSubCat;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.service.CategoryService;
-import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.util.TextUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 @Slf4j
@@ -48,6 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category add(Category category) {
 //        category.setAttributes(category.getParent().getAttributes());
+        category.setAtbs(category.getParent().getAtbs());
         Category categorySaved = cateRepository.save(category);
         categorySaved.setCode(TextUtil.generateCode(categorySaved.getName(), Long.valueOf(categorySaved.getId())));
         return save(categorySaved);
@@ -64,7 +59,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category save(Category category) {
         //use for update
-        return cateRepository.save(category);
+
+        Category catSaved = cateRepository.save(category);
+        Category parent = getParentByChildId(catSaved.getId());
+        parent.setNumOfDirectSubCat(getNofSubCatByCategoryId(parent.getId()));
+        cateRepository.save(parent);
+        return catSaved;
     }
 
     @Override
@@ -72,16 +72,37 @@ public class CategoryServiceImpl implements CategoryService {
         return cateRepository.getCategoryResponseDtos();
     }
 
+    @Override
+    public int getNofSubCatByCategoryId(Integer categoryId) {
+        return cateRepository.getNofSubCatByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<Category> getSubCategoriesByParentId(Integer parentId) {
+        return cateRepository.getSubCategoriesByParentId(parentId);
+    }
+
+    @Override
+    public Category getParentByChildId(Integer childId) {
+        return cateRepository.getParentByChildId(childId);
+    }
 
     @Override
     public void deleteById(Integer id) {
 
+        Category parent = getParentByChildId(id);
+        parent.setNumOfDirectSubCat((parent.getNumOfDirectSubCat() - 1) > 0 ? (parent.getNumOfDirectSubCat() - 1) : 0);
+        cateRepository.save(parent);
         cateRepository.deleteById(id);
     }
 
     @Override
     public void deleteCategories(Integer[] ids) {
         for (Integer id : ids) {
+
+            Category parent = getParentByChildId(id);
+            parent.setNumOfDirectSubCat((parent.getNumOfDirectSubCat() - 1) > 0 ? (parent.getNumOfDirectSubCat() - 1) : 0);
+            cateRepository.save(parent);
             cateRepository.deleteById(id);
         }
     }
@@ -114,15 +135,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getCategoriesInHierarchicalFromRoot() {
         List<Category> categoriesRs = new ArrayList<>();
-        List<Category> categoryList = cateRepository.findAll();
-        reRender(categoriesRs, categoryList, 1, "");
+
+        reRender(categoriesRs, cateRepository.findAll(), 1, "");
         return categoriesRs;
 
     }
 
 
     @Override
-
     public List<Category> getCategoriesInHierarchicalFromRootWithOut(int i) {
         List<Category> categories = getCategoriesInHierarchicalFromRoot();
         for (Category category : categories) {
@@ -142,20 +162,11 @@ public class CategoryServiceImpl implements CategoryService {
                 String name = split + category.getName();
                 String code = category.getCode();
                 rs.add(new Category(category.getId(), name, code));
-                if (!category.getChildren().isEmpty()) reRender(rs, all, category.getId(), split.concat("--"));
+                if (category.getNumOfDirectSubCat() > 0) reRender(rs, all, category.getId(), split.concat("--"));
             }
 
         }
 
-    }
-
-    @PersistenceContext
-    private EntityManager em;
-    @Transactional
-    public List<CatWithNofDirectSubCat> getCategoriesWithNofDirectSubCat() {
-        List<CatWithNofDirectSubCat> cats = (List<CatWithNofDirectSubCat>) em.createNativeQuery
-                ("select par.id , par.name , par.code ,par.parent_id , count(child.id) as numOfDirectSubCat from categories par left outer join  categories child on child.parent_id = par.id group by par.id", "catForForm").getResultList();
-        return cats;
     }
 
 

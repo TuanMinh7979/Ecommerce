@@ -1,7 +1,6 @@
 package com.tmt.tmdt.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tmt.tmdt.entities.pojo.CatWithNofDirectSubCat;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,18 +24,7 @@ import java.util.*;
 @NoArgsConstructor
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 
-@SqlResultSetMapping(name = "catForForm",
-        classes = @ConstructorResult(
-                targetClass = com.tmt.tmdt.entities.pojo.CatWithNofDirectSubCat.class,
-                columns = {@ColumnResult(name = "id", type = Integer.class),
-                        @ColumnResult(name = "name", type = String.class),
-                        @ColumnResult(name = "code", type = String.class),
-                        @ColumnResult(name = "parent_id", type = Integer.class),
-                        @ColumnResult(name = "numOfDirectSubCat", type = Integer.class),
 
-                }
-        )
-)
 
 public class Category extends BaseEntity implements Serializable {
     @Id
@@ -60,7 +48,9 @@ public class Category extends BaseEntity implements Serializable {
     //auto-generate from name
     private String code;
 
-    private Integer numOfDirectProduct;
+    private int numOfDirectProduct;
+
+    private int numOfDirectSubCat;
 
 
     @JsonIgnore

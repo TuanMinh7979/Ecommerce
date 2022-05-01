@@ -9,6 +9,7 @@ import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.mapper.ImageMapper;
 import com.tmt.tmdt.mapper.ProductMapper;
+import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.repository.ProductRepo;
 import com.tmt.tmdt.service.ImageService;
 import com.tmt.tmdt.service.ProductService;
@@ -33,13 +34,12 @@ import java.util.stream.Collectors;
 
 public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
-    private final Cloudinary cloudinary;
     private final ProductRepo productRepo;
     private final ProductMapper productMapper;
-
-
     private final UploadService uploadService;
     private final ImageMapper imageMapper;
+
+    private final CategoryRepo categoryRepo;
 
 
     @Override
@@ -203,7 +203,8 @@ public class ProductServiceImpl implements ProductService {
     public void deleteById(Long id) throws IOException {
         //sql error
         //return null to sign that error happened
-        Product product = productRepo.getProductWithImages(id);
+        Product product = getProductWithImagesAndCategory(id);
+
         Set<Image> images = product.getImages();
         for (Image image : images) {
             imageService.deleteById(image.getId());
@@ -226,8 +227,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductWithImages(Long id) {
-//        Product product = getProduct(id);
-        Product productWithImages = productRepo.getProductWithImages(id);
+
+        Product productWithImages = productRepo.getProductWithImages(id)
+                .orElseThrow(() -> new ResourceNotFoundException("product with id " + id + " is not found"));
         return productWithImages;
     }
 
@@ -239,10 +241,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponseDto> getProductsByCategoryForHome(Category category) {
         List<ProductResponseDto> rs = new ArrayList<>();
-        if (category.getChildren().isEmpty()) {
+        if (categoryRepo.getNofSubCatByCategoryId(category.getId()) == 0) {
+            //no sub category can get only all product of it
             rs = getProductsByCategory(category.getId())
                     .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
         } else if (category.getId() == 1) {
+            //root category -> find all product
             rs = getProducts().stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
         } else {
             List<Category> allChildHasProduct = new ArrayList<>();
@@ -251,19 +255,24 @@ public class ProductServiceImpl implements ProductService {
             Category cat;
             while (!queue.isEmpty()) {
                 cat = queue.remove();
-                if (!cat.getChildren().isEmpty()) {
-                    queue.addAll(cat.getChildren());
+                if (cat.getNumOfDirectSubCat() != 0) {
+                    queue.addAll(categoryRepo.getSubCategoriesByParentId(cat.getId()));
                 }
                 if (cat.getNumOfDirectProduct() > 0) allChildHasProduct.add(cat);
             }
             for (Category cateHasProduct : allChildHasProduct) {
-                System.out.println(cateHasProduct.getName());
                 rs.addAll(getProductsByCategory(cateHasProduct.getId())
                         .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList()));
             }
 
         }
         return rs;
+    }
+
+    @Override
+    public Product getProductWithImagesAndCategory(Long id) {
+        return productRepo.getProductWithImagesAndCategory(id).
+                orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " is not found"));
     }
 
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -56,19 +57,16 @@ public class Product extends BaseEntity implements Serializable {
     private String code;
 
 
-
     @Transient
     public String defaultImage() {
         return "/resource/img/default.png";
     }
 
 
-
     @JsonIgnore
+    @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "atbs")
     private String atbs;
-
-
 
 
 }

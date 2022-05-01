@@ -6,6 +6,8 @@
     <title>Title</title>
     <th:block layout:fragment="addcss">
         <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+        <link rel="stylesheet" th:href="@{/resource/css/home/product/productByCategory.css}">
+
     </th:block>
 </head>
 <body>
@@ -17,7 +19,7 @@
             <h5>Filtering by:</h5>
         </div>
         <div class="col-10 ">
-          
+
 
         </div>
     </div>
@@ -71,7 +73,7 @@
                     <img class="img-fluid card-img" th:src="${product.mainImageLink}" alt="">
                 </div>
                 <div class="card-footer ">
-                    <button>XEM NGAY</button>
+                    <button><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
                 </div>
             </div>
 

@@ -246,8 +246,33 @@ function changeImage(file, fileInp, mode, delIdsInpId, defaultImage) {
 }
 
 
-
 //load content through ajax
+
+function ajaxGet(url, renderfunction) {
+    $.ajax({
+        type: "get",
+        url: url,
+        success: function (data) {
+            if (typeof renderfunction === "function") {
+                renderfunction(data);
+            }
+
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load content',
+                // text: 'Something went wrong!',
+
+            })
+        }
+
+
+    });
+
+}
+
+
 
 
 

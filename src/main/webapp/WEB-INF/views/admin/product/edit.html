@@ -119,6 +119,7 @@
     <script th:inline="javascript">    // Enable Thymeleaf inlining
     var defaultImage = [[${product.defaultImage}]]; 	// Behaves just like in HTML
     var productId = [[${product.id}]]; 	// Behaves just like in HTML
+    var productCategoryId = [[${product.category.id}]];
     </script>
 
     <script th:src="@{/resource/plugins/rich-text-editor/jquery.richtext.min.js}"></script>

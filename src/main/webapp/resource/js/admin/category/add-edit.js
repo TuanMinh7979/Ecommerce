@@ -1,14 +1,15 @@
 var attributesObject = {};
+var filterData = {};
 
 
 $(function () {
 
     $.ajax({
         type: "get",
-        url: "/ajax/categoryHierarchical",
+        url: "/ajax/hierarchical-category",
         success: function (data) {
-            catHierarchical = data;
-            renderCatHierarchical();
+
+            renderCatHierarchical(data);
         },
         error: function () {
             Swal.fire({
@@ -63,7 +64,6 @@ $(function () {
             })
 
 
-
         }
 
 
@@ -71,11 +71,17 @@ $(function () {
 
 })
 
-function renderCatHierarchical() {
+function renderCatHierarchical(data) {
     let opts = "";
-    catHierarchical.map(function (cat) {
+    data.map(function (cat) {
 
-        opts += `<option value="${cat.id}">${cat.name}</option> `
+        if (cat.id != categoryParentId) {
+            opts += `<option value="${cat.id}">${cat.name}</option> `
+
+        } else {
+            opts += `<option value="${cat.id}" selected>${cat.name}</option> `
+        }
+
 
     })
     $(".parent-sel").append(opts);
@@ -138,7 +144,7 @@ function renderDataForAttributeTable(data) {
 
         rs += `       <tr class="col-12">
                 <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
-                <td class="col-5" class="atb-name-inp" ">${curAtr.name}</td>
+                <td class="col-5" class="atb-name-inp" ">${atbi}</td>
                 <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
                   <td class="col-3">
                     <button class="editAttributeBtn btn btn-default" >Edit</button>
@@ -163,11 +169,14 @@ function callAttributeApi(url) {
         type: "get",
         url: url,
         success: function (data) {
+            if (data !== "" && data !== null && data !== undefined) {
+                attributesObject = JSON.parse(data);
+                renderDataForAttributeTable(attributesObject);
+            } else {
 
+                alert("This category do not have any attribute");
+            }
 
-            attributesObject = JSON.parse(data);
-
-            renderDataForAttributeTable(attributesObject);
         },
         error: function () {
             Swal.fire({
@@ -185,28 +194,22 @@ function callAttributeApi(url) {
 
 function loadAttributeToForm(editAttributeBtn) {
     let tri = $(editAttributeBtn).parent().parent();
-    let triKey = tri.find(".atb-iddel-checkbox").val();
-    let triName = tri.find("td:nth-child(2)").text();
+    let triKeyName = tri.find(".atb-iddel-checkbox").val();
 
-
-    let isfilter = attributesObject[`${triKey}`].filter;
-
+//
+    let isfilter = attributesObject[`${triKeyName}`].filter;
     let isactive = tri.find(".atb-active-checkbox").attr("isactive");
-    // let isactive = triActive.attr("isactive");
+
 
     let editModal = $("#exampleModalCenter2");
-    editModal.find("#atrIdInp").val(triKey);
-    editModal.find(".atrNameInp").val(triName);
-
-
+    editModal.find(".atrNameInp").val(triKeyName);
     editModal.find(".atrActiveChbx").prop("checked", isactive == 1 ? true : false);
     editModal.find(".atrFilterChbx").prop("checked", isfilter == 1 ? true : false);
 
 
     let valueList = editModal.find(".tasks");
 
-
-    let currentAttribute = attributesObject[triKey];
+    let currentAttribute = attributesObject[triKeyName];
 
     if (currentAttribute["value"] != undefined) {
         let rs = "";
@@ -235,7 +238,7 @@ function saveCurrentFormAttribute(saveBtn) {
     let modalContent = $(saveBtn).parent().parent();
     let attributeWrapper = modalContent.find(".attributeWrapper");
 
-    data["name"] = attributeWrapper.find(".atrNameInp").val();
+    let keyname = attributeWrapper.find(".atrNameInp").val();
     data["active"] = attributeWrapper.find(".atrActiveChbx").is(":checked") ? 1 : 0;
     data["filter"] = attributeWrapper.find(".atrFilterChbx").is(":checked") ? 1 : 0;
     let valueArr = [];
@@ -244,19 +247,16 @@ function saveCurrentFormAttribute(saveBtn) {
     })
     data["value"] = valueArr;
 
-    if (attributeWrapper.find("#atrIdInp").val() !== undefined) {
-        //case update
-        let keyId = attributeWrapper.find("#atrIdInp").val();
-        updateAttribute(keyId, data, attributesObject);
-        console.log(data);
+    if ($("#exampleModalCenter2").hasClass("show")) {
+        updateAttribute(keyname, data, attributesObject);
+
     } else {
         //case add new attribute -> check if existByName
-        if (existByName(data["name"], attributesObject)) {
-            alert(data["name"] + " is exist!");
+        if (existByName(keyname, attributesObject)) {
+            alert(keyname + " is exist!");
         } else {
             //add new
-            let curId = generateID()
-            attributesObject[curId] = data;
+            attributesObject[keyname] = data;
 
         }
     }
@@ -292,6 +292,85 @@ $('#mainForm').on('submit', function () {
     // You don't have to prevent submission
 
 });
+
+//FOR CUSTOM ATTRIBUTE FILTER
+$("#editFilterBtn").on("click", function (event) {
+
+    event.preventDefault();
+    loadFilterData();
+    $("#editFilterModalBtn").click();
+
+
+})
+
+
+function getAndRenderCheckedFilterOpt(atbKeyNames) {
+
+    $.ajax({
+        type: "post",
+        url: "/product-filter/list-map",
+        data: JSON.stringify(atbKeyNames),
+        contentType: "application/json",
+
+        success: function (data) {
+            let rs = "";
+            atbKeyNames.map(function (atbKeyName) {
+                let atbKeyObj = attributesObject[atbKeyName];
+                if (atbKeyObj.filterValue !== undefined && atbKeyObj.hasOwnProperty("filter") && atbKeyObj.filter == 1) {
+                    rs += "<div class='filters-item__div'>";
+                    rs += `<label>${atbKeyName}</label>`;
+                    rs += `<div id="${atbKeyName}OptWrapper" class="filters-item-checkboxes-wrapper">`
+
+                    let keyClientVal = atbKeyObj.filterValue;
+
+                    for (let optionKeyName in keyClientVal) {
+
+                        if (data[atbKeyName].hasOwnProperty(optionKeyName)) {
+                            rs += `<input class="ml-3" type='checkbox' checked/> ${keyClientVal[optionKeyName]}`
+
+                        } else {
+                            rs += `<input class="ml-3" type='checkbox' /> ${keyClientVal[optionKeyName]}`
+                        }
+                    }
+                    rs += "</div>"
+                    rs += "</div>"
+                }
+            })
+
+
+            $("#filterWrapper").html(rs);
+
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load content',
+                // text: 'Something went wrong!',
+
+            })
+        }
+    });
+
+
+}
+
+function loadFilterData() {
+    let atbKeyNames = [];
+    for (let atbKeyName in attributesObject) {
+        let atbKeyObj = attributesObject[atbKeyName];
+        if (atbKeyObj.hasOwnProperty("filter") && atbKeyObj.filter == 1) {
+            atbKeyNames.push(atbKeyName);
+        }
+    }
+    getAndRenderCheckedFilterOpt(atbKeyNames)
+
+
+}
+
+
+
+
+
 
 
 

@@ -32,3 +32,9 @@ body {
     width: 100%;
 
 }
+
+.menu__ul__li .jqx-tree-item-arrow-collapse {
+    height: 26px !important;
+    width: 26px !important;
+
+}

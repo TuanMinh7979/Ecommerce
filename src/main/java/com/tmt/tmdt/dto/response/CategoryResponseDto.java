@@ -11,15 +11,15 @@ import java.util.Set;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 
 public class CategoryResponseDto {
-    private int id;
+    private Integer id;
     private String name;
     private String code;
     private Integer parentId;
-    private int numOfDirectSubCat;
+    private Integer numOfDirectSubCat;
+
 
     public CategoryResponseDto(int id, String name, String code, Integer parentId) {
         this.id = id;
@@ -28,6 +28,20 @@ public class CategoryResponseDto {
         this.parentId = parentId;
     }
 
+    public CategoryResponseDto(int id, String name, String code) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+
+    }
+
+    public CategoryResponseDto(Integer id, String name, String code, Integer parentId, Integer numOfDirectSubCat) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.parentId = parentId;
+        this.numOfDirectSubCat = numOfDirectSubCat;
+    }
 
 
 }

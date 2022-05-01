@@ -24,9 +24,9 @@ class CategoryRepoTest {
 
     @Test
     public void test() {
-//        List<Category> cateResDto = categoryRepo.getCatForForm();
-//        System.out.println(cateResDto.size());
-//        cateResDto.forEach(c -> System.out.println(c.getNumOfDirectProduct()));
+
+//      List<Category> categories= categoryRepo.findAll();
+
 
 
 //        Category category = categoryRepo.getCategoryWithChilds(3).get();

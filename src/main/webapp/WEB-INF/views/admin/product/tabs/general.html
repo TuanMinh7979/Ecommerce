@@ -40,21 +40,18 @@
     <div class="form-group">
         <label>Category</label>
         <select name="category" id="category-sel">
-            <!--            <th:block th:each="catei : ${categories}">-->
-            <!--                <option th:text="${catei.name}" th:value="${catei.id}"></option>-->
-            <!--            </th:block>-->
 
-            <th:block th:if="${product.id}">
+<!--            <th:block th:if="${product.id}">-->
 
-                <option th:each="cat : ${categoriesForForm}" th:value="${cat.id}" th:text="${cat.name}"
-                        th:selected="${cat.id==product.category.id}"></option>
+<!--                <option th:each="cat : ${categoriesForForm}" th:value="${cat.id}" th:text="${cat.name}"-->
+<!--                        th:selected="${cat.id==product.category.id}"></option>-->
 
-            </th:block>
-            <th:block th:if="${product.id==null}">
+<!--            </th:block>-->
+<!--            <th:block th:if="${product.id==null}">-->
 
-                <option th:each="cat : ${categoriesForForm}" th:value="${cat.id}" th:text="${cat.name}"
-                ></option>
-            </th:block>
+<!--                <option th:each="cat : ${categoriesForForm}" th:value="${cat.id}" th:text="${cat.name}"-->
+<!--                ></option>-->
+<!--            </th:block>-->
 
 
         </select>

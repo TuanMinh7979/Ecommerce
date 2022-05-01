@@ -46,7 +46,7 @@ public class ProductController {
 
         model.addAttribute("product", product);
 
-        model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRoot());
+//       model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRoot());
         return "admin/product/add";
 
     }
@@ -102,10 +102,12 @@ public class ProductController {
                                 @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
                                 @Valid @ModelAttribute("product") Product product, BindingResult result) {
         if (productService.existByName(product.getName())) {
+
             result.rejectValue("name", "nameIsExist");
         }
         if (!result.hasErrors()) {
             try {
+                product.setAtbs(product.getCategory().getAtbs());
                 productService.add(product, mainImageDto, extraImageDtos);
                 return "redirect:/admin/product";
             } catch (IOException e) {
@@ -149,6 +151,7 @@ public class ProductController {
             product = productService.getProductWithImages(id);
 
 
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
             product = productService.getProductByName(idx);
@@ -165,7 +168,6 @@ public class ProductController {
                 model.addAttribute("mainImageId", imagei.getId());
             }
         }
-        model.addAttribute("categoriesForForm", categoryService.getCategoriesInHierarchicalFromRoot());
 
         model.addAttribute("images", extraImages);
 //                .filter(img -> img.getIsMain() == false).collect(Collectors.toSet()));
