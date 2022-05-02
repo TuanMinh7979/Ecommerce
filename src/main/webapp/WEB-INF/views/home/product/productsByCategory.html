@@ -13,40 +13,14 @@
 <body>
 
 <div class="content-wrapper container" layout:fragment="content">
-    <div class="row mt-5">
 
-        <div class="col-12">
-            <h5>Filtering by:</h5>
-        </div>
-        <div class="col-10 ">
-
-
-        </div>
-    </div>
     <div class="row mt-5">
 
         <div class="col-12">
             <h5>Filter By:</h5>
         </div>
-        <div class="col-10 row list-filter">
-            <div class="col-2" th:each="filterAtb: ${filterAttributes}">
-                <div class="dropdown">
-                    <button th:text="${filterAtb.name}" th:id="${filterAtb.id}" style="border :1px solid #D3D3D3"
-                            class="btn dropdown-toggle"
-                            type="button"
-                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div id="listFilter" class="col-10 row list-filter">
 
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <th:block th:each="valuei : ${filterAtb.value}">
-                            <a class="dropdown-item" th:text="${valuei}" href="#"></a>
-                        </th:block>
-
-
-                    </div>
-                </div>
-
-            </div>
 
         </div>
     </div>
@@ -83,7 +57,13 @@
 </div>
 
 <th:block layout:fragment="addscript">
+    <script th:inline="javascript">    // Enable Thymeleaf inlining
+    var categoryId = [[${categoryId}]]; 	// Behaves just like in HTML
+
+
+    </script>
     <script th:src="@{/resource/js/home/index.js}"></script>
+    <script th:src="@{/resource/js/home/product/productByCategory.js}"></script>
 
 
 </th:block>

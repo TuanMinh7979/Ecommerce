@@ -72,5 +72,17 @@ public class AjaxController {
         return categoryService.getCategoriesInHierarchicalFromRoot();
     }
 
+    @GetMapping("product/{id}/attributes")
+
+    public String getAttributesByProductId(@PathVariable("id") Long id) {
+        return productService.getProduct(id).getAtbs();
+    }
+
+    @GetMapping("category/{id}/attributes")
+    public String getFilterValue(@PathVariable("id") Integer id) {
+        return categoryService.getCategory(id).getAtbs();
+
+    }
+
 
 }

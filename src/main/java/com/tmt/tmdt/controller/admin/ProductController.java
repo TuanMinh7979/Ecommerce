@@ -107,6 +107,7 @@ public class ProductController {
         }
         if (!result.hasErrors()) {
             try {
+
                 product.setAtbs(product.getCategory().getAtbs());
                 productService.add(product, mainImageDto, extraImageDtos);
                 return "redirect:/admin/product";
@@ -149,7 +150,6 @@ public class ProductController {
             //Catch casting exception
             Long id = Long.parseLong(idx);
             product = productService.getProductWithImages(id);
-
 
 
         } catch (NumberFormatException e) {

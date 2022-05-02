@@ -23,11 +23,7 @@ public class Filter {
     @Value("#{${filter.ramMap}}")
     Map<String, String> ramMap;
 
-    @Value("#{${filter.price}}")
-    Map<String, String> price;
 
-    @Value("#{${filter.priceMap}}")
-    Map<String, String> priceMap;
 
     @Value("#{${filter.storageMap}}")
     Map<String, String> storageMap;

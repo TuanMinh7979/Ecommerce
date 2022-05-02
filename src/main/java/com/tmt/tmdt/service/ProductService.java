@@ -20,7 +20,6 @@ public interface ProductService {
     //for input search by keyword
     Page<Product> getProductsByName(String name, Pageable pageable);
 
-    List<Product> getProductsByName(String name);
 
     Product getProductByName(String name);
 
@@ -50,11 +49,11 @@ public interface ProductService {
 
     Product save(Product product);
 
-    int countProductByCategory(Integer categoryId);
 
-    List<ProductResponseDto> getProductsByCategoryForHome(Category category);
+    List<ProductResponseDto> getProductDtosByCategory(Category category);
 
     Product getProductWithImagesAndCategory(Long id);
 
 
+    List<ProductResponseDto> getProductDtos();
 }

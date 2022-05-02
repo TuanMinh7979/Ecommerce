@@ -42,17 +42,23 @@ function callCategoriesData() {
 
 function renderCatHierarchical(data) {
     let opts = "";
-    data.map(function (cat) {
+    if (mode == "edit") {
+        data.map(function (cat) {
+            if (cat.id != productCategoryId) {
+                opts += `<option value="${cat.id}">${cat.name}</option> `
 
-        if (cat.id != productCategoryId) {
-            opts += `<option value="${cat.id}">${cat.name}</option> `
+            } else {
+                opts += `<option value="${cat.id}" selected>${cat.name}</option> `
+            }
+        })
+    } else {
+        data.map(function (cat) {
+            opts += `<option value="${cat.id}" >${cat.name}</option> `
 
-        } else {
-            opts += `<option value="${cat.id}" selected>${cat.name}</option> `
-        }
+        })
+    }
 
 
-    })
     $("#category-sel").append(opts);
 
 }

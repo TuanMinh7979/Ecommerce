@@ -1,8 +1,11 @@
 package com.tmt.tmdt.util;
 
+import org.springframework.stereotype.Component;
+
 import java.text.Normalizer;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
 
 public class TextUtil {
     public static String generateCode(String text, Long id) {

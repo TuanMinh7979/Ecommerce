@@ -1,4 +1,4 @@
-package com.tmt.tmdt.controller;
+package com.tmt.tmdt.controller.home;
 
 import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
@@ -27,7 +27,7 @@ public class HomeController {
 
     @GetMapping("")
     public String index(Model model) {
-        List<Product> products = productService.getProducts();
+        List<ProductResponseDto> products = productService.getProductDtos();
         model.addAttribute("products", products);
         return "home/home";
     }
@@ -39,7 +39,8 @@ public class HomeController {
                 .substring(categoryCode.lastIndexOf(".") + 1, categoryCode.length());
         Integer categoryId = Integer.valueOf(stringId);
         Category category = categoryService.getCategory(categoryId);
-        List<ProductResponseDto> rs = productService.getProductsByCategoryForHome(category);
+        List<ProductResponseDto> rs = productService.getProductDtosByCategory(category);
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("products", rs);
 
         return "home/product/productsByCategory";
@@ -50,8 +51,7 @@ public class HomeController {
         String stringId = productCode.substring(productCode.lastIndexOf(".") + 1);
         Long productId = Long.valueOf(stringId);
         Product product = productService.getProductWithImages(productId);
-        System.out.println("_______________________size la______________________");
-        System.out.println(filter.getRam().size());
+
         model.addAttribute("product", product);
         return "home/product/productDetail";
 

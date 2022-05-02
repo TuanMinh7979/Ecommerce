@@ -42,28 +42,43 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category add(Category category) {
 //        category.setAttributes(category.getParent().getAttributes());
-        category.setAtbs(category.getParent().getAtbs());
+
+        Category parentCategory = category.getParent();
+
+        category.setAtbs(parentCategory.getAtbs());
         Category categorySaved = cateRepository.save(category);
         categorySaved.setCode(TextUtil.generateCode(categorySaved.getName(), Long.valueOf(categorySaved.getId())));
-        return save(categorySaved);
+
+        parentCategory.setNumOfDirectSubCat(parentCategory.getNumOfDirectSubCat() + 1);
+        save(parentCategory);
+        return categorySaved;
     }
 
     @Override
     public Category update(Category category) {
         category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
-        //set old category attribute
-//        category.setAttributes(getCategory(category.getId()).getAttributes());
+        Category oldParentCat = getParentByChildId(category.getId());
+
+
+        if (oldParentCat.getId() != category.getParent().getId()) {
+
+            Category newParentCat = category.getParent();
+            newParentCat.setNumOfDirectSubCat(newParentCat.getNumOfDirectSubCat() + 1);
+
+            save(newParentCat);
+            oldParentCat.setNumOfDirectSubCat((oldParentCat.getNumOfDirectSubCat() - 1) > 0 ? (oldParentCat.getNumOfDirectSubCat() - 1) : 0);
+
+            save(oldParentCat);
+        }
+
+
         return save(category);
     }
 
     @Override
     public Category save(Category category) {
-        //use for update
 
         Category catSaved = cateRepository.save(category);
-        Category parent = getParentByChildId(catSaved.getId());
-        parent.setNumOfDirectSubCat(getNofSubCatByCategoryId(parent.getId()));
-        cateRepository.save(parent);
         return catSaved;
     }
 
@@ -86,6 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getParentByChildId(Integer childId) {
         return cateRepository.getParentByChildId(childId);
     }
+
 
     @Override
     public void deleteById(Integer id) {
@@ -167,6 +183,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         }
 
+    }
+
+    @Override
+    public Category getCategoryByProductId(Long id) {
+        return cateRepository.getCategoryByProductId(id).
+                orElseThrow(() -> new ResourceNotFoundException("Category have product id: " + id + " is not found"));
     }
 
 

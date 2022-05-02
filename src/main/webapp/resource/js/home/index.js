@@ -1,18 +1,5 @@
 $(function () {
-
-    $('#select').on('change', function () {
-        if ($(this).val() === 'important') {
-            $(this).addClass('red')
-        }
-    })
-    $(".list-sort button").on("click", function (event) {
-        event.preventDefault();
-        $(".list-sort button").removeClass("active");
-        $(this).toggleClass("active");
-    })
-
     loadTreeMenu("/ajax/menudata");
-
 })
 
 function categoryClick(event) {

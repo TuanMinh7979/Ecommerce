@@ -1,5 +1,6 @@
 package com.tmt.tmdt.repository;
 
+import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +18,8 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     @Query("select name from Product where name like :kw% ")
     List<String> getNamesByKw(@Param("kw") String kw);
 
-    @Query("from Product where name like :name% ")
-    List<Product> getProductsByName(@Param("name") String name);
+//    @Query("from Product where name like :name% ")
+//    List<Product> getProductsByName(@Param("name") String name);
 
     Optional<Product> getProductByName(String name);
 
@@ -48,6 +49,10 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     Optional<Product> getProductWithImagesAndCategory(@Param("id") Long id);
 
 
+    //for home
+    @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p where p.category.id = :catId")
+    List<ProductResponseDto> getProductDtoByCategory(@Param("catId") Integer id);
+
     @Query(value = "select * from products where category_id = ?1",
             nativeQuery = true)
     List<Product> getProductsByCategory(Integer id);
@@ -55,5 +60,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
     @Query(value = "select count(p.id) from Product p where p.category.id= :id")
     int countProductByCategory(@Param("id") Integer categoryId);
 
-
+    @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p")
+    List<ProductResponseDto> getProductDtos();
 }

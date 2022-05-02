@@ -1,9 +1,10 @@
 $(function () {
     ajaxGet(`/ajax/product/${productId}` + "/images", renderProductImagesSlide);
-    ajaxGet(`/admin/product/api/${productId}` + "/attributes", renderProductDetail);
+    ajaxGet(`/ajax/product/${productId}` + "/attributes", renderProductDetail);
 })
 
 function renderProductDetail(data) {
+    // console.log(data);
     let container = $("#productSpec");
     let rs = "";
     let dataObj = {};

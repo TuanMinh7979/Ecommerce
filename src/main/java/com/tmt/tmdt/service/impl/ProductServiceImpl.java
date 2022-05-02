@@ -63,11 +63,6 @@ public class ProductServiceImpl implements ProductService {
         return productNames;
     }
 
-    @Override
-    public List<Product> getProductsByName(String name) {
-        return productRepo.getProductsByName(name);
-    }
-
 
     @Override
     public boolean existByName(String name) {
@@ -108,6 +103,7 @@ public class ProductServiceImpl implements ProductService {
     public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException {
         Category category = product.getCategory();
         category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
+        categoryRepo.save(category);
 
 
         Product productSaved = save(product);
@@ -178,24 +174,33 @@ public class ProductServiceImpl implements ProductService {
                     Image extraImage = imageMapper.toModel(extraImagei);
                     extraImage.setProduct(product);
                     imageService.save(extraImage);
+
                 }
             }
         }
 
-//        product.setAttributes(getProduct(product.getId()).getAttributes());
+
         product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
+
+        Category oldCategory = categoryRepo.getCategoryByProductId(product.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category of product id : " + product.getId() + " not found"));
+        if (oldCategory.getId() != product.getCategory().getId()) {
+            Category newCategory = product.getCategory();
+            //change product category
+
+            oldCategory.setNumOfDirectProduct((oldCategory.getNumOfDirectProduct() - 1) > 0 ? (oldCategory.getNumOfDirectProduct() - 1) : 0);
+            categoryRepo.save(oldCategory);
+            newCategory.setNumOfDirectProduct(newCategory.getNumOfDirectProduct() + 1);
+            categoryRepo.save(newCategory);
+        }
         return productRepo.save(product);
     }
 
     @Override
     public Product save(Product product) {
+
         return productRepo.save(product);
 
-    }
-
-    @Override
-    public int countProductByCategory(Integer categoryId) {
-        return productRepo.countProductByCategory(categoryId);
     }
 
 
@@ -238,16 +243,22 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.getProductsByCategory(categoryId);
     }
 
+
+    public List<ProductResponseDto> getProductDtoByCategory(Integer categoryId) {
+        return productRepo.getProductDtoByCategory(categoryId);
+    }
+
     @Override
-    public List<ProductResponseDto> getProductsByCategoryForHome(Category category) {
+    public List<ProductResponseDto> getProductDtosByCategory(Category category) {
         List<ProductResponseDto> rs = new ArrayList<>();
-        if (categoryRepo.getNofSubCatByCategoryId(category.getId()) == 0) {
+        if (category.getNumOfDirectSubCat() == 0) {
             //no sub category can get only all product of it
-            rs = getProductsByCategory(category.getId())
-                    .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
+            rs = getProductDtoByCategory(category.getId());
+
         } else if (category.getId() == 1) {
             //root category -> find all product
-            rs = getProducts().stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
+            rs = getProductDtos();
+
         } else {
             List<Category> allChildHasProduct = new ArrayList<>();
             Queue<Category> queue = new ArrayDeque<>();
@@ -261,8 +272,7 @@ public class ProductServiceImpl implements ProductService {
                 if (cat.getNumOfDirectProduct() > 0) allChildHasProduct.add(cat);
             }
             for (Category cateHasProduct : allChildHasProduct) {
-                rs.addAll(getProductsByCategory(cateHasProduct.getId())
-                        .stream().map(productMapper::toProductResponseDto).collect(Collectors.toList()));
+                rs.addAll(getProductDtoByCategory(cateHasProduct.getId()));
             }
 
         }
@@ -275,5 +285,114 @@ public class ProductServiceImpl implements ProductService {
                 orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " is not found"));
     }
 
+    @Override
+    public List<ProductResponseDto> getProductDtos() {
+        return productRepo.getProductDtos();
+    }
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -51,5 +51,7 @@ public interface CategoryService {
 
     Category getParentByChildId(Integer childId);
 
+    Category getCategoryByProductId(Long id);
+
 
 }

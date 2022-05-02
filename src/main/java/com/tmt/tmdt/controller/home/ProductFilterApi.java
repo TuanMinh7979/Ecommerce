@@ -1,4 +1,4 @@
-package com.tmt.tmdt.controller;
+package com.tmt.tmdt.controller.home;
 
 import com.tmt.tmdt.entities.pojo.Filter;
 import lombok.RequiredArgsConstructor;
