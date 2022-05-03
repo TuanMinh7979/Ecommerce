@@ -1,7 +1,6 @@
-.attributeWrapper{
+.attributeWrapper {
     width: 40%;
     min-width: 450px;
-
 
 
     background: white;
@@ -10,10 +9,10 @@
 }
 
 
-.attributeWrapper .newtask input{
+.attributeWrapper .newtask input {
     width: 75%;
     height: 45px;
-    font-family: 'Poppins',sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 15px;
     border: 2px solid #d1d3d4;
     padding: 12px;
@@ -22,18 +21,19 @@
 
     border-radius: 5px;
 }
-.attributeWrapper .newtask input:focus{
+
+.attributeWrapper .newtask input:focus {
     outline: none;
     border-color: #0d75ec;
 }
 
-.attributeWrapper .newtask button{
+.attributeWrapper .newtask button {
 
     float: right;
     width: 20%;
     height: 45px;
     border-radius: 5px;
-    font-family: 'Poppins',sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 16px;
     background-color: #0d75ec;
@@ -42,7 +42,8 @@
     cursor: pointer;
     outline: none;
 }
-.attributeWrapper .tasks{
+
+.attributeWrapper .tasks {
     background-color: #ffffff;
     padding: 10px 5px;
 
@@ -50,7 +51,8 @@
     width: 100%;
 
 }
-.attributeWrapper .task{
+
+.attributeWrapper .task {
     background-color: #c5e1e6;
     height: 50px;
     margin-bottom: 8px;
@@ -62,12 +64,14 @@
     border: 1px solid #939697;
     cursor: pointer;
 }
-.attributeWrapper .task span{
-    font-family: 'Poppins',sans-serif;
+
+.attributeWrapper .task span {
+    font-family: 'Poppins', sans-serif;
     font-size: 15px;
     font-weight: 400;
 }
-.attributeWrapper .task button{
+
+.attributeWrapper .task button {
     background-color: #0a2ea4;
     color: #ffffff;
     height: 100%;
@@ -82,4 +86,19 @@ table td[class*=col-], table th[class*=col-] {
     position: static;
     display: table-cell;
     float: none;
+}
+
+.rotate {
+    -moz-transition: all 2s linear;
+    -webkit-transition: all 2s linear;
+    transition: all 0.5s linear;
+    font-size: 1.6rem;
+}
+
+.rotate.down {
+    color: orange;
+    font-size: 1.6rem;
+    -moz-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
 }

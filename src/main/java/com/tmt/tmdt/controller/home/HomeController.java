@@ -43,6 +43,7 @@ public class HomeController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("products", rs);
 
+
         return "home/product/productsByCategory";
     }
 

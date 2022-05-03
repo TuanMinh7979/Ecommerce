@@ -22,6 +22,13 @@ $(function () {
         }
     });
 
+    $(".rotate").click(function () {
+
+        let setAllCb = $("#setChangeForAllChildCb");
+        setAllCb.attr("checked", !setAllCb.attr("checked"));
+        $(this).toggleClass("down");
+    })
+
 
     $('.nav-tabs a').on('shown.bs.tab', function (event) {
         var editMode = $(event.target).text();
@@ -126,6 +133,9 @@ function renderCatHierarchical(data) {
 
 function saveAllChange(data, url) {
 
+    if ($('#setChangeForAllChildCb').is(':checked')) {
+        url += "/filterset-forallchild";
+    }
     $.ajax({
         type: "post",
         url: url,
@@ -341,52 +351,59 @@ $("#editFilterBtn").on("click", function (event) {
 
 function getAndRenderCheckedFilterOpt(atbKeyNames) {
 
+    let data = {};
+    data["categoryId"] = categoryId;
+    data["atbNames"] = atbKeyNames;
     $.ajax({
         type: "post",
-        url: "/product-filter/list-map",
-        data: JSON.stringify(atbKeyNames),
+        url: "/admin/categoryfilter/list-map",
+        data: JSON.stringify(data),
         contentType: "application/json",
 
         success: function (data) {
 
+            if (data === null || data === undefined || data == "") {
+                alert("System do not have any filter option for this category");
+            } else {
+                let rs = "";
+                atbKeyNames.map(function (atbKeyName) {
 
-            let rs = "";
-            atbKeyNames.map(function (atbKeyName) {
+                    let atbKeyObj = {};
+                    atbKeyObj = attributesObject[atbKeyName];
+                    rs += "<div class='filters-item__div'>";
+                    rs += `<label>${atbKeyName}</label>`;
+                    rs += `<div id="${atbKeyName}OptWrapper" class="filters-item-checkboxes-wrapper">`
 
-                let atbKeyObj = {};
-                atbKeyObj = attributesObject[atbKeyName];
-                rs += "<div class='filters-item__div'>";
-                rs += `<label>${atbKeyName}</label>`;
-                rs += `<div id="${atbKeyName}OptWrapper" class="filters-item-checkboxes-wrapper">`
+                    if (data[atbKeyName] !== undefined) {
 
-                if (data[atbKeyName] !== undefined) {
-
-                    if (atbKeyObj["filterValue"] === undefined) {
-                        atbKeyObj["filterValue"] = {};
-                    }
-                    let keyClientVal = atbKeyObj.filterValue;
-                    for (let optionDataKeyName in data[atbKeyName]) {
-                        let dataKeyClientVal = data[atbKeyName];
-                        if (keyClientVal.hasOwnProperty(optionDataKeyName)) {
-                            rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' checked val="${dataKeyClientVal[optionDataKeyName]}"/>  <span>${dataKeyClientVal[optionDataKeyName]}</span>`
-
-                        } else {
-                            rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' val="${dataKeyClientVal[optionDataKeyName]}" /> <span>${dataKeyClientVal[optionDataKeyName]}</span>`
+                        if (atbKeyObj["filterValue"] === undefined) {
+                            atbKeyObj["filterValue"] = {};
                         }
+                        let keyClientVal = atbKeyObj.filterValue;
+                        for (let optionDataKeyName in data[atbKeyName]) {
+                            let dataKeyClientVal = data[atbKeyName];
+                            if (keyClientVal.hasOwnProperty(optionDataKeyName)) {
+                                rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' checked val="${dataKeyClientVal[optionDataKeyName]}"/>  <span>${dataKeyClientVal[optionDataKeyName]}</span>`
+
+                            } else {
+                                rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' val="${dataKeyClientVal[optionDataKeyName]}" /> <span>${dataKeyClientVal[optionDataKeyName]}</span>`
+                            }
+                        }
+                    } else {
+                        rs += "<p>System do not have any option for this attribute</p>"
                     }
-                } else {
-                    rs += "<p>System do not have any option for this attribute</p>"
-                }
 
 
-                rs += "</div>"
-                rs += "</div>"
-            })
-            // console.log(attributesObject);
+                    rs += "</div>"
+                    rs += "</div>"
+                })
+                // console.log(attributesObject);
 
 
-            $("#filterWrapper").html(rs);
+                $("#filterWrapper").html(rs);
+                $("#editFilterModalBtn").click();
 
+            }
         },
         error: function () {
             Swal.fire({
@@ -413,7 +430,8 @@ function loadFilterData() {
         alert("There are no attributes that is ticked in it's filter field, please tick one before!")
     } else {
         getAndRenderCheckedFilterOpt(atbKeyNames);
-        $("#editFilterModalBtn").click();
+
+
     }
 
 }

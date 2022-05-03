@@ -1,5 +1,6 @@
 $(function () {
-    loadFilter();
+
+    loadFilterUI();
     $('#select').on('change', function () {
         if ($(this).val() === 'important') {
             $(this).addClass('red')
@@ -13,49 +14,89 @@ $(function () {
 
 })
 
-//
-function loadFilter() {
 
-    ajaxGet(`/ajax/category/${categoryId}/attributes`, renderFilter);
+//
+function loadFilterUI() {
+    $.ajax({
+        type: "get",
+        url: `/admin/category/api/${categoryId}/attributes`,
+        contentType: "application/json",
+        success: function (atbs) {
+            console.log(atbs);
+
+            renderFilterUI(atbs)
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load content',
+                // text: 'Something went wrong!',
+
+            })
+        }
+
+
+    });
+
 }
 
-function renderFilter(data) {
-    let oriObject = JSON.parse(data);
-    let filterData = {};
-    for (let atbKeyName in oriObject) {
-        for (let valOfAtbKeyName in oriObject[atbKeyName]) {
-            if (valOfAtbKeyName == "filter" && oriObject[atbKeyName].filter == 1) {
-                filterData[`${atbKeyName}`] = oriObject[atbKeyName].filterValue;
+function renderFilterUI(atbs) {
+    let atbObj = JSON.parse(atbs);
+    let filterAtbs = {};
+    for (let atbKeyName in atbObj) {
+        if (atbObj[atbKeyName].hasOwnProperty("filter") && atbObj[atbKeyName].filter == 1 && Object.keys(atbObj[atbKeyName].filterValue).length !== 0) {
+            filterAtbs[`${atbKeyName}`] = atbObj[atbKeyName].filterValue;
+        }
+    }
+    $.ajax({
+        type: "post",
+        url: `/filter/ui-opt-name`,
+        data: JSON.stringify(Object.keys(filterAtbs)),
+        contentType: "application/json",
+        success: function (data) {
+            let kvAtbUiName = data;
+            let rs = "";
+            for (let filterAtbI in filterAtbs) {
+                rs += `<div class="col-2">
+                <div class="dropdown">
+                <button style="border :1px solid #D3D3D3"
+                        class="btn dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                ${kvAtbUiName[filterAtbI]}
+                <!--ch-->
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`;
+                let optionKVs = filterAtbs[filterAtbI];
+
+                for (let optionKi in optionKVs) {
+                    rs += `<a id="${optionKi}" class="dropdown-item"  href="#">${optionKVs[optionKi]}</a>`
+                }
+
+                rs += `</div>
+            </div>
+
+            </div>`;
+
             }
+
+
+            $("#listFilter").html(rs);
+
+
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Can not load content',
+                // text: 'Something went wrong!',
+
+            })
         }
 
-    }
-    let rs = "";
-    for (let atbOptions in filterData) {
-        rs += `<div class="col-2">
-        <div class="dropdown">
-        <button style="border :1px solid #D3D3D3"
-                class="btn dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        ${atbOptions}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`;
-        let optionKVObj = filterData[atbOptions];
 
-        for (let optioniKey in optionKVObj) {
-            rs += `<a id="${optioniKey}" class="dropdown-item"  href="#">${optionKVObj[optioniKey]}</a>`
-        }
-
-        rs += `</div>
-    </div>
-
-    </div>`;
-
-    }
-
-
-    $("#listFilter").html(rs);
+    });
 
 
 }
