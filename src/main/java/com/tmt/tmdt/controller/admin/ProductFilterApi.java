@@ -16,26 +16,26 @@ import java.util.Map;
 
 public class ProductFilterApi {
 
-
     private final Filter filter;
     private final CategoryService catService;
 
-    //common case
-    //category is one of a root categories
+    // common case
+    // category is one of a root categories
     private String getFilterRootParentName(Integer id) {
         Category curCat = catService.getCategory(id);
         while (curCat != null) {
             Category tempParCat = catService.getParentByChildId(curCat.getId());
-            if (tempParCat != null && tempParCat.getId() == 1) return curCat.getName();
+            if (tempParCat != null && tempParCat.getId() == 1)
+                return curCat.getName();
             curCat = tempParCat;
         }
         return null;
 
     }
 
-    //special case
-    //category that for fitler is not a root categories
-    private String getSpecialFilterParentName(Integer childId, List<String> parentNames) {
+    // special case
+    // category that for fitler is not a root categories
+    private String getSpecificFilterParentName(Integer childId, List<String> parentNames) {
 
         Category parCat = catService.getParentByChildId(childId);
         while (parCat != null) {
@@ -49,73 +49,68 @@ public class ProductFilterApi {
 
         return null;
 
-
     }
 
-
-
-
-    //for admin page
+    // for admin page
     @PostMapping("/list-map")
     @ResponseBody
     public Map<String, Map<String, String>> getListMap(@RequestBody Map<String, Object> data) {
         Integer catId = (Integer) data.get("categoryId");
         List<String> atbNames = (List<String>) data.get("atbNames");
 
+        // special case put here if have
 
-        //special case put here if have
-
-        //common case
+        // common case
         String rootParentName = getFilterRootParentName(catId);
         if (rootParentName.equals("Phone")) {
-            return getPhoneFilterMaps(atbNames);
+            return filter.getPhoneFilterMaps(atbNames);
         }
         if (rootParentName.equals("Laptop")) {
-            return getLaptopFilterMaps(atbNames);
+            return filter.getLaptopFilterMaps(atbNames);
         }
 
         return null;
 
     }
 
+    // public Map<String, Map<String, String>> getPhoneFilterMaps(List<String>
+    // keyIds) {
 
-    public Map<String, Map<String, String>> getPhoneFilterMaps(List<String> keyIds) {
+    // Map<String, Map<String, String>> rs = new HashMap<>();
 
-        Map<String, Map<String, String>> rs = new HashMap<>();
+    // for (String keyId : keyIds) {
+    // switch (keyId) {
+    // case "Ram":
+    // rs.put("Ram", filter.getPhoneRamMap());
+    // break;
+    // case "Storage":
+    // rs.put("Storage", filter.getPhoneStorageMap());
+    // break;
+    // default:
+    // break;
 
-        for (String keyId : keyIds) {
-            switch (keyId) {
-                case "Ram":
-                    rs.put("Ram", filter.getPhoneRamMap());
-                    break;
-                case "Storage":
-                    rs.put("Storage", filter.getPhoneStorageMap());
-                    break;
-                default:
-                    break;
+    // }
+    // }
+    // return rs;
+    // }
 
-            }
-        }
-        return rs;
-    }
+    // public Map<String, Map<String, String>> getLaptopFilterMaps(List<String>
+    // keyIds) {
+    // Map<String, Map<String, String>> rs = new HashMap<>();
 
-    public Map<String, Map<String, String>> getLaptopFilterMaps(List<String> keyIds) {
-        Map<String, Map<String, String>> rs = new HashMap<>();
+    // for (String keyId : keyIds) {
+    // switch (keyId) {
+    // case "Ram":
+    // rs.put("Ram", filter.getLaptopRamMap());
+    // break;
+    // case "Hard disk":
+    // rs.put("Hard disk", filter.getLaptopHardDiskMap());
+    // break;
+    // default:
+    // break;
 
-
-        for (String keyId : keyIds) {
-            switch (keyId) {
-                case "Ram":
-                    rs.put("Ram", filter.getLaptopRamMap());
-                    break;
-                case "Hard disk":
-                    rs.put("Hard disk", filter.getLaptopHardDiskMap());
-                    break;
-                default:
-                    break;
-
-            }
-        }
-        return rs;
-    }
+    // }
+    // }
+    // return rs;
+    // }
 }

@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -24,8 +23,6 @@ import java.util.*;
 @NoArgsConstructor
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 
-
-
 public class Category extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +31,6 @@ public class Category extends BaseEntity implements Serializable {
     @NotBlank
     @Size(min = 2)
     private String name;
-
 
     @JsonIgnore
     @OneToMany(mappedBy = "category")
@@ -45,23 +41,26 @@ public class Category extends BaseEntity implements Serializable {
     @Column(columnDefinition = "jsonb", name = "atbs")
     private String atbs;
 
-    //auto-generate from name
+    // auto-generate from name
     private String code;
 
     private int numOfDirectProduct;
 
     private int numOfDirectSubCat;
 
+    @JsonIgnore
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "filter")
+    private String filter;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
-    //one to one one one to many
+    // one to one one one to many
     @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Category> children = new HashSet<>();
-
 
     public Category(String name) {
         this.name = name;
@@ -71,7 +70,6 @@ public class Category extends BaseEntity implements Serializable {
         this.parent = parent;
         this.name = name;
     }
-
 
     public Category(Integer id, String name) {
         this.id = id;
@@ -90,8 +88,6 @@ public class Category extends BaseEntity implements Serializable {
         this.code = code;
         this.parent = parent;
 
-
     }
-
 
 }

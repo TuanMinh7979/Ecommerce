@@ -1,10 +1,8 @@
 package com.tmt.tmdt.controller.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
 import com.tmt.tmdt.entities.Category;
-import com.tmt.tmdt.entities.pojo.Attribute;
+
 import com.tmt.tmdt.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +26,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-
     @GetMapping("")
     public String index() {
         return "admin/category/index";
@@ -37,12 +34,11 @@ public class CategoryController {
     @GetMapping("api/viewApi")
     @ResponseBody
     public ViewResponseApi<List<Category>> getCategories(Model model,
-                                                         @RequestParam(name = "page", required = false) String pageParam,
-                                                         @RequestParam(name = "limit", required = false) String limitParam,
-                                                         @RequestParam(name = "sortBy", required = false) String sortBy,
-                                                         @RequestParam(name = "sortDirection", required = false) String sortDirection,
-                                                         @RequestParam(name = "searchNameTerm", required = false) String searchNameTerm) {
-
+            @RequestParam(name = "page", required = false) String pageParam,
+            @RequestParam(name = "limit", required = false) String limitParam,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "sortDirection", required = false) String sortDirection,
+            @RequestParam(name = "searchNameTerm", required = false) String searchNameTerm) {
 
         String sortField = sortBy == null ? "id" : sortBy;
         Sort sort = (sortDirection == null || sortDirection.equals("asc")) ? Sort.by(Sort.Direction.ASC, sortField)
@@ -64,7 +60,7 @@ public class CategoryController {
         return new ViewResponseApi<>(totalPage, data);
     }
 
-    //ADD
+    // ADD
     @GetMapping("add")
     public String showAddForm(Model model) {
         Category category = new Category();
@@ -72,9 +68,8 @@ public class CategoryController {
         return "admin/category/add";
     }
 
-
     @PostMapping("add")
-    //rest api save => add(post), edit(put)
+    // rest api save => add(post), edit(put)
     public String add(Model model, @Valid @ModelAttribute("category") Category category, BindingResult result) {
         if (categoryService.existByName(category.getName())) {
             result.rejectValue("name", "nameIsExist");
@@ -85,18 +80,17 @@ public class CategoryController {
             return "redirect:/admin/category";
         }
 
-
         return "admin/category/add";
     }
-    //-ADD
+    // -ADD
 
-    //UPDATE
+    // UPDATE
     @GetMapping("update/{idx}")
-    //rest api : showUpdateForm , showAddForm => getCategory(get)(just for update)
+    // rest api : showUpdateForm , showAddForm => getCategory(get)(just for update)
     public String showUpdateForm(Model model, @PathVariable("idx") String idx) {
         Category category = null;
         try {
-            //Catch casting exception
+            // Catch casting exception
             Integer id = Integer.parseInt(idx);
             category = categoryService.getCategory(id);
         } catch (NumberFormatException e) {
@@ -109,8 +103,8 @@ public class CategoryController {
     }
 
     @PostMapping("update")
-    //rest api save => add(post), update(put)
-    //FOR UPDATE: update in rest api must a id in path. but in mvc dont need it
+    // rest api save => add(post), update(put)
+    // FOR UPDATE: update in rest api must a id in path. but in mvc dont need it
     public String update(Model model, @Valid @ModelAttribute("category") Category category, BindingResult result) {
 
         if (!result.hasErrors()) {
@@ -120,53 +114,54 @@ public class CategoryController {
 
         return "admin/category/edit";
     }
-    //-UPDATE
+    // -UPDATE
 
-
-    //DELETE
+    // DELETE
     @PostMapping("api/delete/{id}")
-    //call by ajax
+    // call by ajax
     public ResponseEntity<Integer> deleteCategory(@PathVariable Integer id) {
         categoryService.deleteById(id);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
-
 
     @PostMapping("api/delete")
     public ResponseEntity<Integer[]> deleteCategories(@RequestBody Integer[] ids) {
         categoryService.deleteCategories(ids);
         return new ResponseEntity<>(ids, HttpStatus.OK);
     }
-    //-DELETE
+    // -DELETE
 
-
-    //FOR ATTRIBUTE
+    // FOR ATTRIBUTE
 
     @GetMapping("api/{id}/attributes")
     @ResponseBody
-    public String getAttributesByCategoryId(@PathVariable("id") Integer id) {
-        return categoryService.getCategory(id).getAtbs();
+    public Map<String, String> getAttributesByCategoryId(@PathVariable("id") Integer id) {
+        Category category = categoryService.getCategory(id);
+        Map<String, String> atbAndFilter = new HashMap<>();
+        atbAndFilter.put("atbs", category.getAtbs());
+        atbAndFilter.put("filter", category.getFilter());
+        return atbAndFilter;
     }
 
     @PostMapping("api/{id}/attributes/update")
     @ResponseBody
-    public Category updateAttributes(@PathVariable("id") Integer id, @RequestBody String newAttributes) {
+    public Category updateAttributes(@PathVariable("id") Integer id, @RequestBody Map<String, String> atbAndFilter) {
         Category category = categoryService.getCategory(id);
-        category.setAtbs(newAttributes);
+        category.setAtbs(atbAndFilter.get("atbs"));
+        category.setFilter(atbAndFilter.get("filter"));
         return categoryService.save(category);
 
     }
 
     @PostMapping("api/{id}/attributes/update/filterset-forallchild")
     @ResponseBody
-    public Category updateAttributesWithFilterSetForChild(@PathVariable("id") Integer id, @RequestBody String newAttributes) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Attribute> mapAtb = objectMapper.readValue(newAttributes, Map.class);
+    public Category updateAttributesWithFilterSetForChild(@PathVariable("id") Integer id,
+            @RequestBody Map<String, String> atbAndFilter) {
 
         Category category = categoryService.getCategory(id);
-        category.setAtbs(newAttributes);
+        category.setAtbs(atbAndFilter.get("atbs"));
+        category.setFilter(atbAndFilter.get("filter"));
         Category savedCat = categoryService.save(category);
-
 
         List<Category> allSubCat = new ArrayList<>();
         Queue<Category> queue = new ArrayDeque<>();
@@ -175,41 +170,23 @@ public class CategoryController {
         while (!queue.isEmpty()) {
             cat = queue.remove();
             if (cat.getNumOfDirectSubCat() != 0) {
-                //this is direct subcat
+                // this is direct subcat
                 queue.addAll(categoryService.getSubCategoriesByParentId(cat.getId()));
 
             }
             allSubCat.add(cat);
         }
 
-
         for (int i = 1; i < allSubCat.size(); i++) {
             Category subCati = allSubCat.get(i);
-            Map<String, Attribute> atbs = objectMapper.readValue(subCati.getAtbs(), Map.class);
-            for (String atbiName : atbs.keySet()) {
-            }
-            for (String keyi : atbs.keySet()) {
-
-                System.out.println("::::::::::::::::::::::::::");
-                System.out.println(keyi);
-//                mapAtbi.get(keyi).getValue();
-                if (atbs.get(keyi).getFilter() == 1 && atbs.get(keyi).getFilterValue() != null) {
-                    atbs.get(keyi).setFilterValue(mapAtb.get(keyi).getFilterValue());
-                }
-            }
-
-//            String newUpdateAttribute = objectMapper.writeValueAsString(atbs.getAttributeMap());
-//            subCati.setAtbs(newUpdateAttribute);
+            subCati.setFilter(atbAndFilter.get("filter"));
             categoryService.save(subCati);
         }
-
 
         return savedCat;
 
     }
 
-
-    //-FOR ATTRIBUTE
-
+    // -FOR ATTRIBUTE
 
 }

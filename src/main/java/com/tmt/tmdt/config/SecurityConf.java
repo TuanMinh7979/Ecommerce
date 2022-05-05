@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class SecurityConf extends WebSecurityConfigurerAdapter {
 
-
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailServiceImpl();
@@ -38,7 +37,6 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
         return authenticationProvider;
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -48,6 +46,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/admin/**").hasRole("ADMIN")
                 .antMatchers("/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
+                .antMatchers("/ajax/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()
@@ -55,7 +54,6 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedPage("/403");
-
 
     }
 

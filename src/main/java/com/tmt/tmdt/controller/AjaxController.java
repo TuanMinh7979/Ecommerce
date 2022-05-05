@@ -4,6 +4,7 @@ import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
+import com.tmt.tmdt.entities.pojo.Filter;
 import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.repository.ProductRepo;
 import com.tmt.tmdt.service.ImageService;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("ajax")
 public class AjaxController {
-    //this class for common component with server data use for many page
+    // this class for common component with server data use for many page
     private final ProductService productService;
 
     private final CategoryServiceImpl categoryService;
@@ -31,7 +34,7 @@ public class AjaxController {
 
     private final ProductRepo productRepo;
     private final CategoryRepo catRepo;
-
+    private final Filter filter;
 
     @GetMapping("autocomplete-search/product")
     public List<String> getProductNamesByKw(@RequestParam("term") String kw) {
@@ -48,7 +51,7 @@ public class AjaxController {
         return roleService.getRoleNamesByKw(kw);
     }
 
-    //for home page
+    // for home page
     @GetMapping("/menudata")
     public List<CategoryResponseDto> getMenu() {
         List<CategoryResponseDto> categories = categoryService.getCategoryResponseDtos();
@@ -64,11 +67,10 @@ public class AjaxController {
         return images.stream().map(img -> img.getLink()).collect(Collectors.toList());
     }
 
-
-    //for admin page
+    // for admin page
     @GetMapping("/hierarchical-category")
     public List<Category> getCategoriesHierarchical() {
-        //can not map to dto because all category is detacted
+        // can not map to dto because all category is detacted
         return categoryService.getCategoriesInHierarchicalFromRoot();
     }
 
@@ -78,11 +80,23 @@ public class AjaxController {
         return productService.getProduct(id).getAtbs();
     }
 
-    @GetMapping("category/{id}/attributes")
+    @GetMapping("category/{id}/filter")
     public String getFilterValue(@PathVariable("id") Integer id) {
-        return categoryService.getCategory(id).getAtbs();
+        return categoryService.getCategory(id).getFilter();
 
     }
 
+    @PostMapping("filter/ui-opt-name")
+
+    public Map<String, String> getUiOptNameMap(@RequestBody List<String> filterAtbs) {
+        Map<String, String> ori = filter.getUiOptName();
+
+        Map<String, String> kvAtbUiname = new HashMap<>();
+        for (String atbName : filterAtbs) {
+            kvAtbUiname.put(atbName, ori.get(atbName));
+        }
+
+        return kvAtbUiname;
+    }
 
 }

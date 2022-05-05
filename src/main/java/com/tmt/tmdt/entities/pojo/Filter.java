@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.*;
 
 @Component
 @PropertySource(value = "classpath:filterAndSort.properties")
@@ -15,38 +15,65 @@ import java.util.Map;
 
 public class Filter {
 
-    //filterOptionUIName
+    // filterOptionUIName
     @Value("#{${uiOptName}}")
     Map<String, String> uiOptName;
 
-    //root phone category
-    @Value("#{${filter.phone.ram}}")
-    Map<String, String> phoneRam;
+    // FOR CLIENT
+    // root phone category
 
     @Value("#{${filter.phone.ramMap}}")
     Map<String, String> phoneRamMap;
 
-    @Value("#{${filter.phone.storage}}")
-    Map<String, String> phoneStorage;
-
-
     @Value("#{${filter.phone.storageMap}}")
     Map<String, String> phoneStorageMap;
-
-
-    //root laptop category
-    @Value("#{${filter.laptop.ram}}")
-    Map<String, String> laptopRam;
 
     @Value("#{${filter.laptop.ramMap}}")
     Map<String, String> laptopRamMap;
 
-    @Value("#{${filter.laptop.hardDisk}}")
-    Map<String, String> laptopHardDisk;
-
-
     @Value("#{${filter.laptop.hardDiskMap}}")
     Map<String, String> laptopHardDiskMap;
 
+    public Map<String, Map<String, String>> getPhoneFilterMaps(List<String> keyIds) {
+
+        Map<String, Map<String, String>> rs = new HashMap<>();
+
+        for (String keyId : keyIds) {
+            switch (keyId) {
+                case "Ram":
+                    rs.put("Ram", getPhoneRamMap());
+                    break;
+                case "Storage":
+                    rs.put("Storage", getPhoneStorageMap());
+                    break;
+                default:
+                    break;
+
+            }
+        }
+        return rs;
+    }
+
+    public Map<String, Map<String, String>> getLaptopFilterMaps(List<String> keyIds) {
+        Map<String, Map<String, String>> rs = new HashMap<>();
+
+        for (String keyId : keyIds) {
+            switch (keyId) {
+                case "Ram":
+                    rs.put("Ram", getLaptopRamMap());
+                    break;
+                case "Hard disk":
+                    rs.put("Hard disk", getLaptopHardDiskMap());
+                    break;
+                default:
+                    break;
+
+            }
+        }
+        return rs;
+    }
+
+    @Value("#{${filter.query}}")
+    Map<String, String> getQueryMap;
 
 }
