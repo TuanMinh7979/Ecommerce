@@ -1,6 +1,7 @@
 package com.tmt.tmdt.controller;
 
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
+import com.tmt.tmdt.dto.response.ClientFilterResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
@@ -14,6 +15,7 @@ import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -90,13 +92,42 @@ public class AjaxController {
 
     public Map<String, String> getUiOptNameMap(@RequestBody List<String> filterAtbs) {
         Map<String, String> ori = filter.getUiOptName();
-
         Map<String, String> kvAtbUiname = new HashMap<>();
         for (String atbName : filterAtbs) {
             kvAtbUiname.put(atbName, ori.get(atbName));
         }
 
         return kvAtbUiname;
+    }
+
+    @PostMapping("filter/selected-tag-value")
+    @ResponseBody
+    public List<ClientFilterResponseDto> getSelectedTagValue(
+            @RequestBody Map<String, String> urlAtbNameOptionCodeMap) {
+        Map<String, String> atbUinameMap = filter.getUiOptName();
+        List<String> atbNames = new ArrayList<>(urlAtbNameOptionCodeMap.keySet());
+        List<String> optionCodes = new ArrayList<String>(urlAtbNameOptionCodeMap.values());
+
+        List<Map<String, String>> listMap = filter.getAllMap();
+        List<ClientFilterResponseDto> forClientSelectedTags = new ArrayList<>();
+
+        for (int i = 0; i < optionCodes.size(); i++) {
+            for (Map<String, String> mapI : listMap) {
+
+                String tagValue = mapI.get(optionCodes.get(i));
+                if (tagValue != null) {
+                    ClientFilterResponseDto dto = new ClientFilterResponseDto(
+                            optionCodes.get(i),
+                            atbUinameMap.get(atbNames.get(i)),
+                            tagValue);
+                    forClientSelectedTags.add(dto);
+
+                    break;
+                }
+            }
+        }
+        return forClientSelectedTags;
+
     }
 
 }

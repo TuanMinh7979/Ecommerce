@@ -14,12 +14,11 @@ import java.util.List;
 @Service
 public interface ProductService {
 
-    //for auto complete search
+    // for auto complete search
     List<String> getNamesByKw(String kw);
 
-    //for input search by keyword
+    // for input search by keyword
     Page<Product> getProductsByName(String name, Pageable pageable);
-
 
     Product getProductByName(String name);
 
@@ -43,17 +42,19 @@ public interface ProductService {
 
     List<Product> getProductsByCategory(Integer categoryId);
 
-    Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException;
+    Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos)
+            throws IOException;
 
     Product update(Product product, FileRequestDto file, List<FileRequestDto> files, String ids) throws IOException;
 
     Product save(Product product);
 
-
     List<ProductResponseDto> getProductDtosByCategory(Category category);
 
     Product getProductWithImagesAndCategory(Long id);
 
-
     List<ProductResponseDto> getProductDtos();
+
+    List<Integer> getListIdToQuery(Integer id);
+
 }

@@ -18,7 +18,7 @@
         <div class="col-12">
             <h5 style="color:orange">Filtering By Tags:</h5>
         </div>
-        <div id="listFilter" class="col-10 row list-filter">
+        <div id="listFilterBy" class="col-10 row list-filter">
 
 
         </div>
@@ -40,10 +40,10 @@
             <h5>Sort By:</h5>
         </div>
         <div class="row col-10 list-sort">
-            <button class="col-2">high
+            <button id=""class="col-2" onclick="sortBtn('price', 'desc')">high to low
             </button>
-            <button class="col-2">
-                low
+            <button class="col-2"onclick="sortBtn('price','asc')" >
+                low to high
             </button>
         </div>
     </div>

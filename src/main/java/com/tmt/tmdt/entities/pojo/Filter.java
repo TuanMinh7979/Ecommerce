@@ -73,6 +73,15 @@ public class Filter {
         return rs;
     }
 
+    public List<Map<String, String>> getAllMap() {
+        List<Map<String, String>> listMap = new ArrayList<>();
+        listMap.add(getPhoneRamMap());
+        listMap.add(getPhoneStorageMap());
+        listMap.add(getLaptopRamMap());
+        listMap.add(getLaptopHardDiskMap());
+        return listMap;
+    }
+
     @Value("#{${filter.query}}")
     Map<String, String> getQueryMap;
 

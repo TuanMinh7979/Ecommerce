@@ -1,6 +1,5 @@
 package com.tmt.tmdt.controller.home;
 
-import java.util.*;
 import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Product;
@@ -11,16 +10,16 @@ import com.tmt.tmdt.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.PersistenceContexts;
+import java.util.Map;
 
 @Controller
 @RequestMapping("")
@@ -43,21 +42,61 @@ public class HomeController {
 
     @GetMapping("category/{categoryCode}")
     public String showProductByCategory(Model model, @PathVariable String categoryCode,
-            @RequestParam(required = false) Map<String, String> allRequestParams) {
 
-        if (allRequestParams.size() != 0) {
+                                        @RequestParam(value = "sortBy", required = false) String sortBy,
+                                        @RequestParam(value = "sortDir", required = false) String sortDir,
+                                        @RequestParam(required = false) Map<String, String> allRequestParams) {
 
-            ArrayList<String> keyFilters = new ArrayList<String>(allRequestParams.values());
-            Map<String, String> queryMap = filter.getGetQueryMap();
-            String queryString = "select * from products p where ";
-            for (int i = 0; i < keyFilters.size(); i++) {
-                String queryKey = keyFilters.get(i).trim();
-                String queryWhereClause = queryMap.get(queryKey);
-                queryString += " and ";
-                queryString += queryWhereClause;
+        String stringId = categoryCode
+                .substring(categoryCode.lastIndexOf(".") + 1, categoryCode.length());
+        Integer categoryId = Integer.valueOf(stringId);
+        if (allRequestParams != null && allRequestParams.size() != 0) {
+            List<Integer> categoryIdsToQuery = productService.getListIdToQuery(categoryId);
+
+            ArrayList<String> keyFilters = null;
+
+            String queryString = "select * from products p ";
+            allRequestParams.keySet().removeIf(key -> key.equals("sortBy"));
+            allRequestParams.keySet().removeIf(key -> key.equals("sortDir"));
+            keyFilters = new ArrayList<String>(allRequestParams.values());
+
+            // case filter param != null
+
+            // case filer param ==null
+            queryString += "where p.category_id in (" ;
+            for(Integer idi: categoryIdsToQuery){
+                String idiStrToQuery= idi+",";
+                queryString+=idiStrToQuery;
             }
-            queryString = queryString.replaceFirst(" and ", " ");
+            queryString=queryString.substring(0, queryString.length()-1);
+            queryString+=") ";
 
+            if (keyFilters != null && keyFilters.size() != 0) {
+
+                Map<String, String> queryMap = filter.getGetQueryMap();
+
+                for (int i = 0; i < keyFilters.size(); i++) {
+                    String queryKey = keyFilters.get(i).trim();
+                    String queryWhereClause = queryMap.get(queryKey);
+                    queryString += " and ";
+                    queryString += queryWhereClause;
+                }
+                queryString = queryString.replaceFirst(" and ", " ");
+            }
+
+            if (sortBy == null && sortDir == null) {
+                queryString += " order by price asc";
+            } else if (sortBy != null && sortDir != null) {
+                queryString += " order by " + sortBy + " " + sortDir;
+            } else if (sortBy != null) {
+                queryString += " order by " + sortBy + " asc";
+            } else {
+                // sortDir != null ^ sortBy null
+                queryString += " order by price" + " " + sortDir;
+            }
+            queryString += ";";
+
+            System.out.println("______________________________)))))____________________");
             System.out.println(queryString);
             List<Product> products = entityManager
                     .createNativeQuery(
@@ -69,11 +108,11 @@ public class HomeController {
             return "home/product/productsByCategory";
 
         }
-        String stringId = categoryCode
-                .substring(categoryCode.lastIndexOf(".") + 1, categoryCode.length());
-        Integer categoryId = Integer.valueOf(stringId);
+
         Category category = categoryService.getCategory(categoryId);
-        List<ProductResponseDto> rs = productService.getProductDtosByCategory(category);
+        System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHWWWWWWWWWWWWWWWWWWWWWWW");
+        List<ProductResponseDto> rs = productService.getProductDtosByCategory(
+                category);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("products", rs);
 

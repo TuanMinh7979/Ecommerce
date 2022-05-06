@@ -1,5 +1,6 @@
 $(function () {
   loadFilterUI();
+  loadSelectedTags();
   $("#select").on("change", function () {
     if ($(this).val() === "important") {
       $(this).addClass("red");
@@ -119,4 +120,80 @@ function filterOptionValueClick(thisAtag, event) {
       newurl.substring(0, firstIdx) + "?" + newurl.substring(firstIdx + 1);
   }
   window.location.href = newurl;
+}
+
+function loadSelectedTags() {
+  let params = new URL(document.location).searchParams;
+  let keys = {};
+
+  for (par of params.keys()) {
+    keys[par] = params.get(par);
+  }
+  $.ajax({
+    type: "post",
+    url: "/ajax/filter/selected-tag-value",
+    data: JSON.stringify(keys),
+    contentType: "application/json",
+    success: function (data) {
+      let rs = "";
+      data.map(function (filteri) {
+        rs += `<div class="filter-tag">
+        ${filteri.optionClientName} : ${filteri.optionValue}
+        <button type="button" id ="${filteri.optionCode}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        </div>`;
+
+        $("#listFilterBy").html(rs);
+      });
+    },
+    error: function () {
+      Swal.fire({
+        icon: "error",
+        title: "Can not load selected tag",
+        // text: 'Something went wrong!',
+      });
+    },
+  });
+}
+
+$(document).on("click", ".filter-tag-close", function (event) {
+  event.preventDefault();
+  let paramValue = $(this).attr("id");
+
+  let oldurl = window.location.href;
+  let paramToDelIdx = oldurl.indexOf(paramValue);
+
+  let subStr = oldurl.substring(0, paramToDelIdx);
+  let tmpStartIdx1 = subStr.lastIndexOf("&");
+  let tmpStartIdx2 = subStr.lastIndexOf("?");
+  let startIdx;
+  let endIdx;
+  if (tmpStartIdx2 < tmpStartIdx1) {
+    //tmp2 alway < tmp1 unless this is first param and tmp1 = -1
+    //2 case interparam and lasparam
+    startIdx = tmpStartIdx1;
+  } else {
+    startIdx = tmpStartIdx2;
+  }
+  let tmpEndIdx = startIdx + oldurl.substring(startIdx).indexOf("&");
+  endIdx =
+    oldurl.substring(startIdx + 1).indexOf("&") == -1
+      ? oldurl.length
+      : tmpEndIdx;
+
+  let removePart = oldurl.substring(startIdx, endIdx);
+
+  let newurl = oldurl.replace(removePart, "");
+
+  if (newurl.indexOf("?") == -1) {
+    newurl = newurl.replace("&", "?");
+  }
+
+  window.location.href = newurl;
+});
+
+function sortBtn(sortBy, sortDir) {
+  let oldurl = window.location.href;
 }

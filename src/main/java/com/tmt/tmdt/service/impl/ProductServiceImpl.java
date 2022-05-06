@@ -41,13 +41,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final CategoryRepo categoryRepo;
 
-
     @Override
     public Product getProduct(Long id) {
         return productRepo.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Product with id " + id + " not found")
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
     }
 
     @Override
@@ -63,12 +60,10 @@ public class ProductServiceImpl implements ProductService {
         return productNames;
     }
 
-
     @Override
     public boolean existByName(String name) {
         return productRepo.existsByName(name);
     }
-
 
     @Override
     public Page<Product> getProductsByName(String name, Pageable pageable) {
@@ -83,8 +78,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductByName(String name) {
         return productRepo.getProductByName(name)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Product with id " + name + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + name + " not found"));
 
     }
 
@@ -98,22 +92,20 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.findAll(pageable);
     }
 
-
     @Override
-    public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos) throws IOException {
+    public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos)
+            throws IOException {
         Category category = product.getCategory();
         category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
         categoryRepo.save(category);
 
-
         Product productSaved = save(product);
 
         productSaved.setCode(TextUtil.generateCode(product.getName(), product.getId()));
-        //relation should work in persistence
-
+        // relation should work in persistence
 
         if (!fileRequestDto.getFile().isEmpty()) {
-            //save main image
+            // save main image
             fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
             Image mainImage = imageMapper.toModel(fileRequestDto);
             mainImage.setProduct(productSaved);
@@ -122,16 +114,15 @@ public class ProductServiceImpl implements ProductService {
 
             productSaved.setMainImageLink(savedMainImage.getLink());
 
-
         }
-        //extra image is a option
+        // extra image is a option
         if (fileRequestDtos != null) {
             for (FileRequestDto extraImagei : fileRequestDtos) {
                 if (!extraImagei.getFile().isEmpty()) {
                     extraImagei.setUploadRs(uploadService.simpleUpload(extraImagei.getFile()));
                     Image extraImage = imageMapper.toModel(extraImagei);
                     extraImage.setProduct(productSaved);
-                    //relation should work in persistence or -> not save trasient before flush
+                    // relation should work in persistence or -> not save trasient before flush
                     imageService.save(extraImage);
                 }
             }
@@ -141,14 +132,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos, String delImageIds) throws IOException {
+    public Product update(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos,
+            String delImageIds) throws IOException {
         delImageIds = delImageIds.trim();
 
         if (delImageIds != null && !delImageIds.isEmpty()) {
             delImageIds = delImageIds.trim();
             List<String> strIds = Arrays.asList(delImageIds.split(" "));
             Set<Long> ids = strIds.stream().map(Long::valueOf).collect(Collectors.toSet());
-            //remove image from database (orphan removeal and deleit in cloud)
+            // remove image from database (orphan removeal and deleit in cloud)
             for (Long idToDel : ids) {
                 if (imageService.getImage(idToDel).isMain()) {
                     product.setMainImageLink(product.defaultImage());
@@ -158,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
 
         }
         if (!fileRequestDto.getFile().isEmpty()) {
-            //save main image
+            // save main image
             fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
             Image mainImage = imageMapper.toModel(fileRequestDto);
             mainImage.setProduct(product);
@@ -179,16 +171,17 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-
         product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
 
         Category oldCategory = categoryRepo.getCategoryByProductId(product.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category of product id : " + product.getId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category of product id : " + product.getId() + " not found"));
         if (oldCategory.getId() != product.getCategory().getId()) {
             Category newCategory = product.getCategory();
-            //change product category
+            // change product category
 
-            oldCategory.setNumOfDirectProduct((oldCategory.getNumOfDirectProduct() - 1) > 0 ? (oldCategory.getNumOfDirectProduct() - 1) : 0);
+            oldCategory.setNumOfDirectProduct(
+                    (oldCategory.getNumOfDirectProduct() - 1) > 0 ? (oldCategory.getNumOfDirectProduct() - 1) : 0);
             categoryRepo.save(oldCategory);
             newCategory.setNumOfDirectProduct(newCategory.getNumOfDirectProduct() + 1);
             categoryRepo.save(newCategory);
@@ -203,11 +196,10 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-
     @Override
     public void deleteById(Long id) throws IOException {
-        //sql error
-        //return null to sign that error happened
+        // sql error
+        // return null to sign that error happened
         Product product = getProductWithImagesAndCategory(id);
 
         Set<Image> images = product.getImages();
@@ -219,7 +211,6 @@ public class ProductServiceImpl implements ProductService {
         category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
         productRepo.deleteById(id);
 
-
     }
 
     @Override
@@ -228,7 +219,6 @@ public class ProductServiceImpl implements ProductService {
             productRepo.deleteById(id);
         }
     }
-
 
     @Override
     public Product getProductWithImages(Long id) {
@@ -243,7 +233,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.getProductsByCategory(categoryId);
     }
 
-
+    //
     public List<ProductResponseDto> getProductDtoByCategory(Integer categoryId) {
         return productRepo.getProductDtoByCategory(categoryId);
     }
@@ -252,11 +242,11 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponseDto> getProductDtosByCategory(Category category) {
         List<ProductResponseDto> rs = new ArrayList<>();
         if (category.getNumOfDirectSubCat() == 0) {
-            //no sub category can get only all product of it
+            // no sub category can get only all product of it
             rs = getProductDtoByCategory(category.getId());
 
         } else if (category.getId() == 1) {
-            //root category -> find all product
+            // root category -> find all product
             rs = getProductDtos();
 
         } else {
@@ -269,7 +259,8 @@ public class ProductServiceImpl implements ProductService {
                 if (cat.getNumOfDirectSubCat() != 0) {
                     queue.addAll(categoryRepo.getSubCategoriesByParentId(cat.getId()));
                 }
-                if (cat.getNumOfDirectProduct() > 0) allChildHasProduct.add(cat);
+                if (cat.getNumOfDirectProduct() > 0)
+                    allChildHasProduct.add(cat);
             }
             for (Category cateHasProduct : allChildHasProduct) {
                 rs.addAll(getProductDtoByCategory(cateHasProduct.getId()));
@@ -278,11 +269,12 @@ public class ProductServiceImpl implements ProductService {
         }
         return rs;
     }
+    //
 
     @Override
     public Product getProductWithImagesAndCategory(Long id) {
-        return productRepo.getProductWithImagesAndCategory(id).
-                orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " is not found"));
+        return productRepo.getProductWithImagesAndCategory(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " is not found"));
     }
 
     @Override
@@ -291,108 +283,24 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+
+    public List<Integer> getListIdToQuery(Integer parentId){
+        Category category = categoryRepo.findById(parentId).
+                orElseThrow(()->new ResourceNotFoundException("Category with id "+parentId+" not found"));
+        List<Integer> allChildHasProduct = new ArrayList<>();
+        Queue<Category> queue = new ArrayDeque<>();
+        queue.add(category);
+        Category cat;
+        while (!queue.isEmpty()) {
+            cat = queue.remove();
+            if (cat.getNumOfDirectSubCat() != 0) {
+                queue.addAll(categoryRepo.getSubCategoriesByParentId(cat.getId()));
+            }
+            if (cat.getNumOfDirectProduct() > 0)
+                allChildHasProduct.add(cat.getId());
+        }
+        return allChildHasProduct;
+
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
