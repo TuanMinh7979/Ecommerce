@@ -47,6 +47,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .antMatchers("/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers("/ajax/**").permitAll()
+                .antMatchers("/payment/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()
