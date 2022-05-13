@@ -15,6 +15,8 @@ public class PaymentHelper {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(message.getBytes("UTF-8"));
+
+            // converting byte array to Hexadecimal String
             StringBuilder sb = new StringBuilder(2 * hash.length);
             for (byte b : hash) {
                 sb.append(String.format("%02x", b & 0xff));
@@ -24,12 +26,38 @@ public class PaymentHelper {
 
         } catch (UnsupportedEncodingException ex) {
             digest = "";
+            // Logger.getLogger(StringReplace.class.getName()).log(Level.SEVERE,
+            // null, ex);
         } catch (NoSuchAlgorithmException ex) {
+            // Logger.getLogger(StringReplace.class.getName()).log(Level.SEVERE,
+            // null, ex);
             digest = "";
         }
         return digest;
     }
 
+    public static String hmacSHA512(final String key, final String data) {
+        try {
+
+            if (key == null || data == null) {
+                throw new NullPointerException();
+            }
+            final Mac hmac512 = Mac.getInstance("HmacSHA512");
+            byte[] hmacKeyBytes = key.getBytes();
+            final SecretKeySpec secretKey = new SecretKeySpec(hmacKeyBytes, "HmacSHA512");
+            hmac512.init(secretKey);
+            byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+            byte[] result = hmac512.doFinal(dataBytes);
+            StringBuilder sb = new StringBuilder(2 * result.length);
+            for (byte b : result) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+            return sb.toString();
+
+        } catch (Exception ex) {
+            return "";
+        }
+    }
 
 
     public static String getIpAddress(HttpServletRequest request) {

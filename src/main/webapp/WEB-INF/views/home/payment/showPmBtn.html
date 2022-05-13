@@ -13,12 +13,30 @@
 </head>
 <body>
 <div class="content-wrapper container" layout:fragment="content">
-<form method="post" action="/payment/redirectToBankForm">
-<input name="gia"type="text">
-    <input type="submit">
-</form>
+<!--/payment/redirectToBankForm-->
+
+    <button id="sendBtn">send</button>
+
 </div>
 <th:block layout:fragment="addscript">
+    <script>
+        $("#sendBtn").on("click", function(event){
+            event.preventDefault();
+            $.ajax({
+                url : "/payment/redirectToBankForm",
+                type: "post",
+                success: function(response) {
+                    window.location.href=response;
+                },
+                error: function (err) {
+                  alert("err")
+                }
+            });
+
+
+        })
+
+    </script>
     <script th:src="@{/resource/js/home/index.js}"></script>
 
 
