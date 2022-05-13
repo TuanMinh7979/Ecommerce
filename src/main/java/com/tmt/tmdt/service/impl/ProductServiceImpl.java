@@ -169,6 +169,8 @@ public class ProductServiceImpl implements ProductService {
 
                 }
             }
+        }else{
+            product.setImages(getProduct(product.getId()).getImages());
         }
 
         product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
@@ -209,6 +211,7 @@ public class ProductServiceImpl implements ProductService {
 
         Category category = product.getCategory();
         category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
+        categoryRepo.save(category);
         productRepo.deleteById(id);
 
     }
@@ -216,6 +219,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProducts(Long[] ids) {
         for (Long id : ids) {
+           Product product = getProduct(id);
+            Category category = product.getCategory();
+            category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
+            categoryRepo.save(category);
+            productRepo.deleteById(id);
             productRepo.deleteById(id);
         }
     }

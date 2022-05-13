@@ -22,7 +22,8 @@
                     <img class="img-fluid card-img" th:src="${product.mainImageLink}" alt="">
                 </div>
                 <div class="card-footer ">
-                    <button>XEM NGAY</button>
+                    <button><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
+                    <button><a th:href="@{'/product/'+${product.code}}">CHO VAO GIO</a></button>
                 </div>
             </div>
 

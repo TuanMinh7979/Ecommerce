@@ -1,6 +1,7 @@
 package com.tmt.tmdt.controller.home;
 
 import com.tmt.tmdt.dto.response.ProductResponseDto;
+
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.entities.pojo.Filter;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("")
@@ -32,6 +35,8 @@ public class HomeController {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+
 
     @GetMapping("")
     public String index(Model model) {
@@ -55,21 +60,19 @@ public class HomeController {
 
             ArrayList<String> keyFilters = null;
 
-            String queryString = "select * from products p ";
+            StringBuilder queryString = new StringBuilder("select * from products p ");
             allRequestParams.keySet().removeIf(key -> key.equals("sortBy"));
             allRequestParams.keySet().removeIf(key -> key.equals("sortDir"));
             keyFilters = new ArrayList<String>(allRequestParams.values());
 
-            // case filter param != null
 
-            // case filer param ==null
-            queryString += "where p.category_id in (" ;
+            queryString.append("where p.category_id in (") ;
             for(Integer idi: categoryIdsToQuery){
                 String idiStrToQuery= idi+",";
-                queryString+=idiStrToQuery;
+                queryString.append(idiStrToQuery);
             }
-            queryString=queryString.substring(0, queryString.length()-1);
-            queryString+=") ";
+            queryString= new StringBuilder(queryString.substring(0, queryString.length() - 1));
+            queryString.append(") ");
 
             if (keyFilters != null && keyFilters.size() != 0) {
 
@@ -78,41 +81,40 @@ public class HomeController {
                 for (int i = 0; i < keyFilters.size(); i++) {
                     String queryKey = keyFilters.get(i).trim();
                     String queryWhereClause = queryMap.get(queryKey);
-                    queryString += " and ";
-                    queryString += queryWhereClause;
+                    queryString.append(" and ");
+                    queryString.append(queryWhereClause);
                 }
-                queryString = queryString.replaceFirst(" and ", " ");
+
             }
 
             if (sortBy == null && sortDir == null) {
-                queryString += " order by price asc";
+                queryString.append(" order by price asc");
             } else if (sortBy != null && sortDir != null) {
-                queryString += " order by " + sortBy + " " + sortDir;
+                queryString.append(" order by " + sortBy + " " + sortDir);
             } else if (sortBy != null) {
-                queryString += " order by " + sortBy + " asc";
+                queryString.append(" order by " + sortBy + " asc");
             } else {
-                // sortDir != null ^ sortBy null
-                queryString += " order by price" + " " + sortDir;
+                queryString.append(" order by price" + " " + sortDir);
             }
-            queryString += ";";
+            queryString.append(";");
 
-            System.out.println("______________________________)))))____________________");
-            System.out.println(queryString);
-            List<Product> products = entityManager
-                    .createNativeQuery(
-                            queryString,
+
+            List<Product> products = entityManager.createNativeQuery(
+                            queryString.toString(),
                             Product.class)
                     .getResultList();
+            List<ProductResponseDto> productDtos =products.stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
 
-            model.addAttribute("products", products);
+
+            model.addAttribute("products", productDtos);
             return "home/product/productsByCategory";
 
         }
 
         Category category = categoryService.getCategory(categoryId);
-        System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHWWWWWWWWWWWWWWWWWWWWWWW");
         List<ProductResponseDto> rs = productService.getProductDtosByCategory(
                 category);
+
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("products", rs);
 
