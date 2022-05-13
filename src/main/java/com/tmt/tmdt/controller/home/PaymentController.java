@@ -51,9 +51,9 @@ public class PaymentController {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String dateString = formatter.format(dt);
         String vnp_CreateDate = dateString;
-        String vnp_TransDate = vnp_CreateDate;
+
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-        vnp_Params.put("vnp_TransDate", vnp_TransDate);
+
 
         // Build data to hash and querystring
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
