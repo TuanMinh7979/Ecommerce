@@ -21,11 +21,11 @@ import java.util.*;
 @Controller
 public class PaymentController {
     @PostMapping("/payment/redirectToBankForm")
-    public String createQueryUrl() {
+    public String createQueryUrl(HttpServletRequest request) {
         String vnp_Version = "2.0.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = PaymentHelper.getRandomNumber(8);
-        String vnp_IpAddr = "127.0.0.1";
+        String vnp_IpAddr = request.getRemoteAddr();
         String vnp_TmnCode = PaymentConfig.vnp_TmnCode;
 
         Map<String, String> vnp_Params = new HashMap<>();
