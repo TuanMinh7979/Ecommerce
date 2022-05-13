@@ -202,29 +202,12 @@ public class PaymentController {
 //    }
 
 
-//    @GetMapping("/payment/returnRS")
-//    public String returnPage(Model model,
-//                             HttpServletRequest request) {
-//        Map<String, String> fields = new HashMap<>();
-//        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements(); ) {
-//            String fieldName = params.nextElement();
-//            String fieldValue = request.getParameter(fieldName);
-//            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-//                fields.put(fieldName, fieldValue);
-//            }
-//        }
-//
-//        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-//        fields.remove("vnp_SecureHashType");
-//        fields.remove("vnp_SecureHash");
-//
-//        String hash = PaymentHelper.hashAllFields(fields, PaymentConfig.vnp_HashSecret);
-//        if (!hash.equals(vnp_SecureHash))
-//            throw new RuntimeException("Wrong checksum");
-//
-//        model.addAllAttributes(fields);
-//        return "home/payment/rspm";
-//    }
+    @GetMapping("/payment/returnRS")
+    public String returnPage(Model model,
+                             HttpServletRequest request) {
+
+        return "home/payment/rspm";
+    }
 }
 
 
