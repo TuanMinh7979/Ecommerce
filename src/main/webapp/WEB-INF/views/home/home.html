@@ -8,7 +8,6 @@
         <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
 
 
-
     </th:block>
 </head>
 <body>
@@ -16,14 +15,22 @@
     <div class="row">
         <div class="col-3" style="margin-top: 10px" th:each="product :${products}">
 
-            <div class="pcard card" style="height: 360px; overflow-y: hidden">
+            <div class="pcard card" style="height: 360px; overflow-y: hidden; padding: 10px">
                 <div class="pcard-img card-body" style="background-size: cover;">
 
                     <img class="img-fluid card-img" th:src="${product.mainImageLink}" alt="">
                 </div>
-                <div class="card-footer ">
-                    <button><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
-                    <button><a th:href="@{'/product/'+${product.code}}">THEM VAO GIO</a></button>
+                <div class="infoBody">
+                    <h5 class="productlistItem__name" th:text="${product.name}"></h5>
+                    <div class="infoFooter">
+
+                        <h6 class="productlistItem__price" th:with="realprice=${product.price * 1000000}"
+                            th:text="${#numbers.formatDecimal(realprice, 0, 0)}"><span>Đ</span>
+                        </h6>
+                        <button class="view-btn"><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
+                    </div>
+
+
                 </div>
             </div>
 
@@ -31,13 +38,11 @@
     </div>
 
 
-
 </div>
 
 
 <th:block layout:fragment="addscript">
     <script th:src="@{/resource/js/home/index.js}"></script>
-
 
 
 </th:block>

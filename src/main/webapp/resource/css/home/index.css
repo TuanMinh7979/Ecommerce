@@ -38,3 +38,38 @@ body {
     width: 26px !important;
 
 }
+
+.productlistItem:hover .productlistItem__name {
+    color: blue;
+    font-weight: bold;
+}
+.productlistItem__name{
+    height: 50px;
+}
+.infoFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+}
+.infoBody{
+    margin-top:20px;
+
+}
+
+
+.productlistItem__price {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.view-btn{
+
+    background-color: white;
+    border: 2px solid red;
+}
+.view-btn a{
+    font-weight: bold;
+    color: red;
+
+}

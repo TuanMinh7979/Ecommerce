@@ -23,7 +23,7 @@
         $("#sendBtn").on("click", function(event){
             event.preventDefault();
             $.ajax({
-                url : "/payment/redirectToBankForm",
+                url : "/payment/redirect-vnpay-checkout",
                 type: "post",
                 success: function(response) {
                     window.location.href=response;
