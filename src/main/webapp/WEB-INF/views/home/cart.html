@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/home/home_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+        <link rel="stylesheet" th:href="@{/resource/css/home/cart.css}">
+
+
+    </th:block>
+</head>
+<body>
+
+<div class="content-wrapper container" layout:fragment="content">
+    <h2 style="color: chocolate; margin-top: 30px" class="text-center">Cart</h2>
+    <form id="cart"  action="">
+        <table class="col-12">
+            <thead>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Count</th>
+            <th>Choose</th>
+            </thead>
+            <tbody>
+            <tr class="col-12">
+                <td class="col-4">
+                    <img class="product-img"
+                         src="https://didongviet.vn/pub/media/catalog/product//i/p/iphone-11-64gb-chinh-hang_3.jpg"
+                         alt=""/>
+                </td>
+                <td><span>12345</span></td>
+                <td>
+                    <input type="number" style="width: 30px; outline: none" value="1" min="1"
+                    />
+                </td>
+                <td style="cursor: pointer">
+                    <button style="font-weight: bold; color:orange; border : 1px solid orange; background-color: white">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="price-total col-12">
+            <p class="col-3 float-right" style="font-weight: bold">Sum: <span>320000</span></p>
+        </div>
+
+    </form>
+
+</div>
+<th:block layout:fragment="addscript">
+    <script th:src="@{/resource/js/home/index.js}"></script>
+    <script th:src="@{/resource/js/home/cart.js}"></script>
+
+
+</th:block>
+
+</body>
+</html>

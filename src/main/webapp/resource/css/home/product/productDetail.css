@@ -61,6 +61,41 @@
 
 
 
+.modalbody__item {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 5px 0px;
+}
+
+#countinp {
+    width: 30px;
+}
+
+.modal-content {
+    font-size: 1.2rem;
+}
+#buyModalForm{
+    padding: 10px;
+}
+#buyModalFormBody{
+    border: 1px solid lightgrey;
+}
+#exampleModalCenter{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+
+
+
+
+
+}
+
+
+
 
 
 

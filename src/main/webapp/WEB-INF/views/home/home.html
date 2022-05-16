@@ -24,8 +24,8 @@
                     <h5 class="productlistItem__name" th:text="${product.name}"></h5>
                     <div class="infoFooter">
 
-                        <h6 class="productlistItem__price" th:with="realprice=${product.price * 1000000}"
-                            th:text="${#numbers.formatDecimal(realprice, 0, 0)}"><span>Đ</span>
+                        <h6 class="productlistItem__price"
+                            th:text="${#numbers.formatDecimal(product.price, 0, 0)}"><span>Đ</span>
                         </h6>
                         <button class="view-btn"><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
                     </div>

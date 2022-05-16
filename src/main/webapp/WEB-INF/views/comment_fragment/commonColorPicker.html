@@ -1,0 +1,54 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="set-common-color" th:remove="tag">
+
+    <div th:fragment="center-modal" th:remove="tag">
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="launch-cp-modal" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalCenterTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Pick a color</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body set-common-color-wrapper">
+
+                        <div class="set-common-color">
+<!--                            <p>Pick a color</p>-->
+                            <ul>
+                                <li class="color-item" id="red">Red</li>
+                                <li class="color-item" id="green">Green</li>
+                                <li class="color-item" id="gold">Gold</li>
+                                <li class="color-item" id="blue">Blue</li>
+                                <li class="color-item" id="gray">Gray</li>
+
+                                <li class="color-item" id="white">White</li>
+                                <li class="color-item" id="black">Black</li>
+                                <li class="color-item" id="silver">Silver</li>
+                                <li class="color-item" id="pink">Pink</li>
+                                <li class="color-item" id="blueviolet">Blue Violet</li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+</div>
+</body>
+</html>

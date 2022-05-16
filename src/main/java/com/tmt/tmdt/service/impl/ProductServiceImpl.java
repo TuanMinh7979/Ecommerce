@@ -1,6 +1,5 @@
 package com.tmt.tmdt.service.impl;
 
-import com.cloudinary.Cloudinary;
 import com.tmt.tmdt.dto.request.FileRequestDto;
 import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -93,15 +91,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos)
+    public Product add(Product product, FileRequestDto fileRequestDto, String mainColor,
+                       List<FileRequestDto> fileRequestDtos, List<String> extraColors)
             throws IOException {
         Category category = product.getCategory();
         category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
         categoryRepo.save(category);
 
         Product productSaved = save(product);
-
-        productSaved.setCode(TextUtil.generateCode(product.getName(), product.getId()));
         // relation should work in persistence
 
         if (!fileRequestDto.getFile().isEmpty()) {
@@ -109,6 +106,9 @@ public class ProductServiceImpl implements ProductService {
             fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
             Image mainImage = imageMapper.toModel(fileRequestDto);
             mainImage.setProduct(productSaved);
+
+            mainImage.setColor(mainColor);
+
             mainImage.setMain(true);
             Image savedMainImage = imageService.save(mainImage);
 
@@ -117,10 +117,14 @@ public class ProductServiceImpl implements ProductService {
         }
         // extra image is a option
         if (fileRequestDtos != null) {
-            for (FileRequestDto extraImagei : fileRequestDtos) {
+            for (int i = 0; i < fileRequestDtos.size(); i++) {
+                FileRequestDto extraImagei = fileRequestDtos.get(i);
+                String extraColori = extraColors.get(i);
                 if (!extraImagei.getFile().isEmpty()) {
                     extraImagei.setUploadRs(uploadService.simpleUpload(extraImagei.getFile()));
                     Image extraImage = imageMapper.toModel(extraImagei);
+
+                    extraImage.setColor(extraColori);
                     extraImage.setProduct(productSaved);
                     // relation should work in persistence or -> not save trasient before flush
                     imageService.save(extraImage);
@@ -132,9 +136,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos,
-            String delImageIds) throws IOException {
+    public Product update(Product product, FileRequestDto fileRequestDto, String mainColor,
+                          List<FileRequestDto> fileRequestDtos, List<String> extraColors,
+                          String delImageIds, String flags) throws IOException {
+
         delImageIds = delImageIds.trim();
+        //3 case : 11 ch img and it color string - intensity 3
+        //         10 ch img no chg it color - intensity 2
+        //         2 first case -> 3 first if .
+
+        //         01 ch color no chg img -intensity 1
+
 
         if (delImageIds != null && !delImageIds.isEmpty()) {
             delImageIds = delImageIds.trim();
@@ -149,31 +161,37 @@ public class ProductServiceImpl implements ProductService {
             }
 
         }
+        //main alway != null(alway have a image for product)
         if (!fileRequestDto.getFile().isEmpty()) {
-            // save main image
+            //if no change main image (file ="")-> not exe this
             fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
             Image mainImage = imageMapper.toModel(fileRequestDto);
             mainImage.setProduct(product);
             mainImage.setMain(true);
+
+
+            mainImage.setColor(mainColor);
             Image savedMainImage = imageService.save(mainImage);
             product.setMainImageLink(savedMainImage.getLink());
         }
 
         if (fileRequestDtos != null) {
-            for (FileRequestDto extraImagei : fileRequestDtos) {
+            for (int i = 0; i < fileRequestDtos.size(); i++) {
+                FileRequestDto extraImagei = fileRequestDtos.get(i);
                 if (!extraImagei.getFile().isEmpty()) {
+                    //if no change any extra img (filei = "")-> not exe this
+                    String extraColori = extraColors.get(i);
                     extraImagei.setUploadRs(uploadService.simpleUpload(extraImagei.getFile()));
                     Image extraImage = imageMapper.toModel(extraImagei);
+
+                    extraImage.setColor(extraColori);
                     extraImage.setProduct(product);
                     imageService.save(extraImage);
 
                 }
             }
-        }else{
-            product.setImages(getProduct(product.getId()).getImages());
         }
 
-        product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
 
         Category oldCategory = categoryRepo.getCategoryByProductId(product.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -188,11 +206,37 @@ public class ProductServiceImpl implements ProductService {
             newCategory.setNumOfDirectProduct(newCategory.getNumOfDirectProduct() + 1);
             categoryRepo.save(newCategory);
         }
-        return productRepo.save(product);
+        Product productSaved = save(product);
+
+        //rare case : update color name with out update img file.
+        if (flags.equals("01")) {
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            List<Image> images = imageService.getImagesByProduct(productSaved.getId())
+                    .stream()
+                    .sorted(Comparator.comparingLong(Image::getId))
+                    .collect(Collectors.toList());
+            Image mainImg = images.get(0);
+            List<Image> extraImgs = images.subList(1, images.size());
+            if (mainImg.getColor() != mainColor) {
+                mainImg.setColor(mainColor);
+                imageService.save(mainImg);
+            }
+            for (int j = 0; j < extraImgs.size(); j++) {
+                if (extraImgs.get(j).getColor() != extraColors.get(j)) {
+                    Image imgi = extraImgs.get(j);
+                    String colori = extraColors.get(j);
+                    imgi.setColor(colori);
+                    imageService.save(imgi);
+                }
+            }
+        }
+        return productSaved;
     }
 
     @Override
     public Product save(Product product) {
+        //when use model attribute if dont have a fill -> that fill will be null when update
+        product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
 
         return productRepo.save(product);
 
@@ -219,7 +263,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProducts(Long[] ids) {
         for (Long id : ids) {
-           Product product = getProduct(id);
+            Product product = getProduct(id);
             Category category = product.getCategory();
             category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
             categoryRepo.save(category);
@@ -236,10 +280,6 @@ public class ProductServiceImpl implements ProductService {
         return productWithImages;
     }
 
-    @Override
-    public List<Product> getProductsByCategory(Integer categoryId) {
-        return productRepo.getProductsByCategory(categoryId);
-    }
 
     //
     public List<ProductResponseDto> getProductDtoByCategory(Integer categoryId) {
@@ -291,10 +331,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
-    public List<Integer> getListIdToQuery(Integer parentId){
+    public List<Integer> getListIdToQuery(Integer parentId) {
         Category category = categoryRepo.findById(parentId).
-                orElseThrow(()->new ResourceNotFoundException("Category with id "+parentId+" not found"));
+                orElseThrow(() -> new ResourceNotFoundException("Category with id " + parentId + " not found"));
         List<Integer> allChildHasProduct = new ArrayList<>();
         Queue<Category> queue = new ArrayDeque<>();
         queue.add(category);

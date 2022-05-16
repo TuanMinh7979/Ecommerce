@@ -40,12 +40,14 @@ public interface ProductService {
 
     Product getProductWithImages(Long id);
 
-    List<Product> getProductsByCategory(Integer categoryId);
 
-    Product add(Product product, FileRequestDto fileRequestDto, List<FileRequestDto> fileRequestDtos)
+    Product add(Product product, FileRequestDto fileRequestDto, String mainColor,
+                List<FileRequestDto> fileRequestDtos, List<String> extraColors)
             throws IOException;
 
-    Product update(Product product, FileRequestDto file, List<FileRequestDto> files, String ids) throws IOException;
+    Product update(Product product, FileRequestDto file, String mainColor,
+                   List<FileRequestDto> files, List<String> extraColors,
+                   String ids, String flags) throws IOException;
 
     Product save(Product product);
 

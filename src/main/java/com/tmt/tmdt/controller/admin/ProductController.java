@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -97,10 +98,12 @@ public class ProductController {
 
     @PostMapping("add")
 //    @Transactional
-    public String addWithImages(Model model,
-                                @RequestParam("file") FileRequestDto mainImageDto,
-                                @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
-                                @Valid @ModelAttribute("product") Product product, BindingResult result) {
+    public String add(Model model,
+                      @RequestParam("file") FileRequestDto mainImageDto,
+                      @RequestParam(value = "mainColor", required = false) String mainColor,
+                      @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
+                      @RequestParam(value = "extraColor", required = false) List<String> extraColors,
+                      @Valid @ModelAttribute("product") Product product, BindingResult result) {
         if (productService.existByName(product.getName())) {
 
             result.rejectValue("name", "nameIsExist");
@@ -109,7 +112,7 @@ public class ProductController {
             try {
 
                 product.setAtbs(product.getCategory().getAtbs());
-                productService.add(product, mainImageDto, extraImageDtos);
+                productService.add(product, mainImageDto, mainColor, extraImageDtos, extraColors);
                 return "redirect:/admin/product";
             } catch (IOException e) {
                 model.addAttribute("message", "Can not read your file, try again please!");
@@ -124,17 +127,29 @@ public class ProductController {
 
 
     @PostMapping(value = "update")
-    public String updateWithImages(Model model,
-                                   @RequestParam("file") FileRequestDto mainImageDto,
-                                   @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
+    public String update(Model model,
+                         @RequestParam("file") FileRequestDto mainImageDto,
+                         @RequestParam(value = "mainColor", required = false) String mainColor,
+                         @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
+                         @RequestParam(value = "extraColor", required = false) List<String> extraColors,
+                         @RequestParam("delImageIds") String delImageIds,
+                         @RequestParam(value = "flags", required = false) String flags,
+                         @Valid @ModelAttribute("product") Product product,
+                         BindingResult result) throws IOException {
 
-                                   @RequestParam("delImageIds") String delImageIds,
-                                   @Valid @ModelAttribute("product") Product product,
-                                   BindingResult result) throws IOException {
 
+        System.out.println("*******************************:");
+        System.out.println(flags);
 
         if (!result.hasErrors()) {
-            productService.update(product, mainImageDto, extraImageDtos, delImageIds);
+            if (flags == null) {
+                System.out.println("NLLLLLLLLLLLLLLLLLLL");
+                productService.save(product);
+            } else {
+                System.out.println("NNNNNNNNNNNNNNOOOOOOOOOOOOOOOTT NULL");
+
+                productService.update(product, mainImageDto, mainColor, extraImageDtos, extraColors, delImageIds, flags);
+            }
             return "redirect:/admin/product";
         }
         return "admin/product/edit";
@@ -165,11 +180,13 @@ public class ProductController {
             if (!imagei.isMain()) {
                 extraImages.add(imagei);
             } else {
-                model.addAttribute("mainImageId", imagei.getId());
+                model.addAttribute("mainImage", imagei);
             }
         }
 
-        model.addAttribute("images", extraImages);
+        model.addAttribute("images", extraImages.stream()
+                .sorted(Comparator.comparingLong(Image::getId))
+                .collect(Collectors.toList()));
 //                .filter(img -> img.getIsMain() == false).collect(Collectors.toSet()));
         return "admin/product/edit";
 

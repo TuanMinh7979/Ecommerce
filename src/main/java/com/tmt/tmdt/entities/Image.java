@@ -34,6 +34,8 @@ public class Image extends BaseEntity {
     private UserEntity userEntity;
     private boolean isMain;
 
+    private String color;
+
 
 
 

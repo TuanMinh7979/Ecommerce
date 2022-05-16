@@ -33,7 +33,7 @@
 }
 
 
-#imageWrapper{
+#imageWrapper {
     height: 800px;
     /*display: block;*/
     overflow-y: auto;
@@ -66,4 +66,19 @@
     justify-content: space-around;
     background-color: lightgrey;
     margin: 10px 0;
+}
+
+.color-text {
+    border-radius: 10px;
+    width: 100px;
+}
+
+#imageWrapper .img-wrapper {
+
+
+    max-height: 460px;
+    margin-top: 16px;
+    border: 1px solid black;
+    border-radius: 16px;
+    padding: 16px;
 }

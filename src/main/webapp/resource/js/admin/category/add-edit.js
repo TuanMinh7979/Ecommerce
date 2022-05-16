@@ -315,13 +315,13 @@ $("#editFilterBtn").on("click", function (event) {
 });
 
 function getAndRenderCheckedFilterOpt(atbKeyNames) {
-  let data = {};
-  data["categoryId"] = categoryId;
-  data["atbNames"] = atbKeyNames;
+  let requestData = {};
+  requestData["categoryId"] = categoryId;
+  requestData["atbNames"] = atbKeyNames;
   $.ajax({
     type: "post",
     url: "/admin/categoryfilter/list-map",
-    data: JSON.stringify(data),
+    data: JSON.stringify(requestData),
     contentType: "application/json",
 
     success: function (data) {
@@ -340,7 +340,7 @@ function getAndRenderCheckedFilterOpt(atbKeyNames) {
             let keyClientVal = filterObject[atbKeyName];
             for (let optionDataKeyName in data[atbKeyName]) {
               let dataKeyClientVal = data[atbKeyName];
-              if (keyClientVal.hasOwnProperty(optionDataKeyName)) {
+              if (keyClientVal!=undefined && keyClientVal.hasOwnProperty(optionDataKeyName)) {
                 rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' checked val="${dataKeyClientVal[optionDataKeyName]}"/>  <span>${dataKeyClientVal[optionDataKeyName]}</span>`;
               } else {
                 rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' val="${dataKeyClientVal[optionDataKeyName]}" /> <span>${dataKeyClientVal[optionDataKeyName]}</span>`;

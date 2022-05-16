@@ -37,7 +37,6 @@ public class HomeController {
     private EntityManager entityManager;
 
 
-
     @GetMapping("")
     public String index(Model model) {
         List<ProductResponseDto> products = productService.getProductDtos();
@@ -66,12 +65,12 @@ public class HomeController {
             keyFilters = new ArrayList<String>(allRequestParams.values());
 
 
-            queryString.append("where p.category_id in (") ;
-            for(Integer idi: categoryIdsToQuery){
-                String idiStrToQuery= idi+",";
+            queryString.append("where p.category_id in (");
+            for (Integer idi : categoryIdsToQuery) {
+                String idiStrToQuery = idi + ",";
                 queryString.append(idiStrToQuery);
             }
-            queryString= new StringBuilder(queryString.substring(0, queryString.length() - 1));
+            queryString = new StringBuilder(queryString.substring(0, queryString.length() - 1));
             queryString.append(") ");
 
             if (keyFilters != null && keyFilters.size() != 0) {
@@ -103,7 +102,7 @@ public class HomeController {
                             queryString.toString(),
                             Product.class)
                     .getResultList();
-            List<ProductResponseDto> productDtos =products.stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
+            List<ProductResponseDto> productDtos = products.stream().map(productMapper::toProductResponseDto).collect(Collectors.toList());
 
 
             model.addAttribute("products", productDtos);
@@ -130,6 +129,11 @@ public class HomeController {
         model.addAttribute("product", product);
         return "home/product/productDetail";
 
+    }
+
+    @GetMapping("cart")
+    public String showCart() {
+        return "home/cart";
     }
 
 }

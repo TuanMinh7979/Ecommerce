@@ -4,6 +4,11 @@ var attributesObject = {};
 var numOfImage = 1;
 var MAX_FILE_SIZE = 512000;
 
+var imageChgFlag = "0";
+var colorImageChgFlag = "0";
+
+var currentColorPickerImgId = 0;
+
 $(function () {
     callCategoriesData();
 
@@ -18,7 +23,55 @@ $(function () {
             event.preventDefault();
             handleSelectDefaultBtn(this, mode, "delImageIds", defaultImage);
         })
+
+
 })
+
+//Color picker
+$(document).on("click", ".colorpicker__span", function () {
+    currentColorPickerImgId = $(this).closest(".img-wrapper").attr('id');
+    console.log(currentColorPickerImgId);
+    $("#launch-cp-modal").modal("show");
+
+})
+
+$(".color-item").on("click", function () {
+    let colorText = $(this).text();
+
+    $("#" + currentColorPickerImgId).find(".color-text").val(colorText);
+    if (colorImageChgFlag == "0") {
+        colorImageChgFlag = "1";
+    }
+
+    $("#launch-cp-modal").modal("hide");
+});
+
+
+$("#launch-cp-modal").on("hidden.bs.modal", function () {
+    currentColorPickerImgId = 0;
+});
+///Color picker
+
+
+$(document).on("change", ".file_inp", function () {
+    if (imageChgFlag == "0") {
+        imageChgFlag = "1";
+    }
+})
+$(document).on("change", ".color-text", function () {
+    if (colorImageChgFlag == "0") {
+        colorImageChgFlag = "1";
+    }
+})
+
+$('#mainForm').submit(function () {
+    let flags = imageChgFlag + colorImageChgFlag;
+    if (flags !== "00") {
+        $(this).append('<input type="hidden" name="flags" value="' + flags + '" />');
+    }
+    // alert(flags)
+    return true;
+});
 
 //CALL CATEGORIES FOR FORM
 function callCategoriesData() {
@@ -77,9 +130,12 @@ function createNewEmptyExtraImage() {
 
 
     event.preventDefault();
-    let html = '       <div class="col-6">\n' +
+    let html = '       <div class="img-wrapper col-6">\n' +
         '\n' +
-        '<span>Extra</span>' +
+        '<span>Extra</span>    <span class="float-right image-color-picker">' +
+        '<input name="extraColor" type="text" class="color-text" value="no color" >' +
+        '<span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>' +
+        '</span>' +
         '            <div class="image-preview">\n' +
         '                <i class="close-i fas fa-times"></i>\n' +
         `                <img  src="${defaultImage}" alt="alt" class="image-preview__img"/>\n` +
@@ -102,10 +158,13 @@ $(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
 $(document).on("click", ".image-preview .close-i", function () {
     // alert(productId);
     if ($(this).parent().hasClass("saved-image-preview") && mode === "edit") {
-        document.getElementById("delImageIds").value += this.parentElement.parentElement.id + " ";
+        let oldIds = document.getElementById("delImageIds").value.trim();
+        document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.id + " ";
+
     }
 
-    $(this).parent().parent().hide();
+
+    $(this).parent().parent().remove();
 })
 
 //DETAIL ATTRIBUTE TAB

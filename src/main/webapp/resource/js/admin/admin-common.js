@@ -202,10 +202,12 @@ function addIdToDel(idToAdd, delIdsInpId) {
     if (delIdsInpId.charAt(delIdsInpId.length - 1) === 's') {
         oldVal = oldVal.trim();
         delIdsInp.val(oldVal.concat(" " + idToAdd));
+
+
     } else {
         delIdsInp.val(idToAdd);
     }
-    alert(delIdsInp.val())
+
 
 }
 
