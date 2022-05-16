@@ -13,10 +13,12 @@ function deleteOnTable(event) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
+            document.getElementById("loader").style.display="block";
             $.ajax({
                 type: "POST",
                 url: url,
                 success: function (data) {
+                    document.getElementById("loader").style.display="none";
                     that.closest("tr").remove();
                 },
                 error: function (data) {
@@ -52,7 +54,7 @@ function deleteManyOnTable(event) {
 
         toDelChecboxs.push(parseInt(checkboxes[i].value))
     }
-    console.log(toDelChecboxs);
+    // console.log(toDelChecboxs);
 
     Swal.fire({
 
@@ -65,7 +67,7 @@ function deleteManyOnTable(event) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-
+            document.getElementById("loader").style.display="block";
             $.ajax({
                 type: "post",
                 url: url,
@@ -74,6 +76,7 @@ function deleteManyOnTable(event) {
 
 
                 success: function (data) {
+                    document.getElementById("loader").style.display="none";
                     for (checkbox of checkboxes) {
                         checkbox.parentElement.parentElement.remove();
 
@@ -111,7 +114,7 @@ function deleteManyOnTableByStringIdArray(event) {
 
         toDelChecboxs.push(checkboxes[i].value);
     }
-    console.log(toDelChecboxs);
+    // console.log(toDelChecboxs);
 
     Swal.fire({
 
@@ -185,8 +188,13 @@ function handleSelectDefaultBtn(btn, mode, delIdsInpId, defaultImage) {
 
 
     if (idTodel != null && imagePreviewImg.attr("src") != defaultImage && mode === "edit") {
+        if (imageChgFlag == "0") {
+            imageChgFlag = "1";
+            //chg flag to indicate the controller updatewithimages
+        }
         addIdToDel(idTodel, delIdsInpId);
     }
+    // alert(document.getElementById("delImageIds").value);
 
 
     imageInputWrapper.find(".file_inp").val(null);

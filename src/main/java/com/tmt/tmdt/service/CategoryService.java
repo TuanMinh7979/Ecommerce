@@ -41,7 +41,7 @@ public interface CategoryService {
 
     Category update(Category category);
 
-    Category save(Category category);
+    Category savePersistence(Category category);
 
     List<CategoryResponseDto> getCategoryResponseDtos();
 

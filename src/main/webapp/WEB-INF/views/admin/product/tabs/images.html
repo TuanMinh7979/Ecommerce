@@ -7,7 +7,7 @@
     </div>
     <br/>
     <div id="imageWrapper" class="row col-12">
-        <th:block th:if="${product.id!=null}">
+        <th:block th:if="${product.id!=null} and ${mainImage!=null}">
             <div th:id="${mainImage.id}" class="img-wrapper col-6">
                 <span>Main</span>
 
@@ -32,13 +32,14 @@
             </div>
         </th:block>
 
-        <th:block th:if="${product.id==null}">
+        <th:block th:if="${product.id==null} or ${mainImage==null}">
             <div class="img-wrapper col-6">
                 <span>Main</span>
                 <span class="float-right image-color-picker">
 
-                    <input name="mainColor" type="text" class="color-text" th:value="no color" >
+                    <input name="mainColor" type="text" class="color-text" value="no color" >
                      <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
+                </span>
 
                 <div class="image-preview saved-image-preview">
                     <th:block th:if="${product.mainImageLink!=null}">

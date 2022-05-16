@@ -44,42 +44,53 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category parentCategory = category.getParent();
 
-        category.setAtbs(parentCategory.getAtbs());
-        category.setFilter(parentCategory.getFilter());
-        Category categorySaved = cateRepository.save(category);
-        categorySaved.setCode(TextUtil.generateCode(categorySaved.getName(), Long.valueOf(categorySaved.getId())));
+//        category.setAtbs(parentCategory.getAtbs());
+//
+//        category.setOriAtbs(parentCategory.getAtbs());
+//
+//        category.setFilter(parentCategory.getFilter());
 
         parentCategory.setNumOfDirectSubCat(parentCategory.getNumOfDirectSubCat() + 1);
-        save(parentCategory);
-        return categorySaved;
+        cateRepository.save(parentCategory);
+
+        Category savedCategory = cateRepository.save(category);
+        savedCategory.setCode(TextUtil.generateCode(savedCategory.getName(), Long.valueOf(savedCategory.getId())));
+
+        return cateRepository.save(category);
     }
 
     @Override
     public Category update(Category category) {
         category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
+        Category oldCategory = getCategory(category.getId());
+        category.setAtbs(oldCategory.getAtbs());
+        category.setOriAtbs(oldCategory.getOriAtbs());
+        category.setFilter(oldCategory.getFilter());
+
+        //rare case: change to new parent category
         Category oldParentCat = getParentByChildId(category.getId());
-
         if (oldParentCat.getId() != category.getParent().getId()) {
-
+//            change parent category//
             Category newParentCat = category.getParent();
             newParentCat.setNumOfDirectSubCat(newParentCat.getNumOfDirectSubCat() + 1);
+            cateRepository.save(newParentCat);
 
-            save(newParentCat);
-            oldParentCat.setNumOfDirectSubCat(
-                    (oldParentCat.getNumOfDirectSubCat() - 1) > 0 ? (oldParentCat.getNumOfDirectSubCat() - 1) : 0);
 
-            save(oldParentCat);
+            oldParentCat.setNumOfDirectSubCat((oldParentCat.getNumOfDirectSubCat() - 1) > 0 ? (oldParentCat.getNumOfDirectSubCat() - 1) : 0);
+            cateRepository.save(oldParentCat);
         }
+        ///rare case
 
-        return save(category);
+        return cateRepository.save(category);
     }
 
+    //    persistenceCate that is from server , not from client
     @Override
-    public Category save(Category category) {
-
-        Category catSaved = cateRepository.save(category);
-        return catSaved;
+    public Category savePersistence(Category persistenceCate) {
+        return cateRepository.save(persistenceCate);
     }
+    //if add or update with dependencies in other table need a updatewithDependencies method.
+
 
     @Override
     public List<CategoryResponseDto> getCategoryResponseDtos() {

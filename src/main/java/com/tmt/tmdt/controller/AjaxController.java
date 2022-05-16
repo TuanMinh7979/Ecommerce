@@ -13,6 +13,8 @@ import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.service.RoleService;
 import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -31,12 +33,19 @@ public class AjaxController {
     private final ProductService productService;
 
     private final CategoryServiceImpl categoryService;
-    private final RoleService roleService;
-    private final ImageService imageService;
+    private final CategoryRepo categoryRepo;
 
-    private final ProductRepo productRepo;
-    private final CategoryRepo catRepo;
+    private final RoleService roleService;
+
     private final Filter filter;
+
+
+    @PostMapping("jsonAdd")
+    @ResponseBody
+    public ResponseEntity<Category> jsonAdd(@RequestBody Category category) {
+        Category savedCategory = categoryRepo.save(category);
+        return new ResponseEntity<>(savedCategory, HttpStatus.OK);
+    }
 
     @GetMapping("autocomplete-search/product")
     public List<String> getProductNamesByKw(@RequestParam("term") String kw) {

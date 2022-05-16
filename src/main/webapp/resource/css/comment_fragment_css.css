@@ -28,7 +28,7 @@
 }
 
 .set-common-color ul li {
-    width: 80px;
+    max-width: 160px;
     height: 60px;
     border-radius: 6px;
     cursor: pointer;
@@ -82,4 +82,28 @@
 }
 
 /*/ Color picker */
+
+
+/* loadder css */
+.loader {
+    position: fixed; /* or absolute */
+    top: 50%;
+    left: 50%;
+    z-index: 10;
+
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid blue; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/*/ loadder css */
 

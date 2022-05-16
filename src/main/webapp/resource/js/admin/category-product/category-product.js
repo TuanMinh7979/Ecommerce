@@ -56,13 +56,12 @@ function existByName(keyName, atbs) {
 }
 
 
-function updateAttribute(keyName, newAttribute, atbs) {
+function updateAttribute(keyName, newData, atbs) {
     if (atbs.hasOwnProperty(keyName)) {
-        atbs[keyName] = newAttribute;
-        return;
+        atbs[keyName] = newData;
     }
 
-    return;
+
 }
 
 

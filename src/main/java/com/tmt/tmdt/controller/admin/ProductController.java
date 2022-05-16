@@ -110,7 +110,6 @@ public class ProductController {
         }
         if (!result.hasErrors()) {
             try {
-
                 product.setAtbs(product.getCategory().getAtbs());
                 productService.add(product, mainImageDto, mainColor, extraImageDtos, extraColors);
                 return "redirect:/admin/product";
@@ -137,17 +136,10 @@ public class ProductController {
                          @Valid @ModelAttribute("product") Product product,
                          BindingResult result) throws IOException {
 
-
-        System.out.println("*******************************:");
-        System.out.println(flags);
-
         if (!result.hasErrors()) {
             if (flags == null) {
-                System.out.println("NLLLLLLLLLLLLLLLLLLL");
                 productService.save(product);
             } else {
-                System.out.println("NNNNNNNNNNNNNNOOOOOOOOOOOOOOOTT NULL");
-
                 productService.update(product, mainImageDto, mainColor, extraImageDtos, extraColors, delImageIds, flags);
             }
             return "redirect:/admin/product";
@@ -201,14 +193,10 @@ public class ProductController {
     }
 
     @PostMapping("api/delete")
-    public ResponseEntity<Long[]> deleteProducts(@RequestBody Long[] ids) {
-
+    public ResponseEntity<Long[]> deleteProducts(@RequestBody Long[] ids) throws IOException {
         productService.deleteProducts(ids);
         return new ResponseEntity<>(ids, HttpStatus.OK);
-
     }
-
-
 //    FOR ATTRIBUTE
 
     @GetMapping("api/{id}/attributes")

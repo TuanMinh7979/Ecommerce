@@ -141,11 +141,8 @@ public class ProductServiceImpl implements ProductService {
                           String delImageIds, String flags) throws IOException {
 
         delImageIds = delImageIds.trim();
-        //3 case : 11 ch img and it color string - intensity 3
-        //         10 ch img no chg it color - intensity 2
-        //         2 first case -> 3 first if .
-
-        //         01 ch color no chg img -intensity 1
+        //first: update all (delete + add new)
+        //second: loop if color != old color(old exist color img  or new added img(default: no color) )
 
 
         if (delImageIds != null && !delImageIds.isEmpty()) {
@@ -208,15 +205,22 @@ public class ProductServiceImpl implements ProductService {
         }
         Product productSaved = save(product);
 
-        //rare case : update color name with out update img file.
-        if (flags.equals("01")) {
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //if  :
+        if (flags.endsWith("1")) {
             List<Image> images = imageService.getImagesByProduct(productSaved.getId())
                     .stream()
                     .sorted(Comparator.comparingLong(Image::getId))
                     .collect(Collectors.toList());
-            Image mainImg = images.get(0);
-            List<Image> extraImgs = images.subList(1, images.size());
+            Image mainImg = null;
+            List<Image> extraImgs = new ArrayList<>();
+
+            for (Image imagei : images) {
+                if (!imagei.isMain()) {
+                    extraImgs.add(imagei);
+                } else {
+                    mainImg = imagei;
+                }
+            }
             if (mainImg.getColor() != mainColor) {
                 mainImg.setColor(mainColor);
                 imageService.save(mainImg);
@@ -236,10 +240,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product save(Product product) {
         //when use model attribute if dont have a fill -> that fill will be null when update
-        product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
-
-        return productRepo.save(product);
-
+        if (product.getId() != null) {
+            //update
+            product.setAtbs(getProduct(product.getId()).getAtbs());
+            product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
+            return productRepo.save(product);
+        } else {
+            //rare case: add new
+            Product productSaved = productRepo.save(product);
+            productSaved.setCode(TextUtil.generateCode(product.getName(), product.getId()));
+            return productRepo.save(productSaved);
+        }
     }
 
     @Override
@@ -254,20 +265,25 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Category category = product.getCategory();
-        category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
+        category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) >= 0 ? (category.getNumOfDirectProduct() - 1) : 0);
         categoryRepo.save(category);
         productRepo.deleteById(id);
 
     }
 
     @Override
-    public void deleteProducts(Long[] ids) {
+    public void deleteProducts(Long[] ids) throws IOException {
         for (Long id : ids) {
-            Product product = getProduct(id);
+            Product product = getProductWithImagesAndCategory(id);
+
+            Set<Image> images = product.getImages();
+            for (Image image : images) {
+                imageService.deleteById(image.getId());
+            }
+
             Category category = product.getCategory();
-            category.setNumOfDirectProduct(category.getNumOfDirectProduct() - 1);
+            category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) >= 0 ? (category.getNumOfDirectProduct() - 1) : 0);
             categoryRepo.save(category);
-            productRepo.deleteById(id);
             productRepo.deleteById(id);
         }
     }

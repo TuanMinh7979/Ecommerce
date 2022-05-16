@@ -3,6 +3,7 @@ package com.tmt.tmdt.controller.admin;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
 import com.tmt.tmdt.entities.Category;
 
+import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+
     @GetMapping("")
     public String index() {
         return "admin/category/index";
@@ -34,11 +36,11 @@ public class CategoryController {
     @GetMapping("api/viewApi")
     @ResponseBody
     public ViewResponseApi<List<Category>> getCategories(Model model,
-            @RequestParam(name = "page", required = false) String pageParam,
-            @RequestParam(name = "limit", required = false) String limitParam,
-            @RequestParam(name = "sortBy", required = false) String sortBy,
-            @RequestParam(name = "sortDirection", required = false) String sortDirection,
-            @RequestParam(name = "searchNameTerm", required = false) String searchNameTerm) {
+                                                         @RequestParam(name = "page", required = false) String pageParam,
+                                                         @RequestParam(name = "limit", required = false) String limitParam,
+                                                         @RequestParam(name = "sortBy", required = false) String sortBy,
+                                                         @RequestParam(name = "sortDirection", required = false) String sortDirection,
+                                                         @RequestParam(name = "searchNameTerm", required = false) String searchNameTerm) {
 
         String sortField = sortBy == null ? "id" : sortBy;
         Sort sort = (sortDirection == null || sortDirection.equals("asc")) ? Sort.by(Sort.Direction.ASC, sortField)
@@ -67,6 +69,8 @@ public class CategoryController {
         model.addAttribute("category", category);
         return "admin/category/add";
     }
+
+
 
     @PostMapping("add")
     // rest api save => add(post), edit(put)
@@ -149,19 +153,19 @@ public class CategoryController {
         Category category = categoryService.getCategory(id);
         category.setAtbs(atbAndFilter.get("atbs"));
         category.setFilter(atbAndFilter.get("filter"));
-        return categoryService.save(category);
+        return categoryService.savePersistence(category);
 
     }
 
     @PostMapping("api/{id}/attributes/update/filterset-forallchild")
     @ResponseBody
     public Category updateAttributesWithFilterSetForChild(@PathVariable("id") Integer id,
-            @RequestBody Map<String, String> atbAndFilter) {
+                                                          @RequestBody Map<String, String> atbAndFilter) {
 
         Category category = categoryService.getCategory(id);
         category.setAtbs(atbAndFilter.get("atbs"));
         category.setFilter(atbAndFilter.get("filter"));
-        Category savedCat = categoryService.save(category);
+        Category savedCat = categoryService.savePersistence(category);
 
         List<Category> allSubCat = new ArrayList<>();
         Queue<Category> queue = new ArrayDeque<>();
@@ -180,10 +184,21 @@ public class CategoryController {
         for (int i = 1; i < allSubCat.size(); i++) {
             Category subCati = allSubCat.get(i);
             subCati.setFilter(atbAndFilter.get("filter"));
-            categoryService.save(subCati);
+            categoryService.savePersistence(subCati);
         }
 
         return savedCat;
+
+    }
+
+    @PostMapping("api/{id}/attributes/update/reset-ori-atb")
+    @ResponseBody
+    public String resetToOriAtb(@PathVariable("id") Integer id) {
+        Category category = categoryService.getCategory(id);
+        String oriAtb = category.getOriAtbs();
+        category.setAtbs(oriAtb);
+        categoryService.savePersistence(category);
+        return oriAtb;
 
     }
 

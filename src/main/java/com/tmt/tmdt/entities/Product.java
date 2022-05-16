@@ -68,6 +68,8 @@ public class Product extends BaseEntity implements Serializable {
     @Column(columnDefinition = "jsonb", name = "atbs")
     private String atbs;
 
+
+
     public Product(Long id, String name, BigDecimal price, String mainImageLink, String code) {
         this.id = id;
         this.name = name;

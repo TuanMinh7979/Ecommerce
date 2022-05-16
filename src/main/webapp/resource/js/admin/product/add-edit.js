@@ -66,6 +66,9 @@ $(document).on("change", ".color-text", function () {
 
 $('#mainForm').submit(function () {
     let flags = imageChgFlag + colorImageChgFlag;
+  // $(".color-text").each(function(){
+  //     console.log(this);
+  // })
     if (flags !== "00") {
         $(this).append('<input type="hidden" name="flags" value="' + flags + '" />');
     }
@@ -158,8 +161,15 @@ $(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
 $(document).on("click", ".image-preview .close-i", function () {
     // alert(productId);
     if ($(this).parent().hasClass("saved-image-preview") && mode === "edit") {
+        if (imageChgFlag == "0") {
+            imageChgFlag = "1";
+            //chg flag to indicate the controller updatewithimages
+        }
+
         let oldIds = document.getElementById("delImageIds").value.trim();
         document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.id + " ";
+
+        // alert(document.getElementById("delImageIds").value);
 
     }
 

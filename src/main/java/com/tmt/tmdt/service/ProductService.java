@@ -36,7 +36,7 @@ public interface ProductService {
 
     void deleteById(Long id) throws IOException;
 
-    void deleteProducts(Long[] ids);
+    void deleteProducts(Long[] ids) throws IOException;
 
     Product getProductWithImages(Long id);
 

@@ -32,7 +32,7 @@ function callViewApi(page, limit, sortBy, sortDirection, searchNameTerm, categor
         type: "get",
         url: url,
         success: function (data) {
-            console.log(data.data)
+
             renderData(data);
         },
         error: function () {
@@ -68,14 +68,14 @@ function HdleFilterBtn() {
 
 function renderData(data) {
     let rs = "";
-    console.log(data.data);
+
     data.data.map(function(producti) {
         rs += '<tr>'
-        rs += `<td class="col-1"><input type="checkbox" value="${producti.id}"></td>`
+        rs += `<td class="col-1"><input type="checkbox" class="idCb" value="${producti.id}"></td>`
 
         rs += `<td class="col-2" >${producti.name}</td>`
         rs += `<td class = "col-1" >${producti.price} </td>`
-        rs += `<td class = "avatar-container col-4" ><img class="avatar__img"src=${producti.mainImageLink} alt="No Image choosed"/> </td>`
+        rs += `<td class = "avatar-container col-4" ><img style="min-height: 120px" class="avatar__img"src=${producti.mainImageLink} alt="No Image choosed"/> </td>`
         rs += `<td class="col-2"> ${producti.code}</td>`
         // rs += `<td class="col-1"> ${producti.category.name}</td>`
 

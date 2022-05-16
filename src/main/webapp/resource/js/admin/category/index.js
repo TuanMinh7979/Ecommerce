@@ -66,7 +66,7 @@ function renderData(data) {
     let rs = "";
     data.data.map(function (catei) {
             rs += "<tr>"
-            rs += `<td class="col-1"><input type="checkbox" value="${catei.id}"></td>`
+            rs += `<td class="col-1 idCb"><input type="checkbox" style="height: 26px; width:26px"value="${catei.id}"></td>`
             rs += `<td class="col-4" >${catei.name}</td>`
             rs += `<td class = "col-4" >${catei.code} </td>`
             rs += '<td class="col-3">'
@@ -80,7 +80,7 @@ function renderData(data) {
         }
 
     )
-    console.log(data.data)
+
     $("#tabledata").html(rs);
     let newTotalPage = data.totalPage;
     if (newTotalPage != GlobalTotalPage) {
