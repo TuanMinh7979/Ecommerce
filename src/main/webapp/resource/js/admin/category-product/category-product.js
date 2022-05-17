@@ -41,13 +41,6 @@ function pushNewRecord(pushAtrBtn) {
 }
 
 function existByName(keyName, atbs) {
-    // for (let atbi in atbs) {
-    //     if (atbs[atbi].name === name) {
-    //         return true;
-    //     }
-    // }
-    // return false;
-
     if (atbs.hasOwnProperty(keyName)) {
         return true;
     }

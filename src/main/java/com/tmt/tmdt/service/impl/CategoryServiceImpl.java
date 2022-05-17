@@ -44,11 +44,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category parentCategory = category.getParent();
 
-//        category.setAtbs(parentCategory.getAtbs());
-//
-//        category.setOriAtbs(parentCategory.getAtbs());
-//
-//        category.setFilter(parentCategory.getFilter());
+        category.setAtbs(parentCategory.getAtbs());
+
+        category.setOriAtbs(parentCategory.getAtbs());
+
+        category.setFilter(parentCategory.getFilter());
 
         parentCategory.setNumOfDirectSubCat(parentCategory.getNumOfDirectSubCat() + 1);
         cateRepository.save(parentCategory);
@@ -62,10 +62,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category update(Category category) {
         category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
-        Category oldCategory = getCategory(category.getId());
-        category.setAtbs(oldCategory.getAtbs());
-        category.setOriAtbs(oldCategory.getOriAtbs());
-        category.setFilter(oldCategory.getFilter());
+//        category.setAtbs(oldCategory.getAtbs());
+        category.setOriAtbs(getCategory(category.getId()).getOriAtbs());
+//        category.setFilter(oldCategory.getFilter());
 
         //rare case: change to new parent category
         Category oldParentCat = getParentByChildId(category.getId());

@@ -147,24 +147,13 @@ public class CategoryController {
         return atbAndFilter;
     }
 
-    @PostMapping("api/{id}/attributes/update")
-    @ResponseBody
-    public Category updateAttributes(@PathVariable("id") Integer id, @RequestBody Map<String, String> atbAndFilter) {
-        Category category = categoryService.getCategory(id);
-        category.setAtbs(atbAndFilter.get("atbs"));
-        category.setFilter(atbAndFilter.get("filter"));
-        return categoryService.savePersistence(category);
 
-    }
-
-    @PostMapping("api/{id}/attributes/update/filterset-forallchild")
+    @PostMapping("api/{id}/filterset-forallchild")
     @ResponseBody
     public Category updateAttributesWithFilterSetForChild(@PathVariable("id") Integer id,
-                                                          @RequestBody Map<String, String> atbAndFilter) {
-
+                                                          @RequestBody String filter) {
         Category category = categoryService.getCategory(id);
-        category.setAtbs(atbAndFilter.get("atbs"));
-        category.setFilter(atbAndFilter.get("filter"));
+        category.setFilter(filter);
         Category savedCat = categoryService.savePersistence(category);
 
         List<Category> allSubCat = new ArrayList<>();
@@ -183,7 +172,7 @@ public class CategoryController {
 
         for (int i = 1; i < allSubCat.size(); i++) {
             Category subCati = allSubCat.get(i);
-            subCati.setFilter(atbAndFilter.get("filter"));
+            subCati.setFilter(filter);
             categoryService.savePersistence(subCati);
         }
 

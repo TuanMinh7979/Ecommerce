@@ -6,7 +6,8 @@
     <!--        <button class="btn btn-info" id="launchFilterAttributeBtn">Filter Attributes</button>-->
     <!--    </div>-->
     <br/>
-    <table style="marigin-top:20px" id="attribute-table" class="table table-striped table-bordered tableFixHeight ">
+
+    <table style="marigin-top:20px" id="attribute-table"  class="table table-striped table-bordered tableFixHeight ">
         <thead>
         <tr class="col-12">
             <th class="col-1"></th>
@@ -24,9 +25,7 @@
     </table>
 
     <div class="col-12 d-flex justify-content-end">
-        <a style="margin-right: 100px" id="saveallchangeBtn"
-           th:href="@{/admin/category/api/{id}/attributes/update(id=${category.id})}"
-           class="btn btn-info ">Save All Changes</a>
+
         <button id="addNewAttributeBtn" class="btn btn-outline-dark" style="margin-right: 100px">Add attribute</button>
         <button id="resetOriAttributeBtn" class="btn btn-outline-warning" style="margin-right: 100px">Reset origin attribute</button>
         <button id="tag_delete_many"
@@ -88,7 +87,7 @@
                         <button type="button" id="closeAttributeFormBtn" class="btn btn-secondary" data-dismiss="modal">
                             Close
                         </button>
-                        <button type="button" class="saveAtrsBtn btn btn-primary">Save changes</button>
+                        <button type="button" id="addAtbConfirmBtn" class=" btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -148,7 +147,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="saveAtrsBtn btn btn-primary">Update changes</button>
+                        <button type="button" id="updateAtbConfirmBtn"class=" btn btn-primary">Update changes</button>
                     </div>
                 </div>
             </div>
@@ -199,6 +198,9 @@
             </div>
         </div>
     </div>
+
+
+    <div id="loader" class="loader" style="display: none"></div>
 </div>
 
 

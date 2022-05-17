@@ -16,115 +16,177 @@ $(function () {
             });
         },
     });
+});
 
-    $(".rotate").click(function () {
-        let setAllCb = $("#setChangeForAllChildCb");
-        setAllCb.attr("checked", !setAllCb.attr("checked"));
-        $(this).toggleClass("down");
-    });
+//clear
 
-    $(".nav-tabs a").on("shown.bs.tab", function (event) {
-        var editMode = $(event.target).text();
+$(".rotate").click(function () {
+    let setAllCb = $("#setChangeForAllChildCb");
+    setAllCb.attr("checked", !setAllCb.attr("checked"));
+    $(this).toggleClass("down");
+});
 
-        if (editMode == "Detail") {
-            callAttributeApi(`/admin/category/api/${categoryId}/attributes`);
-            $("#addNewAttributeBtn").on("click", function (event) {
-                event.preventDefault();
-                $("#addModalBtn").click();
-            });
+$(".nav-tabs a").on("shown.bs.tab", function (event) {
+    var editMode = $(event.target).text();
 
-            $("#resetOriAttributeBtn").on("click", function (event) {
-                event.preventDefault();
-                resetOriAtb();
+    if (editMode == "Detail") {
+        callAttributeApi(`/admin/category/api/${categoryId}/attributes`);
 
-            });
+    }
+});
 
-            $(".saveAtrsBtn").on("click", function (event) {
-                event.preventDefault();
-                saveCurrentFormAttribute(this);
-            });
+$("#addNewAttributeBtn").on("click", function (event) {
+    event.preventDefault();
+    $("#addModalBtn").click();
+});
 
-            $("#tag_delete_many").on("click", function (event) {
-                event.preventDefault();
-                let checkboxes = $('tr input[type="checkbox"]:checked');
-                for (checkbox of checkboxes) {
-                    let keyToDel = $(this)
-                        .parent()
-                        .parent()
-                        .find(".atb-iddel-checkbox")
-                        .val();
-                    delete attributesObject[keyToDel];
-                    $(checkbox).closest("tr").remove();
+$("#resetOriAttributeBtn").on("click", function (event) {
+    event.preventDefault();
+    resetOriAtb();
+
+});
+
+
+$("#tag_delete_many").on("click", function (event) {
+    event.preventDefault();
+    let checkboxes = $('tr input[type="checkbox"]:checked');
+    $(checkboxes).each(function () {
+        let keyToDel = $(this)
+            .parent()
+            .parent()
+            .find(".atb-iddel-checkbox")
+            .val();
+        delete attributesObject[keyToDel];
+        $(this).closest("tr").remove();
+    })
+});
+$(document).on("click", "#saveallchangeBtn", function (event) {
+    event.preventDefault();
+    saveAllChange($(this).attr("href"));
+});
+
+$(document).on("click", ".tag_delete_one", function (event) {
+    event.preventDefault();
+    let keyToDel = $(this)
+        .parent()
+        .parent()
+        .find(".atb-iddel-checkbox")
+        .val();
+    // removeAttributeByName(nameToDel, attributesObject);
+    delete attributesObject[keyToDel];
+
+    $(this).closest("tr").remove();
+});
+
+$("#saveCurFiltersBtn").on("click", function () {
+    $(".filters-item-checkboxes-wrapper").each(function () {
+        let curFilterValue = {};
+
+        let allCbox = $(this).find("input[type='checkbox']:checked");
+
+        let atbiName = $(this).attr("id");
+        atbiName = atbiName.slice(0, -10);
+
+        if (allCbox.length != 0) {
+            $(allCbox).each(function () {
+                let optionKey = $(this).attr("id");
+
+                let optionClientVal = $(this).attr("val");
+
+                if (optionClientVal != undefined) {
+                    curFilterValue[optionKey] = optionClientVal;
                 }
-            });
-            $(document).on("click", "#saveallchangeBtn", function (event) {
-                event.preventDefault();
-                saveAllChange($(this).attr("href"));
+
+
             });
 
-            $(document).on("click", ".tag_delete_one", function (event) {
-                event.preventDefault();
-                let keyToDel = $(this)
-                    .parent()
-                    .parent()
-                    .find(".atb-iddel-checkbox")
-                    .val();
-                // removeAttributeByName(nameToDel, attributesObject);
-                delete attributesObject[keyToDel];
-
-                $(this).closest("tr").remove();
-            });
-        }
-    });
-
-    $("#saveCurFiltersBtn").on("click", function () {
-        $(".filters-item-checkboxes-wrapper").each(function () {
-            let curFilterValue = {};
-
-            let allCbox = $(this).find("input[type='checkbox']:checked");
-
-            let atbiName = $(this).attr("id");
-            atbiName = atbiName.slice(0, -10);
-
-            if (allCbox.length != 0) {
-                $(allCbox).each(function () {
-                    let optionKey = $(this).attr("id");
-
-                    let optionClientVal = $(this).attr("val");
-
-                    if (optionClientVal != undefined) {
-                        curFilterValue[optionKey] = optionClientVal;
-                    }
-
-
-                });
-
-                if (curFilterValue !== undefined && Object.keys(curFilterValue).length !== 0) {
-                    filterObject[atbiName] = curFilterValue;
-                } else {
-                    filterObject = "";
-                }
+            if (curFilterValue !== undefined && Object.keys(curFilterValue).length !== 0) {
+                filterObject[atbiName] = curFilterValue;
             }
-            //   attributesObject[atbiName].filterValue = curFilterValue;
+        }
+        //   attributesObject[atbiName].filterValue = curFilterValue;
 
-        });
-
-        $("#exampleModalCenter3").modal("hide");
     });
+    if ($("#setChangeForAllChildCb").is(":checked") == false) {
+        $("#exampleModalCenter3").modal("hide");
+    } else {
+        let url = `/admin/category/api/${categoryId}/filterset-forallchild`;
+        $("#exampleModalCenter3").modal("hide");
+        document.getElementById("loader").style.display = "block";
+        $.ajax({
+            type: "post",
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify(filterObject),
+
+            success: function (res) {
+                document.getElementById("loader").style.display = "none";
+
+            },
+            error: function () {
+                Swal.fire({
+                    icon: "error",
+                    title: "Can not call this Api",
+                    // text: 'Something went wrong!',
+                });
+            },
+        });
+    }
+
+
+});
+// });
+//end here
+
+//
+$("#addAtbConfirmBtn").on("click", function (event) {
+    event.preventDefault();
+    saveCurrentFormAttribute(this);
+});
+
+$("#updateAtbConfirmBtn").on("click", function (event) {
+    event.preventDefault();
+    saveCurrentFormAttribute(this);
+});
+
+//
+
+
+$('#mainForm').submit(function () {
+    let atbString = JSON.stringify(attributesObject);
+    let filterString = JSON.stringify(filterObject);
+    // console.log(atbString);
+
+    $(this).append(`<input type="hidden" name="atbs" />`);
+    $(this).append(`<input type="hidden" name="filter" />`);
+
+    let allHiddenInp = $(this).find('input[type="hidden"]');
+    $(allHiddenInp).each(function () {
+        if ($(this).attr('name') == "atbs") {
+            $(this).val(atbString);
+        } else {
+            $(this).val(filterString);
+        }
+
+    })
+    return true;
 });
 
 
 function resetOriAtb() {
     // `/admin/category/api/${categoryId}/attributes`
+    document.getElementById("loader").style.display = "block";
     $.ajax({
         type: "post",
         url: `/admin/category/api/${categoryId}/attributes/update/reset-ori-atb`,
         contentType: "application/json",
-        data: JSON.stringify(atbAndFilter),
 
-        success: function (res) {
-            console.log(res);
-            // location.reload();
+        success: function (newAtb) {
+            attributesObject = newAtb;
+            document.getElementById("loader").style.display = "none";
+
+            location.reload();
+
         },
         error: function () {
             Swal.fire({
@@ -152,36 +214,6 @@ function renderCatHierarchical(data) {
     $(".parent-sel").append(opts);
 }
 
-function saveAllChange(url) {
-    if ($("#setChangeForAllChildCb").is(":checked")) {
-        url += "/filterset-forallchild";
-    }
-
-    let atbAndFilter = {};
-    atbAndFilter["atbs"] = JSON.stringify(attributesObject);
-    atbAndFilter["filter"] = JSON.stringify(filterObject);
-    // console.log(JSON.stringify(atbAndFilter));
-    // return;
-
-    $.ajax({
-        type: "post",
-        url: url,
-        contentType: "application/json",
-        data: JSON.stringify(atbAndFilter),
-
-        success: function (res) {
-            location.reload();
-        },
-        error: function () {
-            Swal.fire({
-                icon: "error",
-                title: "Can not call this Api",
-                // text: 'Something went wrong!',
-            });
-        },
-    });
-}
-
 $(document).on("click", ".push", function (event) {
     event.preventDefault();
     pushNewRecord(this);
@@ -199,12 +231,15 @@ $(document).on("click", ".editAttributeBtn", function (event) {
     $("#editModalBtn").click();
 });
 
-function renderDataForAttributeTable(data) {
+function renderDataForAttributeTable() {
     let rs = "";
-    for (let atbi in data) {
-        let curAtr = data[atbi];
 
-        rs += `       <tr class="col-12">
+    // alert(Object.keys(attributesObject).length)
+    if (Object.keys(attributesObject).length != 0) {
+        for (let atbi in attributesObject) {
+            let curAtr = attributesObject[atbi];
+
+            rs += `       <tr class="col-12">
                 <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
                 <td class="col-5" class="atb-name-inp" ">${atbi}</td>
                 <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
@@ -215,11 +250,57 @@ function renderDataForAttributeTable(data) {
                 </td>
 
             </tr>`;
+        }
+        $("#tabledata").html(rs);
+        setActiveCheckbox();
+    } else {
+        rs += "<div class=\"alert alert-warning\" role=\"alert\">\n" +
+            "There are not any attribute!" +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '           <span aria-hidden="true">&times;</span>' +
+            "        </button>" +
+            "</div>"
+        $("#attribute-table").before(rs);
     }
 
-    $("#tabledata").html(rs);
-    setActiveCheckbox();
+
 }
+
+function renderDataForAttributeTableFrom(atb) {
+    let rs = "";
+
+    // alert(Object.keys(attributesObject).length)
+    if (Object.keys(atb).length != 0) {
+        for (let atbi in atb) {
+            let curAtr = atb[atbi];
+
+            rs += `       <tr class="col-12">
+                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
+                <td class="col-5" class="atb-name-inp" ">${atbi}</td>
+                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
+                  <td class="col-3">
+                    <button class="editAttributeBtn btn btn-default" >Edit</button>
+                    <a class="btn btn-danger tag_delete_one"  >Delete</a>
+
+                </td>
+
+            </tr>`;
+        }
+        $("#tabledata").html(rs);
+        setActiveCheckbox();
+    } else {
+        rs += "<div class=\"alert alert-warning\" role=\"alert\">\n" +
+            "There are not any attribute!" +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '           <span aria-hidden="true">&times;</span>' +
+            "        </button>" +
+            "</div>"
+        $("#attribute-table").before(rs);
+    }
+
+
+}
+
 
 //COMMON METHOD
 function callAttributeApi(url) {
@@ -227,13 +308,14 @@ function callAttributeApi(url) {
         type: "get",
         url: url,
         success: function (data) {
-            if (data !== "" && data !== null && data !== undefined) {
-                attributesObject = JSON.parse(data.atbs);
-                filterObject = JSON.parse(data.filter);
-                renderDataForAttributeTable(attributesObject);
-            } else {
-                alert("This category do not have any attribute");
-            }
+
+            filterObject = JSON.parse(data.filter);
+            attributesObject = JSON.parse(data.atbs);
+            // if (Object.keys(attributesObject).length !== 0) {
+            renderDataForAttributeTable();
+            // } else {
+            //     alert("This category do not have any attribute");
+            // }
         },
         error: function () {
             Swal.fire({
@@ -304,45 +386,19 @@ function saveCurrentFormAttribute(saveBtn) {
         );
     });
     data["value"] = valueArr;
-
-    if ($("#exampleModalCenter2").hasClass("show")) {
-        updateAttribute(keyname, data, attributesObject);
+    let curModal = saveBtn.closest(".modal");
+    if ($("#exampleModalCenter1").hasClass("show") && existByName(keyname, attributesObject)) {
+        alert(keyname + " is exist!");
+        $(curModal).modal("hide");
+        return;
     } else {
-        //case add new attribute -> check if existByName
-        if (existByName(keyname, attributesObject)) {
-            alert(keyname + " is exist!");
-        } else {
-            //add new
-            attributesObject[keyname] = data;
-        }
+        //add new
+        attributesObject[keyname] = data;
     }
 
-    let curModal = saveBtn.closest(".modal");
     $(curModal).modal("hide");
     renderDataForAttributeTable(attributesObject);
 }
-
-var generateID = function () {
-    // Math.random should be unique because of its seeding algorithm.
-    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-    // after the decimal.
-    return Math.random().toString(36).substr(2, 3);
-};
-
-$("#mainForm").data("changed", false);
-
-$("#mainForm").on("change", function () {
-    $(this).data("changed", true);
-});
-$("#mainForm").on("submit", function () {
-    if (!$(this).data("changed")) {
-        alert("Nothing changed!");
-        return false;
-        // Reset variable
-    }
-    // Do whatever you want here
-    // You don't have to prevent submission
-});
 
 //FOR CUSTOM ATTRIBUTE FILTER
 $("#editFilterBtn").on("click", function (event) {
@@ -363,6 +419,7 @@ function getAndRenderCheckedFilterOpt(atbKeyNames) {
         success: function (data) {
             if (data === null || data === undefined || data == "") {
                 alert("System do not have any filter option for this category");
+                return;
             } else {
                 let rs = "";
                 atbKeyNames.map(function (atbKeyName) {
@@ -417,6 +474,7 @@ function loadFilterData() {
         alert(
             "There are no attributes that is ticked in it's filter field, please tick one before!"
         );
+        return
     } else {
         getAndRenderCheckedFilterOpt(atbKeyNames);
     }
