@@ -94,10 +94,6 @@ public class ProductServiceImpl implements ProductService {
     public Product add(Product product, FileRequestDto fileRequestDto, String mainColor,
                        List<FileRequestDto> fileRequestDtos, List<String> extraColors)
             throws IOException {
-        Category category = product.getCategory();
-        category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
-        categoryRepo.save(category);
-
         Product productSaved = save(product);
         // relation should work in persistence
 
@@ -242,15 +238,38 @@ public class ProductServiceImpl implements ProductService {
         //when use model attribute if dont have a fill -> that fill will be null when update
         if (product.getId() != null) {
             //update
-            product.setAtbs(getProduct(product.getId()).getAtbs());
+//            product.setAtbs(getProduct(product.getId()).getAtbs());
+
             product.setCode(TextUtil.generateCode(product.getName(), product.getId()));
+            //rare case: change category
+            Category oldCategory = categoryRepo.getCategoryByProductId(product.getId()).
+                    orElseThrow(() -> new ResourceNotFoundException("Category of product not found"));
+            if (oldCategory.getId() != product.getCategory().getId()) {
+
+                oldCategory.setNumOfDirectProduct((oldCategory.getNumOfDirectProduct() - 1) > 0
+                        ? (oldCategory.getNumOfDirectProduct() - 1)
+                        : 0);
+                categoryRepo.save(oldCategory);
+                Category newCategory = product.getCategory();
+                newCategory.setNumOfDirectProduct(newCategory.getNumOfDirectProduct() + 1);
+                categoryRepo.save(newCategory);
+            }
+
             return productRepo.save(product);
         } else {
             //rare case: add new
             Product productSaved = productRepo.save(product);
+            Category category = productSaved.getCategory();
+            category.setNumOfDirectProduct(category.getNumOfDirectProduct() + 1);
+            categoryRepo.save(category);
             productSaved.setCode(TextUtil.generateCode(product.getName(), product.getId()));
             return productRepo.save(productSaved);
         }
+    }
+
+    @Override
+    public Product savePersistence(Product product) {
+        return productRepo.save(product);
     }
 
     @Override
@@ -265,7 +284,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Category category = product.getCategory();
-        category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) >= 0 ? (category.getNumOfDirectProduct() - 1) : 0);
+        category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) > 0 ? (category.getNumOfDirectProduct() - 1) : 0);
         categoryRepo.save(category);
         productRepo.deleteById(id);
 
@@ -282,7 +301,7 @@ public class ProductServiceImpl implements ProductService {
             }
 
             Category category = product.getCategory();
-            category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) >= 0 ? (category.getNumOfDirectProduct() - 1) : 0);
+            category.setNumOfDirectProduct((category.getNumOfDirectProduct() - 1) > 0 ? (category.getNumOfDirectProduct() - 1) : 0);
             categoryRepo.save(category);
             productRepo.deleteById(id);
         }
@@ -365,5 +384,6 @@ public class ProductServiceImpl implements ProductService {
         return allChildHasProduct;
 
     }
+
 
 }

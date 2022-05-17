@@ -42,4 +42,8 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
 
     @Query(value = "select * from categories c where c.id in (select p.category_id from products p where p.id = ?1)", nativeQuery = true)
     Optional<Category> getCategoryByProductId(Long id);
+
+
+//    @Query(value = "select c.parent_id from categories c where c.id = ?1", nativeQuery = true)
+//    int getParentIdByChildId(Integer childId);
 }

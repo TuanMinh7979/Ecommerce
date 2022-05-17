@@ -60,10 +60,7 @@ $("#tag_delete_many").on("click", function (event) {
         $(this).closest("tr").remove();
     })
 });
-$(document).on("click", "#saveallchangeBtn", function (event) {
-    event.preventDefault();
-    saveAllChange($(this).attr("href"));
-});
+
 
 $(document).on("click", ".tag_delete_one", function (event) {
     event.preventDefault();
@@ -231,13 +228,13 @@ $(document).on("click", ".editAttributeBtn", function (event) {
     $("#editModalBtn").click();
 });
 
-function renderDataForAttributeTable() {
+function renderDataForAttributeTable(atbs) {
     let rs = "";
 
     // alert(Object.keys(attributesObject).length)
-    if (Object.keys(attributesObject).length != 0) {
-        for (let atbi in attributesObject) {
-            let curAtr = attributesObject[atbi];
+    if (Object.keys(atbs).length != 0) {
+        for (let atbi in atbs) {
+            let curAtr = atbs[atbi];
 
             rs += `       <tr class="col-12">
                 <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
@@ -265,42 +262,6 @@ function renderDataForAttributeTable() {
 
 
 }
-
-function renderDataForAttributeTableFrom(atb) {
-    let rs = "";
-
-    // alert(Object.keys(attributesObject).length)
-    if (Object.keys(atb).length != 0) {
-        for (let atbi in atb) {
-            let curAtr = atb[atbi];
-
-            rs += `       <tr class="col-12">
-                <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
-                <td class="col-5" class="atb-name-inp" ">${atbi}</td>
-                <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
-                  <td class="col-3">
-                    <button class="editAttributeBtn btn btn-default" >Edit</button>
-                    <a class="btn btn-danger tag_delete_one"  >Delete</a>
-
-                </td>
-
-            </tr>`;
-        }
-        $("#tabledata").html(rs);
-        setActiveCheckbox();
-    } else {
-        rs += "<div class=\"alert alert-warning\" role=\"alert\">\n" +
-            "There are not any attribute!" +
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-            '           <span aria-hidden="true">&times;</span>' +
-            "        </button>" +
-            "</div>"
-        $("#attribute-table").before(rs);
-    }
-
-
-}
-
 
 //COMMON METHOD
 function callAttributeApi(url) {
@@ -309,10 +270,12 @@ function callAttributeApi(url) {
         url: url,
         success: function (data) {
 
-            filterObject = JSON.parse(data.filter);
-            attributesObject = JSON.parse(data.atbs);
-            // if (Object.keys(attributesObject).length !== 0) {
-            renderDataForAttributeTable();
+            if (data !== null && data !== undefined) {
+                filterObject = JSON.parse(data.filter);
+                attributesObject = JSON.parse(data.atbs);
+                // if (Object.keys(attributesObject).length !== 0) {
+                renderDataForAttributeTable(attributesObject);
+            }
             // } else {
             //     alert("This category do not have any attribute");
             // }

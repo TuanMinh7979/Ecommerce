@@ -18,14 +18,14 @@ $(function () {
         mode = "edit";
     }
 
-    $("#selectnone-btn").on("click",
-        function (event) {
-            event.preventDefault();
-            handleSelectDefaultBtn(this, mode, "delImageIds", defaultImage);
-        })
-
 
 })
+
+$("#selectnone-btn").on("click",
+    function (event) {
+        event.preventDefault();
+        handleSelectDefaultBtn(this, mode, "delImageIds", defaultImage);
+    })
 
 //Color picker
 $(document).on("click", ".colorpicker__span", function () {
@@ -66,9 +66,9 @@ $(document).on("change", ".color-text", function () {
 
 $('#mainForm').submit(function () {
     let flags = imageChgFlag + colorImageChgFlag;
-  // $(".color-text").each(function(){
-  //     console.log(this);
-  // })
+    // $(".color-text").each(function(){
+    //     console.log(this);
+    // })
     if (flags !== "00") {
         $(this).append('<input type="hidden" name="flags" value="' + flags + '" />');
     }
@@ -186,41 +186,6 @@ $(function () {
         if (editMode == "Detail") {
 
             callAttributeApi(`/admin/product/api/${productId}/attributes`);
-            $("#addNewAttributeBtn").on("click", function (event) {
-                event.preventDefault();
-                $("#addModalBtn").click();
-            })
-
-            $(".saveAtrsBtn").on("click", function (event) {
-                event.preventDefault();
-                saveCurrentFormAttribute(this);
-
-            });
-
-            $("#tag_delete_many").on("click", function (event) {
-
-                event.preventDefault();
-                let checkboxes = $('tr input[type="checkbox"]:checked');
-                for (checkbox of checkboxes) {
-                    let nameToDel = $(checkbox).parent().parent().find("td:nth-child(2)").text();
-                    removeAttributeByName(nameToDel, attributesObject);
-                    $(checkbox).closest("tr").remove();
-
-                }
-            });
-            $(document).on("click", "#saveallchangeBtn", function (event) {
-                event.preventDefault();
-                saveAllChange(attributesObject, $(this).attr("href"));
-
-            })
-
-
-            $(document).on("click", '.tag_delete_one', function (event) {
-                event.preventDefault();
-                let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
-                removeAttributeByName(nameToDel, attributesObject);
-                $(this).closest("tr").remove();
-            })
 
 
         }
@@ -229,31 +194,37 @@ $(function () {
     });
 
 })
+//Edit mode = detail
+$("#addNewAttributeBtn").on("click", function (event) {
+    event.preventDefault();
+    $("#addModalBtn").click();
+})
+
+$(".saveAtrsBtn").on("click", function (event) {
+    event.preventDefault();
+    saveCurrentFormAttribute(this);
+
+});
+
+$("#tag_delete_many").on("click", function (event) {
+
+    event.preventDefault();
+    let checkboxes = $('tr input[type="checkbox"]:checked');
+    $(checkboxes).each(function () {
+        let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
+        delete attributesObject[nameToDel];
+        $(this).closest("tr").remove();
+
+    })
+});
 
 
-function saveAllChange(data, url) {
-
-    $.ajax({
-        type: "post",
-        url: url,
-        contentType: "application/json",
-        data: JSON.stringify(data),
-
-        success: function (res) {
-            location.reload();
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Can not call this Api',
-                // text: 'Something went wrong!',
-
-            })
-        }
-
-
-    });
-}
+$(document).on("click", '.tag_delete_one', function (event) {
+    event.preventDefault();
+    let nameToDel = $(this).parent().parent().find("td:nth-child(2)").text();
+    delete attributesObject[nameToDel];
+    $(this).closest("tr").remove();
+})
 
 
 $(document).on("click", ".push", function (event) {
@@ -279,28 +250,37 @@ $(document).on("click", ".editAttributeBtn", function (event) {
 
 })
 
-function renderDataForAttributeTable(data) {
+function renderDataForAttributeTable(atbs) {
     let rs = "";
 
+    // alert(Object.keys(attributesObject).length)
+    if (Object.keys(atbs).length != 0) {
+        for (let atbi in atbs) {
+            let curAtr = atbs[atbi];
 
-    for (let atbi in data) {
-        let curAtr = data[atbi];
-        rs += `       <tr class="col-12">
+            rs += `       <tr class="col-12">
                 <td class="col-1"><input type="checkbox" class="atb-iddel-checkbox" value="${atbi}"></td>
                 <td class="col-5" class="atb-name-inp" ">${atbi}</td>
                 <td class="col-3"><i class="atb-active-checkbox fas fa-circle" isactive="${curAtr.active}"></i>  </td>
-                <td class="col-3">
+                  <td class="col-3">
                     <button class="editAttributeBtn btn btn-default" >Edit</button>
-                    <a class="btn btn-danger tag_delete_one"   >Delete</a>
+                    <a class="btn btn-danger tag_delete_one"  >Delete</a>
 
                 </td>
 
-            </tr>`
+            </tr>`;
+        }
+        $("#tabledata").html(rs);
+        setActiveCheckbox();
+    } else {
+        rs += "<div class=\"alert alert-warning\" role=\"alert\">\n" +
+            "There are not any attribute!" +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '           <span aria-hidden="true">&times;</span>' +
+            "        </button>" +
+            "</div>"
+        $("#attribute-table").before(rs);
     }
-    // }
-
-    $("#tabledata").html(rs);
-    setActiveCheckbox();
 
 
 }
@@ -311,14 +291,10 @@ function callAttributeApi(url) {
         type: "get",
         url: url,
         success: function (data) {
-            if (data !== "" && data !== null && data !== undefined) {
+            if (data !== null && data !== undefined) {
                 attributesObject = JSON.parse(data);
                 renderDataForAttributeTable(attributesObject);
-            } else {
-
-                alert("This category do not have any attribute");
             }
-
         },
         error: function () {
             Swal.fire({
@@ -333,9 +309,7 @@ function callAttributeApi(url) {
     });
 }
 
-//-DETAIL ATTRIBUTE TAB
 
-//COMMON METHOD
 function loadAttributeToForm(editAttributeBtn) {
     let tri = $(editAttributeBtn).parent().parent();
     let triKeyName = tri.find(".atb-iddel-checkbox").val();
@@ -407,6 +381,22 @@ function saveCurrentFormAttribute(saveFormBtn) {
 
 }
 
+$('#mainForm').submit(function () {
+    let atbString = JSON.stringify(attributesObject);
+    // console.log(atbString);
+    $(this).append(`<input type="hidden" name="atbs" />`);
+
+    let allHiddenInp = $(this).find('input[type="hidden"]');
+    $(allHiddenInp).each(function () {
+        if ($(this).attr('name') == "atbs") {
+            $(this).val(atbString);
+        }
+    })
+    return true;
+});
+
+
+//---Edit mode = detail
 //add image as paste way by a ordering
 window.addEventListener("paste", (e) => {
     if (e.clipboardData.files.length > 0) {

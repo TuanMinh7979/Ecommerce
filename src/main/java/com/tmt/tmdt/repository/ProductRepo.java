@@ -1,6 +1,7 @@
 package com.tmt.tmdt.repository;
 
 import com.tmt.tmdt.dto.response.ProductResponseDto;
+import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,5 +57,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
         @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p")
         List<ProductResponseDto> getProductDtos();
+
+
 
 }

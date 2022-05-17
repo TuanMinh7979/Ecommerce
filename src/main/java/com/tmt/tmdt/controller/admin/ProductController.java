@@ -205,21 +205,7 @@ public class ProductController {
         return productService.getProduct(id).getAtbs();
     }
 
-    @PostMapping("api/{id}/attributes/update")
-    @ResponseBody
-    public String updateAttributes(@PathVariable("id") Long id, @RequestBody String newAttributes) {
-
-
-        Product product = productService.getProduct(id);
-
-        product.setAtbs(newAttributes);
-
-
-        productService.save(product);
-
-        return newAttributes;
-
-    }
+//
 
 
 }

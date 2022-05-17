@@ -51,6 +51,8 @@ public interface ProductService {
 
     Product save(Product product);
 
+    Product savePersistence(Product product);
+
     List<ProductResponseDto> getProductDtosByCategory(Category category);
 
     Product getProductWithImagesAndCategory(Long id);
@@ -58,5 +60,7 @@ public interface ProductService {
     List<ProductResponseDto> getProductDtos();
 
     List<Integer> getListIdToQuery(Integer id);
+
+
 
 }
