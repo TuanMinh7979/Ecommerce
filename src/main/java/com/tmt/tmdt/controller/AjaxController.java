@@ -71,11 +71,20 @@ public class AjaxController {
         return categories;
     }
 
-    @GetMapping("/product/{id}/images")
-    public List<String> getImageLinks(@PathVariable("id") Long id) {
+    @GetMapping("/product/{id}/image-color-link")
+    @ResponseBody
+    public Map<String, String> getImageForClassification(@PathVariable("id") Long id) {
+        //if return String , that String must be in json format (dont need JSON.parse to obj in client)
+        //return Map<String , String> also in json format (dont need JSON.parse to obj in client)
+
+        //otherwise json resp is model -> must to parse
         Product product = productService.getProductWithImages(id);
         Set<Image> images = product.getImages();
-        return images.stream().map(img -> img.getLink()).collect(Collectors.toList());
+        Map<String, String> colorLinkMap = new HashMap<>();
+        for (Image imagei : images) {
+            colorLinkMap.put(imagei.getColor(), imagei.getLink());
+        }
+        return colorLinkMap;
     }
 
     // for admin page

@@ -30,7 +30,7 @@ public class PaymentController {
         String vnp_IpAddr = PaymentHelper.getIpAddress(req);
         String vnp_TmnCode = PaymentConfig.vnp_TmnCode;
 
-        int amount = 1000000;
+        int amount = Integer.valueOf(req.getParameter("price"))*100;
         Map vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);

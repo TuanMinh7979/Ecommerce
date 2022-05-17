@@ -1,9 +1,34 @@
+var imageColorLinkObj = {}
 $(function () {
-    ajaxGet(`/ajax/product/${productId}` + "/images", renderProductImagesSlide);
+    getImageMap();
     ajaxGet(`/ajax/product/${productId}` + "/attributes", renderProductDetail);
 
 
 })
+
+function getImageMap() {
+    $.ajax({
+        type: "get",
+        url: `/ajax/product/${productId}/image-color-link`,
+        contentType: "application/json",
+        success: function (colorLinkKV) {
+            console.log(colorLinkKV);
+            // imageColorLinkObj = JSON.parse(colorLinkKV);
+            imageColorLinkObj = colorLinkKV;
+            let links = [];
+            links = Object.values(imageColorLinkObj);
+            renderProductImagesSlide(links);
+
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: "Can not load Filter UI",
+                // text: 'Something went wrong!',
+            });
+        },
+    });
+}
 
 function renderProductDetail(data) {
     // console.log(data);
@@ -33,12 +58,28 @@ function renderProductImagesSlide(data) {
 
 }
 
-let count = 0;
-let pricei = $("#pPriceSpan").text();
-$("#buybtn").on("click", function () {
+var count = 1;
+var pricei = $("#pPriceSpan").text();
 
+$("#buybtn").on("click", function () {
+    renderImageToAddToCartModal();
     $("#showBuyModalBtn").click();
 })
+
+function renderImageToAddToCartModal() {
+    let imagesSection = "";
+    for (let colori in imageColorLinkObj) {
+        if (!colori.startsWith("no")) {
+            imagesSection += `<div><div><label>${colori}</label> <input type="radio" name="color" value="${colori}"></div>` +
+                `<img style="height: 100px; width: 100px" class="item-img" src="${imageColorLinkObj[colori]}" alt=""/></div>`
+
+        }
+    }
+
+    $("#colorChooseSection").html(imagesSection);
+    $("input:radio[name='color']:first").attr('checked', true);
+
+}
 
 $("#upbtn").click(function (e) {
     e.preventDefault();
@@ -57,6 +98,7 @@ $("#downbtn").click(function (e) {
     $("#pPriceSpan").text(pricei * count);
 });
 
+
 $('#addToCartModalBody__Submit-Btn').click(function (e) {
     e.preventDefault();
     if (localStorage.getItem("productCounts") == undefined) {
@@ -65,22 +107,45 @@ $('#addToCartModalBody__Submit-Btn').click(function (e) {
     } else {
         localStorage.setItem("productCounts", parseInt(localStorage.getItem("productCounts")) + parseInt(count));
     }
+    let addToCartModalBodySection = $(document).find("#addToCartModalBody");
 
+    //
+    let cartObjI = {};
+    let selectedColorRadio = $(addToCartModalBodySection).find('input:radio[name="color"]:checked');
+
+    cartObjI["productId"] = $("#pIdInp").val();
+    cartObjI["color"] = $(selectedColorRadio).val();
+    let choosedImg = $(selectedColorRadio).parent().parent().find(".item-img");
+    cartObjI["imageLink"] = $(choosedImg).attr("src");
+
+    cartObjI["productPrice"] = pricei;
+    cartObjI["productCount"] = String(count);
+    cartObjI["cartItemPrice"] = $("#pPriceSpan").text();
+    //
+    let cartObjKey = $("#pIdInp").val();
+    let cartObj = {};
     if (localStorage.getItem("cartObj") == undefined) {
-        let newProduct = {};
-        newProduct["id"] = $("#pIdInp").val();
-
-
+        cartObj[cartObjKey] = cartObjI;
     } else {
-
+        cartObj = JSON.parse(localStorage.getItem("cartObj"));
+        cartObj[cartObjKey] = cartObjI;
     }
+    let cartObjStr = JSON.stringify(cartObj);
+    localStorage.setItem("cartObj", cartObjStr);
 
-
+    $("#addToCartModal").modal('hide');
     alert("New product is added to cart!");
-    $("#homeCartCounter").html(localStorage.getItem("productCounts"));
+    updateCartCountNumber();
+    // $("#homeCartCounter").html(localStorage.getItem("productCounts"));
 
 
 });
+
+function updateCartCountNumber() {
+    $("#homeCartCounter").html(localStorage.getItem("productCounts") == undefined ? 0
+        : localStorage.getItem("productCounts"));
+
+}
 
 
 

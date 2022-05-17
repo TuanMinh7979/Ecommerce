@@ -1,0 +1,21 @@
+.tableFixHeight {
+    height: 660px;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.tableFixHeight tr {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+
+.tr__checkbox{
+
+    width:30px;
+    height: 30px;
+}
+
