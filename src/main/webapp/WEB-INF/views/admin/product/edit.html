@@ -25,13 +25,15 @@
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
+
+
         </div><!-- /.container-fluid -->
     </div>
 
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-10 m-auto ml-5">
+            <div class="col-9 m-auto ml-5">
 
                 <!-- Nav tabs -->
 
@@ -50,12 +52,6 @@
                     <li class="nav-item" role="presentation">
                         <a class="maintab nav-link" data-toggle="tab" href="#detail" role="tab"
                            aria-controls="messages" aria-selected="false">Detail</a>
-                    </li>
-
-
-                    <li class="nav-item" role="presentation">
-                        <a id="image-a" class="nav-link" data-toggle="tab" href="#image" role="tab"
-                           aria-controls="profile" aria-selected="false">Image</a>
                     </li>
 
 
@@ -84,10 +80,6 @@
 
                         </div>
 
-                        <div class="tab-pane" id="image" role="tabpanel">
-                            <div th:replace="admin/product/tabs/images :: content"></div>
-                        </div>
-
 
                     </div>
 
@@ -103,6 +95,19 @@
 
                     </div>
                 </form>
+
+
+            </div>
+            <div class="col-2 sidebar-menu ">
+
+
+                <ul class="menu-ul ">
+                    <li><a href="manage-image"><img style="height:60px"
+                                                    src="https://ramonsautomotive.com/wp-content/uploads/2019/10/gallery-icon-0.png?w=144"
+                                                    alt="">Images</a></li>
+
+
+                </ul>
 
 
             </div>

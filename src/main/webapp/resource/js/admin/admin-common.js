@@ -22,7 +22,7 @@ function deleteOnTable(event) {
                     that.closest("tr").remove();
                 },
                 error: function (data) {
-
+                    document.getElementById("loader").style.display="none";
 
                     // console.log(data.responseJSON);
                     Swal.fire({
@@ -85,7 +85,7 @@ function deleteManyOnTable(event) {
 
                 },
                 error: function (data) {
-
+                    document.getElementById("loader").style.display="none";
                     Swal.fire({
                         icon: 'error',
                         title: 'Can not delete',

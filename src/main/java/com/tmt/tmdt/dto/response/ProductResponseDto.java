@@ -23,7 +23,7 @@ public class ProductResponseDto {
 
     public ProductResponseDto(String name, BigDecimal price, Float discountPercent, String mainImageLink, String code) {
         this.name = name;
-        this.price = price;
+        this.price =price;
         this.discountPercent = discountPercent;
         this.mainImageLink = mainImageLink;
         this.code = code;

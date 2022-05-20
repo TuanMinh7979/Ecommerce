@@ -1,10 +1,11 @@
 package com.tmt.tmdt.controller.admin;
 
+import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
 import com.tmt.tmdt.entities.Category;
 
-import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.service.CategoryService;
+import com.tmt.tmdt.service.RootFilterEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ import java.util.*;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final RootFilterEntityService rootFilterEntityService;
 
 
     @GetMapping("")
@@ -69,7 +72,6 @@ public class CategoryController {
         model.addAttribute("category", category);
         return "admin/category/add";
     }
-
 
 
     @PostMapping("add")
@@ -136,8 +138,7 @@ public class CategoryController {
     // -DELETE
 
     // FOR ATTRIBUTE
-
-    @GetMapping("api/{id}/attributes")
+    @GetMapping("api/{id}/attribute-filter")
     @ResponseBody
     public Map<String, String> getAttributesByCategoryId(@PathVariable("id") Integer id) {
         Category category = categoryService.getCategory(id);
@@ -147,50 +148,26 @@ public class CategoryController {
         return atbAndFilter;
     }
 
-
-    @PostMapping("api/{id}/filterset-forallchild")
-    @ResponseBody
-    public Category updateAttributesWithFilterSetForChild(@PathVariable("id") Integer id,
-                                                          @RequestBody String filter) {
-        Category category = categoryService.getCategory(id);
-        category.setFilter(filter);
-        Category savedCat = categoryService.savePersistence(category);
-
-        List<Category> allSubCat = new ArrayList<>();
-        Queue<Category> queue = new ArrayDeque<>();
-        queue.add(savedCat);
-        Category cat;
-        while (!queue.isEmpty()) {
-            cat = queue.remove();
-            if (cat.getNumOfDirectSubCat() != 0) {
-                // this is direct subcat
-                queue.addAll(categoryService.getSubCategoriesByParentId(cat.getId()));
-
-            }
-            allSubCat.add(cat);
-        }
-
-        for (int i = 1; i < allSubCat.size(); i++) {
-            Category subCati = allSubCat.get(i);
-            subCati.setFilter(filter);
-            categoryService.savePersistence(subCati);
-        }
-
-        return savedCat;
-
-    }
-
-    @PostMapping("api/{id}/attributes/update/reset-ori-atb")
-    @ResponseBody
-    public String resetToOriAtb(@PathVariable("id") Integer id) {
-        Category category = categoryService.getCategory(id);
-        String oriAtb = category.getOriAtbs();
-        category.setAtbs(oriAtb);
-        categoryService.savePersistence(category);
-        return oriAtb;
-
-    }
-
     // -FOR ATTRIBUTE
+    //FOR FILTER
+    @GetMapping("api/{id}/rootfilter")
+    @ResponseBody
+    public String getFilterValue(@PathVariable("id") Integer id) {
+        Category category = categoryService.getCategory(id);
+        return rootFilterEntityService.getFilterEntity(category.getRootFilterEntity().getId()).getFilter();
+
+    }
+
+    @GetMapping("api/{id}/menu-category")
+    @ResponseBody
+    public Map<String, Object> getAvailableForMenuCategory(@PathVariable Integer id) {
+        Category category = categoryService.getCategory(id);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("childrenIdsInView", category.getChildrenIdsInView());
+        map.put("availableChilds", categoryService.getAvailableForMenuCategory(category.getId()));
+        return map;
+    }
+    // -FOR FILTER
 
 }

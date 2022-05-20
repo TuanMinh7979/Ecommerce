@@ -13,7 +13,7 @@
 }
 
 
-#page400{
+#page400 {
 
     background-image: url("../../img/404img.png");
     background-size: cover;
@@ -23,9 +23,46 @@
     background-color: #28a745;
     border-color: #3d9970;
 }
-.tr__checkbox{
 
-    width:30px;
+.tr__checkbox {
+
+    width: 30px;
     height: 30px;
+}
+
+.mini-setting-btn {
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.menu-ul {
+
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.menu-ul li {
+    margin-top: 26px;
+    width: 100%;
+    border: 2px solid lightslategray;
+
+
+}
+
+.menu-ul li a {
+    color: darkblue;
+}
+
+.menu-ul li:hover {
+    box-shadow: 0 0 5px darkblue,
+    0 0 5px darkblue,
+    0 0 5px darkblue,
+    0 0 5px darkblue;
+
+}
+
+.sidebar-menu {
+    max-width: 160px;
 }
 

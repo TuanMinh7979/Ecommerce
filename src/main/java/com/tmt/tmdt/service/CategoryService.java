@@ -1,7 +1,9 @@
 package com.tmt.tmdt.service;
 
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
+import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
+import com.tmt.tmdt.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,26 +36,21 @@ public interface CategoryService {
 
     List<Category> getCategoriesInHierarchicalFromRoot();
 
-
-    List<Category> getCategoriesInHierarchicalFromRootWithOut(int i);
-
     Category add(Category category);
 
     Category update(Category category);
+
 
     Category savePersistence(Category category);
 
     List<CategoryResponseDto> getCategoryResponseDtos();
 
-    int getNofSubCatByCategoryId(Integer categoryId);
-
-    List<Category> getSubCategoriesByParentId(Integer parentId);
-
     Category getParentByChildId(Integer childId);
 
-    Category getCategoryByProductId(Long id);
 
 
+
+    List<CategoryResponseDto> getAvailableForMenuCategory(Integer id);
 
 
 }

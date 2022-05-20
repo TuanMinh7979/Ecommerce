@@ -46,8 +46,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
         Optional<Product> getProductWithImagesAndCategory(@Param("id") Long id);
 
         // for home
-        @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p where p.category.id = :catId")
-        List<ProductResponseDto> getProductDtoByCategory(@Param("catId") Integer id);
+
 
         @Query(value = "select * from products where category_id = ?1", nativeQuery = true)
         List<Product> getProductsByCategory(Integer id);
@@ -57,7 +56,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
         @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p")
         List<ProductResponseDto> getProductDtos();
-
 
 
 }

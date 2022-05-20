@@ -103,3 +103,32 @@ table td[class*=col-], table th[class*=col-] {
     transform: rotate(180deg);
 }
 
+.menu-category {
+
+    padding: 0;
+}
+
+.menu-category li {
+    font-size: 1.2rem;
+    list-style-type: none;
+
+}
+
+.menu-category li {
+    border-bottom: 1px solid lightgrey;
+    width: 100%;
+    display: flex;
+    padding: 6px 6px 6px 6px;
+    justify-content: space-around;
+}
+
+.menu-category li input[type="checkbox"] {
+    height: 30px;
+    width: 30px;
+}
+
+.menu-category li span {
+    display: inline-block;
+    width: 160px;
+}
+

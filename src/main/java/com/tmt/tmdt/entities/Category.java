@@ -1,6 +1,7 @@
 package com.tmt.tmdt.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tmt.tmdt.converter.ListToStringConverter;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,11 +42,6 @@ public class Category extends BaseEntity implements Serializable {
     @Column(columnDefinition = "jsonb", name = "atbs")
     private String atbs;
 
-//    @JsonIgnore
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb", name = "ori_atbs")
-    private String oriAtbs;
-
     // auto-generate from name
     private String code;
 
@@ -53,7 +49,7 @@ public class Category extends BaseEntity implements Serializable {
 
     private int numOfDirectSubCat;
 
-//    @JsonIgnore
+    //    @JsonIgnore
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "filter")
     private String filter;
@@ -66,6 +62,16 @@ public class Category extends BaseEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Category> children = new HashSet<>();
+
+
+    @Column(name = "childrenIdsInView")
+    private String childrenIdsInView;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rootfilter_id")
+    private RootFilterEntity rootFilterEntity;
+
 
     public Category(String name) {
         this.name = name;

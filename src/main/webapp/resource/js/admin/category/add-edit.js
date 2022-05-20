@@ -1,5 +1,6 @@
 var attributesObject = {};
 var filterObject = {};
+var isDataLoaded = 0;
 
 $(function () {
     $.ajax({
@@ -16,7 +17,11 @@ $(function () {
             });
         },
     });
+
+
 });
+
+callAttributeFilterApi(`/admin/category/api/${categoryId}/attribute-filter`);
 
 //clear
 
@@ -26,26 +31,15 @@ $(".rotate").click(function () {
     $(this).toggleClass("down");
 });
 
-$(".nav-tabs a").on("shown.bs.tab", function (event) {
-    var editMode = $(event.target).text();
+// $(".nav-tabs a").on("shown.bs.tab", function (event) {
+//     var editMode = $(event.target).text();
 
-    if (editMode == "Detail") {
-        callAttributeApi(`/admin/category/api/${categoryId}/attributes`);
-
-    }
-});
+// });
 
 $("#addNewAttributeBtn").on("click", function (event) {
     event.preventDefault();
     $("#addModalBtn").click();
 });
-
-$("#resetOriAttributeBtn").on("click", function (event) {
-    event.preventDefault();
-    resetOriAtb();
-
-});
-
 
 $("#tag_delete_many").on("click", function (event) {
     event.preventDefault();
@@ -104,31 +98,8 @@ $("#saveCurFiltersBtn").on("click", function () {
         //   attributesObject[atbiName].filterValue = curFilterValue;
 
     });
-    if ($("#setChangeForAllChildCb").is(":checked") == false) {
-        $("#exampleModalCenter3").modal("hide");
-    } else {
-        let url = `/admin/category/api/${categoryId}/filterset-forallchild`;
-        $("#exampleModalCenter3").modal("hide");
-        document.getElementById("loader").style.display = "block";
-        $.ajax({
-            type: "post",
-            url: url,
-            contentType: "application/json",
-            data: JSON.stringify(filterObject),
 
-            success: function (res) {
-                document.getElementById("loader").style.display = "none";
-
-            },
-            error: function () {
-                Swal.fire({
-                    icon: "error",
-                    title: "Can not call this Api",
-                    // text: 'Something went wrong!',
-                });
-            },
-        });
-    }
+    $("#exampleModalCenter3").modal("hide");
 
 
 });
@@ -157,43 +128,37 @@ $('#mainForm').submit(function () {
     $(this).append(`<input type="hidden" name="atbs" />`);
     $(this).append(`<input type="hidden" name="filter" />`);
 
+
+    let checkedCateInView = $(document).find(".selected-viewcateid__cb:checkbox:checked");
+    let checkedCateInViewData = "";
+    console.log(checkedCateInView)
+    if ($(checkedCateInView) != undefined && $(checkedCateInView).length != 0) {
+
+        $(checkedCateInView).each(function () {
+            console.log($(this).val());
+            checkedCateInViewData += $(this).val();
+            checkedCateInViewData += " ";
+        })
+
+        $(this).append(`<input type="hidden" name="childrenIdsInView" />`);
+    }
+
     let allHiddenInp = $(this).find('input[type="hidden"]');
     $(allHiddenInp).each(function () {
         if ($(this).attr('name') == "atbs") {
             $(this).val(atbString);
-        } else {
+        } else if ($(this).attr('name') == "filter") {
             $(this).val(filterString);
+        } else {
+            $(this).val(checkedCateInViewData);
         }
 
     })
+
+
     return true;
 });
 
-
-function resetOriAtb() {
-    // `/admin/category/api/${categoryId}/attributes`
-    document.getElementById("loader").style.display = "block";
-    $.ajax({
-        type: "post",
-        url: `/admin/category/api/${categoryId}/attributes/update/reset-ori-atb`,
-        contentType: "application/json",
-
-        success: function (newAtb) {
-            attributesObject = newAtb;
-            document.getElementById("loader").style.display = "none";
-
-            location.reload();
-
-        },
-        error: function () {
-            Swal.fire({
-                icon: "error",
-                title: "Can not call this Api",
-                // text: 'Something went wrong!',
-            });
-        },
-    });
-}
 
 function renderCatHierarchical(data) {
     let opts = "";
@@ -232,6 +197,7 @@ function renderDataForAttributeTable(atbs) {
     let rs = "";
 
     // alert(Object.keys(attributesObject).length)
+
     if (Object.keys(atbs).length != 0) {
         for (let atbi in atbs) {
             let curAtr = atbs[atbi];
@@ -252,7 +218,7 @@ function renderDataForAttributeTable(atbs) {
         setActiveCheckbox();
     } else {
         rs += "<div class=\"alert alert-warning\" role=\"alert\">\n" +
-            "There are not any attribute!" +
+            "There are no any attribute!" +
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '           <span aria-hidden="true">&times;</span>' +
             "        </button>" +
@@ -264,17 +230,19 @@ function renderDataForAttributeTable(atbs) {
 }
 
 //COMMON METHOD
-function callAttributeApi(url) {
+function callAttributeFilterApi(url) {
     $.ajax({
         type: "get",
         url: url,
         success: function (data) {
-
             if (data !== null && data !== undefined) {
-                filterObject = JSON.parse(data.filter);
+
+                isDataLoaded = 1;
                 attributesObject = JSON.parse(data.atbs);
+                filterObject = JSON.parse(data.filter);
                 // if (Object.keys(attributesObject).length !== 0) {
                 renderDataForAttributeTable(attributesObject);
+
             }
             // } else {
             //     alert("This category do not have any attribute");
@@ -369,62 +337,6 @@ $("#editFilterBtn").on("click", function (event) {
     loadFilterData();
 });
 
-function getAndRenderCheckedFilterOpt(atbKeyNames) {
-    let requestData = {};
-    requestData["categoryId"] = categoryId;
-    requestData["atbNames"] = atbKeyNames;
-    $.ajax({
-        type: "post",
-        url: "/admin/categoryfilter/list-map",
-        data: JSON.stringify(requestData),
-        contentType: "application/json",
-
-        success: function (data) {
-            if (data === null || data === undefined || data == "") {
-                alert("System do not have any filter option for this category");
-                return;
-            } else {
-                let rs = "";
-                atbKeyNames.map(function (atbKeyName) {
-                    rs += "<div class='filters-item__div'>";
-                    rs += `<label>${atbKeyName}</label>`;
-                    rs += `<div id="${atbKeyName}OptWrapper" class="filters-item-checkboxes-wrapper">`;
-
-                    if (data[atbKeyName] !== undefined) {
-                        //case filter = 1  but filter column do not have key atbKeyName
-
-                        let keyClientVal = filterObject[atbKeyName];
-                        for (let optionDataKeyName in data[atbKeyName]) {
-                            let dataKeyClientVal = data[atbKeyName];
-                            if (keyClientVal != undefined && keyClientVal.hasOwnProperty(optionDataKeyName)) {
-                                rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' checked val="${dataKeyClientVal[optionDataKeyName]}"/>  <span>${dataKeyClientVal[optionDataKeyName]}</span>`;
-                            } else {
-                                rs += `<input id=${optionDataKeyName} class="ml-3" type='checkbox' val="${dataKeyClientVal[optionDataKeyName]}" /> <span>${dataKeyClientVal[optionDataKeyName]}</span>`;
-                            }
-                        }
-                    } else {
-                        rs += "<p>System do not have any option for this attribute</p>";
-                    }
-
-                    rs += "</div>";
-                    rs += "</div>";
-                });
-                // console.log(attributesObject);
-
-                $("#filterWrapper").html(rs);
-                $("#editFilterModalBtn").click();
-            }
-        },
-        error: function () {
-            Swal.fire({
-                icon: "error",
-                title: "Can not load content",
-                // text: 'Something went wrong!',
-            });
-        },
-    });
-}
-
 function loadFilterData() {
     let atbKeyNames = [];
     for (let atbKeyName in attributesObject) {
@@ -442,3 +354,109 @@ function loadFilterData() {
         getAndRenderCheckedFilterOpt(atbKeyNames);
     }
 }
+
+function getAndRenderCheckedFilterOpt(atbClientNames) {
+    $.ajax({
+        type: "get",
+        url: `/admin/category/api/${categoryId}/rootfilter`,
+        contentType: "application/json",
+
+        success: function (data) {
+            let rootFilter = JSON.parse(data);
+            let rs = "";
+
+            atbClientNames.map(function (pubKey) {
+                rs += "<div class='filters-item__div'>";
+                rs += `<label>${pubKey}</label>`;
+                rs += `<div id="${pubKey}OptWrapper" class="filters-item-checkboxes-wrapper">`;
+
+                if (rootFilter[pubKey] !== undefined) {
+                    //case filter = 1  but filter column do not have key pubKey
+                    let OptKV = rootFilter[pubKey];
+                    for (let optK in OptKV) {
+                        if (filterObject[pubKey] != undefined && filterObject[pubKey].hasOwnProperty(optK)) {
+                            rs += `<input id=${optK} class="ml-3" type='checkbox' checked val="${OptKV[optK]}"/>  <span>${OptKV[optK]}</span>`;
+                        } else {
+                            rs += `<input id=${optK} class="ml-3" type='checkbox' val="${OptKV[optK]}" /> <span>${OptKV[optK]}</span>`;
+                        }
+                    }
+                } else {
+                    rs += "<p>System do not have any option for this attribute</p>";
+                }
+
+                rs += "</div>";
+                rs += "</div>";
+            });
+            // console.log(attributesObject);
+
+            $("#filterWrapper").html(rs);
+            $("#editFilterModalBtn").click();
+
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: "Can not load content",
+                // text: 'Something went wrong!',
+            });
+        },
+    });
+}
+
+
+$("#miniSettingMenuCategory").on("click", function (event) {
+    event.preventDefault();
+
+    console.log($(document).find("#loader"));
+
+    $.ajax({
+        type: "get",
+        url: `/admin/category/api/${categoryId}/menu-category`,
+        contentType: "application/json",
+
+        success: function (data) {
+
+            let curIds = data.childrenIdsInView != null ? data.childrenIdsInView : "";
+            let avaIds = data.availableChilds
+            let rs = "";
+            rs += "<ul class='menu-category'>"
+
+            if (curIds != "") {
+
+                avaIds.map(function (avaIdi) {
+                    if (curIds.includes(String(avaIdi.id))) {
+                        rs += `<li><span>${avaIdi.name}</span><span>${avaIdi.numOfDirectProduct}</span><input value=${avaIdi.id} class="selected-viewcateid__cb" type="checkbox" checked/></li>`
+                    } else {
+                        rs += `<li><span>${avaIdi.name}</span> <span>${avaIdi.numOfDirectProduct}</span><input value=${avaIdi.id} class="selected-viewcateid__cb" type="checkbox" /></li>`
+                    }
+                })
+            } else {
+                avaIds.map(function (avaIdi) {
+                    rs += `<li><label>${avaIdi.name}</label> <input value=${avaIdi.id} class="selected-viewcateid__cb" type="checkbox" ></li>`
+                })
+            }
+
+
+            rs += "</ul>"
+
+
+            $("#miniSettingMenuCategoryModal .modal-body").html(rs);
+
+            $('#miniSettingMenuCategoryModal').modal('show');
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: "Can not load Menu category",
+                // text: 'Something went wrong!',
+            });
+        },
+
+
+    })
+})
+
+$("#miniSettingMenuCategoryModalSaveBtn").on("click", function () {
+
+    $("#miniSettingMenuCategoryModal").modal("hide");
+})

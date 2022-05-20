@@ -1,4 +1,3 @@
-
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="content" th:remove="tag">
@@ -16,11 +15,19 @@
             <div th:replace="comment_fragment/messages :: mes-btn"></div>
         </div>
     </div>
+    <div class="form-group">
+        <label>Num of direct sub category</label>
+        <input class="form-control" type="text" th:field="*{numOfDirectSubCat}" readonly="true">
+    </div>
+    <div class="form-group">
+        <label>Num of product</label>
+        <input class="form-control" type="text" th:field="*{numOfDirectProduct}" readonly="true">
+    </div>
+
 
     <div class="form-group">
         <select class="parent-sel" name="parent">
             <option value="1">No parent(root parent)</option>
-
 
 
         </select>

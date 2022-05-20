@@ -1,10 +1,13 @@
 package com.tmt.tmdt.repository;
 
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
+import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Category;
+import com.tmt.tmdt.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -40,10 +43,14 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
     @Query(value = "select * from categories par where par.id in (select child.parent_id from categories child where child.id= ?1)", nativeQuery = true)
     Category getParentByChildId(Integer id);
 
-    @Query(value = "select * from categories c where c.id in (select p.category_id from products p where p.id = ?1)", nativeQuery = true)
-    Optional<Category> getCategoryByProductId(Long id);
+//    @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p")
+//    List<ProductResponseDto> getProductDtos();
 
 
-//    @Query(value = "select c.parent_id from categories c where c.id = ?1", nativeQuery = true)
-//    int getParentIdByChildId(Integer childId);
+
+
+
+
+
+
 }

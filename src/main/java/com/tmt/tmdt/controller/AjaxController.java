@@ -1,14 +1,11 @@
 package com.tmt.tmdt.controller;
 
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
-import com.tmt.tmdt.dto.response.ClientFilterResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
-import com.tmt.tmdt.entities.pojo.Filter;
+import com.tmt.tmdt.entities.pojo.FilterQuery;
 import com.tmt.tmdt.repository.CategoryRepo;
-import com.tmt.tmdt.repository.ProductRepo;
-import com.tmt.tmdt.service.ImageService;
 import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.service.RoleService;
 import com.tmt.tmdt.service.impl.CategoryServiceImpl;
@@ -17,13 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,19 +24,11 @@ public class AjaxController {
     private final ProductService productService;
 
     private final CategoryServiceImpl categoryService;
-    private final CategoryRepo categoryRepo;
 
     private final RoleService roleService;
 
-    private final Filter filter;
+    private final FilterQuery filter;
 
-
-    @PostMapping("jsonAdd")
-    @ResponseBody
-    public ResponseEntity<Category> jsonAdd(@RequestBody Category category) {
-        Category savedCategory = categoryRepo.save(category);
-        return new ResponseEntity<>(savedCategory, HttpStatus.OK);
-    }
 
     @GetMapping("autocomplete-search/product")
     public List<String> getProductNamesByKw(@RequestParam("term") String kw) {
@@ -107,7 +90,6 @@ public class AjaxController {
     }
 
     @PostMapping("filter/ui-opt-name")
-
     public Map<String, String> getUiOptNameMap(@RequestBody List<String> filterAtbs) {
         Map<String, String> ori = filter.getUiOptName();
         Map<String, String> kvAtbUiname = new HashMap<>();
@@ -118,34 +100,15 @@ public class AjaxController {
         return kvAtbUiname;
     }
 
-    @PostMapping("filter/selected-tag-value")
-    @ResponseBody
-    public List<ClientFilterResponseDto> getSelectedTagValue(
-            @RequestBody Map<String, String> urlAtbNameOptionCodeMap) {
-        Map<String, String> atbUinameMap = filter.getUiOptName();
-        List<String> atbNames = new ArrayList<>(urlAtbNameOptionCodeMap.keySet());
-        List<String> optionCodes = new ArrayList<String>(urlAtbNameOptionCodeMap.values());
 
-        List<Map<String, String>> listMap = filter.getAllMap();
-        List<ClientFilterResponseDto> forClientSelectedTags = new ArrayList<>();
+//    @PostMapping("category/{id}/filter")
+//    @ResponseBody
+//    public String getSelectedTagValue(@PathVariable Integer id) {
+//        Category category = categoryService.getCategory(id);
+//        return category.getFilter();
+//    }
 
-        for (int i = 0; i < optionCodes.size(); i++) {
-            for (Map<String, String> mapI : listMap) {
 
-                String tagValue = mapI.get(optionCodes.get(i));
-                if (tagValue != null) {
-                    ClientFilterResponseDto dto = new ClientFilterResponseDto(
-                            optionCodes.get(i),
-                            atbUinameMap.get(atbNames.get(i)),
-                            tagValue);
-                    forClientSelectedTags.add(dto);
 
-                    break;
-                }
-            }
-        }
-        return forClientSelectedTags;
-
-    }
 
 }

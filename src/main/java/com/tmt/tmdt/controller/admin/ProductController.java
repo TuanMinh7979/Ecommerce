@@ -98,26 +98,17 @@ public class ProductController {
 
     @PostMapping("add")
 //    @Transactional
-    public String add(Model model,
-                      @RequestParam("file") FileRequestDto mainImageDto,
-                      @RequestParam(value = "mainColor", required = false) String mainColor,
-                      @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
-                      @RequestParam(value = "extraColor", required = false) List<String> extraColors,
-                      @Valid @ModelAttribute("product") Product product, BindingResult result) {
+    public String add(Model model, @Valid @ModelAttribute("product") Product product, BindingResult result) {
         if (productService.existByName(product.getName())) {
 
             result.rejectValue("name", "nameIsExist");
         }
         if (!result.hasErrors()) {
-            try {
-                product.setAtbs(product.getCategory().getAtbs());
-                productService.add(product, mainImageDto, mainColor, extraImageDtos, extraColors);
-                return "redirect:/admin/product";
-            } catch (IOException e) {
-                model.addAttribute("message", "Can not read your file, try again please!");
 
-                return "admin/product/add";
-            }
+            product.setAtbs(product.getCategory().getAtbs());
+            productService.add(product);
+            return "redirect:/admin/product";
+
         }
         //handle loi bindding
         return "admin/product/add";
@@ -138,9 +129,9 @@ public class ProductController {
 
         if (!result.hasErrors()) {
             if (flags == null) {
-                productService.save(product);
+                productService.updateWithChgParent(product);
             } else {
-                productService.update(product, mainImageDto, mainColor, extraImageDtos, extraColors, delImageIds, flags);
+                productService.update(product);
             }
             return "redirect:/admin/product";
         }

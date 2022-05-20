@@ -49,7 +49,6 @@ public class UserEntity extends BaseEntity implements Serializable {
     private Image image;
 
     @Enumerated(EnumType.STRING)
-
     private UserStatus status;
 
     @JsonIgnore

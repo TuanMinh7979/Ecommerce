@@ -41,25 +41,20 @@ public interface ProductService {
     Product getProductWithImages(Long id);
 
 
-    Product add(Product product, FileRequestDto fileRequestDto, String mainColor,
-                List<FileRequestDto> fileRequestDtos, List<String> extraColors)
-            throws IOException;
+    Product add(Product product);
 
-    Product update(Product product, FileRequestDto file, String mainColor,
-                   List<FileRequestDto> files, List<String> extraColors,
-                   String ids, String flags) throws IOException;
 
-    Product save(Product product);
+    Product update(Product product);
+
+    Product updateWithChgParent(Product product);
 
     Product savePersistence(Product product);
 
-    List<ProductResponseDto> getProductDtosByCategory(Category category);
 
     Product getProductWithImagesAndCategory(Long id);
 
     List<ProductResponseDto> getProductDtos();
 
-    List<Integer> getListIdToQuery(Integer id);
 
 
 

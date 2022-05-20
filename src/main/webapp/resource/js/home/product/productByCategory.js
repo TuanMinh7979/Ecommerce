@@ -1,6 +1,6 @@
 $(function () {
 
-    loadFilterUI();
+
     $("#select").on("change", function () {
         if ($(this).val() === "important") {
             $(this).addClass("red");
@@ -12,39 +12,40 @@ $(function () {
         $(this).toggleClass("active");
     });
 });
+loadFilterUI();
 
 
 //
 function loadFilterUI() {
     let curUrl = window.location.href;
-    let categoryId ="";
+    let categoryId = "";
     if (curUrl.indexOf("?") == -1) {
-         categoryId = curUrl.substring(curUrl.lastIndexOf(".") + 1);
+        categoryId = curUrl.substring(curUrl.lastIndexOf(".") + 1);
     } else {
-         categoryId = curUrl.substring(curUrl.lastIndexOf(".") + 1, curUrl.indexOf("?"));
+        categoryId = curUrl.substring(curUrl.lastIndexOf(".") + 1, curUrl.indexOf("?"));
     }
 
     let newurl = '/ajax/category/' + `${categoryId}` + '/filter';
     // console.log(newurl);
     $.ajax({
-      type: "get",
-      url: newurl,
-      contentType: "application/json",
-      success: function (filterSet) {
+        type: "get",
+        url: newurl,
+        contentType: "application/json",
+        success: function (filterSet) {
 
-        renderFilterUI(filterSet);
-      },
-      error: function () {
-        Swal.fire({
-          icon: "error",
-          title: "Can not load Filter UI",
-          // text: 'Something went wrong!',
-        });
-      },
+            renderFilterUI(filterSet, categoryId);
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: "Can not load Filter UI",
+                // text: 'Something went wrong!',
+            });
+        },
     });
 }
 
-function renderFilterUI(filterSet) {
+function renderFilterUI(filterSet, categoryId) {
     let filterSetKObjs = JSON.parse(filterSet);
 
     $.ajax({
@@ -80,7 +81,9 @@ function renderFilterUI(filterSet) {
             }
 
             $("#listFilter").html(rs);
-            loadSelectedTags();
+            if (categoryFilter != undefined) {
+                renderSelectedTag(kvAtbUiName);
+            }
         },
         error: function () {
             Swal.fire({
@@ -133,41 +136,29 @@ function filterOptionValueClick(thisAtag, event) {
     window.location.href = newurl;
 }
 
-function loadSelectedTags() {
+function renderSelectedTag(kvAtbUiName) {
     let params = new URL(document.location).searchParams;
     let keys = {};
 
-    for (par of params.keys()) {
+    for (let par of params.keys()) {
         keys[par] = params.get(par);
     }
-    $.ajax({
-        type: "post",
-        url: "/ajax/filter/selected-tag-value",
-        data: JSON.stringify(keys),
-        contentType: "application/json",
-        success: function (data) {
-            let rs = "";
-            data.map(function (filteri) {
-                rs += `<div class="filter-tag">
-        ${filteri.optionClientName} : ${filteri.optionValue}
-        <button type="button" id ="${filteri.optionCode}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">
+
+
+    let filter = JSON.parse(categoryFilter);
+    let rs = "";
+    for (let parK in keys) {
+        rs += `<div class="filter-tag">
+        ${kvAtbUiName[parK]} : ${filter[parK][keys[parK]]}
+        <button type="button" id ="${keys[parK]}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
         </div>`;
-
-                $("#listFilterBy").html(rs);
-            });
-        },
-        error: function () {
-            Swal.fire({
-                icon: "error",
-                title: "Can not load selected tag",
-                // text: 'Something went wrong!',
-            });
-        },
-    });
+        $("#listFilterBy").html(rs);
+    }
 }
+
 
 $(document).on("click", ".filter-tag-close", function (event) {
     event.preventDefault();

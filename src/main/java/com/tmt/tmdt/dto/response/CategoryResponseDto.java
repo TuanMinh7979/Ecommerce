@@ -19,6 +19,7 @@ public class CategoryResponseDto {
     private String code;
     private Integer parentId;
     private Integer numOfDirectSubCat;
+    private Integer numOfDirectProduct;
 
 
     public CategoryResponseDto(int id, String name, String code, Integer parentId) {
@@ -28,19 +29,16 @@ public class CategoryResponseDto {
         this.parentId = parentId;
     }
 
-    public CategoryResponseDto(int id, String name, String code) {
+
+    public CategoryResponseDto(int id, String name) {
         this.id = id;
         this.name = name;
-        this.code = code;
-
     }
 
-    public CategoryResponseDto(Integer id, String name, String code, Integer parentId, Integer numOfDirectSubCat) {
+    public CategoryResponseDto(int id, String name, int numOfDirectProduct) {
         this.id = id;
         this.name = name;
-        this.code = code;
-        this.parentId = parentId;
-        this.numOfDirectSubCat = numOfDirectSubCat;
+        this.numOfDirectProduct = numOfDirectProduct;
     }
 
 

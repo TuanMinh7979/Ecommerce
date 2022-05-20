@@ -4,6 +4,7 @@ import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.repository.CategoryRepo;
+import com.tmt.tmdt.repository.ProductRepo;
 import com.tmt.tmdt.service.CategoryService;
 import com.tmt.tmdt.util.TextUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,15 +13,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+
     // dont have input but away depend on a input field -> save method
     private final CategoryRepo cateRepository;
+    private final ProductRepo productRepo;
 
     @Override
     public Category getCategory(Integer id) {
@@ -38,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
         return cateRepository.findAll(p);
     }
 
+
     @Override
     public Category add(Category category) {
         // category.setAttributes(category.getParent().getAttributes());
@@ -46,9 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setAtbs(parentCategory.getAtbs());
 
-        category.setOriAtbs(parentCategory.getAtbs());
-
         category.setFilter(parentCategory.getFilter());
+
+        category.setRootFilterEntity(parentCategory.getRootFilterEntity());
+
+        category.setChildrenIdsInView("");
 
         parentCategory.setNumOfDirectSubCat(parentCategory.getNumOfDirectSubCat() + 1);
         cateRepository.save(parentCategory);
@@ -59,18 +68,24 @@ public class CategoryServiceImpl implements CategoryService {
         return cateRepository.save(category);
     }
 
+
     @Override
     public Category update(Category category) {
+//        entityManager.merge()
+        Category oldCategory = getCategory(category.getId());
+        if (category.getChildrenIdsInView() == null) {
+            category.setChildrenIdsInView(oldCategory.getChildrenIdsInView());
+        }
         category.setCode(TextUtil.generateCode(category.getName(), Long.valueOf(category.getId())));
-//        category.setAtbs(oldCategory.getAtbs());
-        category.setOriAtbs(getCategory(category.getId()).getOriAtbs());
-//        category.setFilter(oldCategory.getFilter());
+        category.setRootFilterEntity(oldCategory.getRootFilterEntity());
+        if (category.getId() == 1) return cateRepository.save(category);
 
-        //rare case: change to new parent category
-        Category oldParentCat = getParentByChildId(category.getId());
-        if (oldParentCat.getId() != category.getParent().getId()) {
+        if (oldCategory.getParent().getId() != category.getParent().getId()) {
 //            change parent category//
+            Category oldParentCat = getCategory(category.getParent().getId());
+
             Category newParentCat = category.getParent();
+
             newParentCat.setNumOfDirectSubCat(newParentCat.getNumOfDirectSubCat() + 1);
             cateRepository.save(newParentCat);
 
@@ -78,17 +93,15 @@ public class CategoryServiceImpl implements CategoryService {
             oldParentCat.setNumOfDirectSubCat((oldParentCat.getNumOfDirectSubCat() - 1) > 0 ? (oldParentCat.getNumOfDirectSubCat() - 1) : 0);
             cateRepository.save(oldParentCat);
         }
-        ///rare case
-
         return cateRepository.save(category);
     }
 
-    //    persistenceCate that is from server , not from client
+
     @Override
     public Category savePersistence(Category persistenceCate) {
+        //    persistenceCate that is from server , not from client
         return cateRepository.save(persistenceCate);
     }
-    //if add or update with dependencies in other table need a updatewithDependencies method.
 
 
     @Override
@@ -96,15 +109,6 @@ public class CategoryServiceImpl implements CategoryService {
         return cateRepository.getCategoryResponseDtos();
     }
 
-    @Override
-    public int getNofSubCatByCategoryId(Integer categoryId) {
-        return cateRepository.getNofSubCatByCategoryId(categoryId);
-    }
-
-    @Override
-    public List<Category> getSubCategoriesByParentId(Integer parentId) {
-        return cateRepository.getSubCategoriesByParentId(parentId);
-    }
 
     @Override
     public Category getParentByChildId(Integer childId) {
@@ -116,6 +120,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category parent = getParentByChildId(id);
         parent.setNumOfDirectSubCat((parent.getNumOfDirectSubCat() - 1) > 0 ? (parent.getNumOfDirectSubCat() - 1) : 0);
+
+        if (parent.getChildrenIdsInView().indexOf(String.valueOf(id)) != -1) {
+            String idChildrenInView = parent.getChildrenIdsInView();
+            idChildrenInView.replace(String.valueOf(id), "");
+            idChildrenInView = idChildrenInView.trim();
+            parent.setChildrenIdsInView(idChildrenInView);
+        }
         cateRepository.save(parent);
         cateRepository.deleteById(id);
     }
@@ -123,14 +134,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategories(Integer[] ids) {
         for (Integer id : ids) {
-
-            Category parent = getParentByChildId(id);
-            parent.setNumOfDirectSubCat(
-                    (parent.getNumOfDirectSubCat() - 1) > 0 ? (parent.getNumOfDirectSubCat() - 1) : 0);
-            cateRepository.save(parent);
-            cateRepository.deleteById(id);
+            deleteById(id);
         }
     }
+
 
     @Override
     public boolean existByName(String name) {
@@ -165,17 +172,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
-    @Override
-    public List<Category> getCategoriesInHierarchicalFromRootWithOut(int i) {
-        List<Category> categories = getCategoriesInHierarchicalFromRoot();
-        for (Category category : categories) {
-            if (category.getId() == i) {
-                categories.remove(category);
-                break;
-            }
-        }
-        return categories;
-    }
 
     // non overide
     public void reRender(List<Category> rs, List<Category> all, Integer id, String split) {
@@ -192,12 +188,24 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
-    @Override
-    public Category getCategoryByProductId(Long id) {
-        return cateRepository.getCategoryByProductId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category have product id: " + id + " is not found"));
-    }
+    public List<CategoryResponseDto> getAvailableForMenuCategory(Integer parentId) {
+        Category category = cateRepository.findById(parentId).
+                orElseThrow(() -> new ResourceNotFoundException("Category with id " + parentId + " not found"));
+        List<CategoryResponseDto> allChildHasProduct = new ArrayList<>();
+        Queue<Category> queue = new ArrayDeque<>();
+        queue.add(category);
+        Category cat;
+        while (!queue.isEmpty()) {
+            cat = queue.remove();
+            if (cat.getNumOfDirectSubCat() != 0) {
+                queue.addAll(cateRepository.getSubCategoriesByParentId(cat.getId()));
+            }
+            if (cat.getNumOfDirectProduct() > 0)
+                allChildHasProduct.add(new CategoryResponseDto(cat.getId(), cat.getName(), cat.getNumOfDirectProduct()));
+        }
+        return allChildHasProduct;
 
+    }
 
 
 }

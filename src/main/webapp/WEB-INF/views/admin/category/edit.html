@@ -47,9 +47,23 @@
                 </ul>
 
                 <form th:id="mainForm" th:action="@{/admin/category/update}" th:object="${category}" method="post">
+                    <div class="col-12 d-flex justify-content-end">
+                        <div class="dropdown">
+                            <button class="mini-setting-btn btn " type="button"
+                                    id="miniSettingBtn" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
 
+                            <div class="dropdown-menu" aria-labelledby="miniSettingBtn">
+                                <a class="dropdown-item" id="miniSettingMenuCategory" href="#">Menu Category</a>
+
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="tab-content">
+
                         <div class="tab-pane active" id="general" role="tabpanel">
                             <div th:replace="admin/category/tabs/general :: content"></div>
 
@@ -77,14 +91,46 @@
 
             </div>
         </div>
+
+
+        <!--        Modal-->
+        <!--        menu category setting-->
+        <div class="modal fade" id="miniSettingMenuCategoryModal" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalCenterTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Menu Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="miniSettingMenuCategoryModalSaveBtn" class="btn btn-primary">Save
+                            changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        -->
     </div>
 
+
+
 </div>
+
 
 <th:block layout:fragment="addscript">
     <script th:inline="javascript">    // Enable Thymeleaf inlining
     var categoryId = [[${category.id}]]; 	// Behaves just like in HTML
-    var categoryParentId = [[${category.parent.id}]];
+    var categoryParentId = [[${category.parent != null ? category.parent.id: null }]];
 
     </script>
 
