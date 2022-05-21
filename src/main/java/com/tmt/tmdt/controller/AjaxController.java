@@ -1,5 +1,6 @@
 package com.tmt.tmdt.controller;
 
+import com.tmt.tmdt.dto.request.FileRequestDto;
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
@@ -101,14 +102,21 @@ public class AjaxController {
     }
 
 
-//    @PostMapping("category/{id}/filter")
+    //    @PostMapping("category/{id}/filter")
 //    @ResponseBody
 //    public String getSelectedTagValue(@PathVariable Integer id) {
 //        Category category = categoryService.getCategory(id);
 //        return category.getFilter();
 //    }
 
-
+//    ,  consumes = {"multipart/form-data"}
+    @PostMapping(value = "/testformdata")
+    public String getdata(@ModelAttribute FileRequestDto formdata) {
+        System.out.println(formdata.getFilename());
+        System.out.println(formdata.getFile().getSize());
+        System.out.println("__________________________________IJIJIJIJ");
+        return "thancong";
+    }
 
 
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<button id="sub">abxc</button>
+<form id="formData" method="post" enctype="multipart/form-data">
+    <input id="fileInp" name="file" type="file">
+</form>
+<script>
+    // var formData = new FormData($('#formData')[0]);
+
+    var formData = new FormData();
+    formData.append("filename", "newfilename");
+
+
+    $("#sub").on("click", function () {
+        formData.append("file", $("#fileInp")[0].files[0])
+        console.log(formData);
+
+        var object = {};
+        formData.forEach(function (value, key) {
+            object[key] = value;
+        });
+        var json = JSON.stringify(object);
+        console.log(json);
+        // $.ajax({
+        //     url: "/ajax/testformdata",
+        //     enctype: 'multipart/form-data',
+        //     type: "Post",
+        //     data: formData,
+        //     cache: false,
+        //     processData: false,
+        //     contentType: false,
+        //
+        //     success(data) {
+        //         console.log(data);
+        //
+        //     },
+        //     error: function (request, status, error) {
+        //
+        //     }
+
+    // });
+
+    })
+    ;
+</script>
+</body>
+</html>

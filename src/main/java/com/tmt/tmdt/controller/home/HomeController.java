@@ -140,4 +140,11 @@ public class HomeController {
         return "home/cart";
     }
 
+    @GetMapping("test")
+    public String showtest() {
+        return "home/test.html";
+    }
+
+
+
 }

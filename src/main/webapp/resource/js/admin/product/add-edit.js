@@ -119,63 +119,6 @@ function renderCatHierarchical(data) {
 
 }
 
-//CALL CATEGORIES FOR FORM
-
-
-$(document).on("change", ".file_inp", function (event) {
-    event.preventDefault();
-    changeImage(this.files[0], this, mode, "delImageIds", defaultImage)
-
-});
-
-
-function createNewEmptyExtraImage() {
-
-
-    event.preventDefault();
-    let html = '       <div class="img-wrapper col-6">\n' +
-        '\n' +
-        '<span>Extra</span>    <span class="float-right image-color-picker">' +
-        '<input name="extraColor" type="text" class="color-text" value="no color" >' +
-        '<span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>' +
-        '</span>' +
-        '            <div class="image-preview">\n' +
-        '                <i class="close-i fas fa-times"></i>\n' +
-        `                <img  src="${defaultImage}" alt="alt" class="image-preview__img"/>\n` +
-        '\n' +
-        '\n' +
-        '            </div>\n' +
-        '            <input type="file" name="files" class="file_inp"/>\n' +
-        '        </div>'
-
-
-    $("#imageWrapper").append(html);
-
-
-}
-
-
-$(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
-
-
-$(document).on("click", ".image-preview .close-i", function () {
-    // alert(productId);
-    if ($(this).parent().hasClass("saved-image-preview") && mode === "edit") {
-        if (imageChgFlag == "0") {
-            imageChgFlag = "1";
-            //chg flag to indicate the controller updatewithimages
-        }
-
-        let oldIds = document.getElementById("delImageIds").value.trim();
-        document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.id + " ";
-
-        // alert(document.getElementById("delImageIds").value);
-
-    }
-
-
-    $(this).parent().parent().remove();
-})
 
 //DETAIL ATTRIBUTE TAB
 $(function () {
@@ -423,6 +366,69 @@ window.addEventListener("paste", (e) => {
 
     }
 });
+
+
+
+//CALL CATEGORIES FOR FORM
+
+
+// $(document).on("change", ".file_inp", function (event) {
+//     event.preventDefault();
+//     changeImage(this.files[0], this, mode, "delImageIds", defaultImage)
+//
+// });
+
+
+// function createNewEmptyExtraImage() {
+//
+//
+//     event.preventDefault();
+//     let html = '       <div class="img-wrapper col-6">\n' +
+//         '\n' +
+//         '<span>Extra</span>    <span class="float-right image-color-picker">' +
+//         '<input name="extraColor" type="text" class="color-text" value="no color" >' +
+//         '<span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>' +
+//         '</span>' +
+//         '            <div class="image-preview">\n' +
+//         '                <i class="close-i fas fa-times"></i>\n' +
+//         `                <img  src="${defaultImage}" alt="alt" class="image-preview__img"/>\n` +
+//         '\n' +
+//         '\n' +
+//         '            </div>\n' +
+//         '            <input type="file" name="files" class="file_inp"/>\n' +
+//         '        </div>'
+//
+//
+//     $("#imageWrapper").append(html);
+//
+//
+// }
+
+
+// $(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
+
+
+// $(document).on("click", ".image-preview .close-i", function () {
+//     // alert(productId);
+//     if ($(this).parent().hasClass("saved-image-preview") && mode === "edit") {
+//         if (imageChgFlag == "0") {
+//             imageChgFlag = "1";
+//             //chg flag to indicate the controller updatewithimages
+//         }
+//
+//         let oldIds = document.getElementById("delImageIds").value.trim();
+//         document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.id + " ";
+//
+//         // alert(document.getElementById("delImageIds").value);
+//
+//     }
+//
+//
+//     $(this).parent().parent().remove();
+// })
+
+
+
 
 
 

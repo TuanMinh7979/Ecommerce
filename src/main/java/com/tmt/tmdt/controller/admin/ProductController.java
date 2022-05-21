@@ -118,21 +118,13 @@ public class ProductController {
 
     @PostMapping(value = "update")
     public String update(Model model,
-                         @RequestParam("file") FileRequestDto mainImageDto,
-                         @RequestParam(value = "mainColor", required = false) String mainColor,
-                         @RequestParam(value = "files", required = false) List<FileRequestDto> extraImageDtos,
-                         @RequestParam(value = "extraColor", required = false) List<String> extraColors,
-                         @RequestParam("delImageIds") String delImageIds,
-                         @RequestParam(value = "flags", required = false) String flags,
                          @Valid @ModelAttribute("product") Product product,
                          BindingResult result) throws IOException {
 
         if (!result.hasErrors()) {
-            if (flags == null) {
-                productService.updateWithChgParent(product);
-            } else {
-                productService.update(product);
-            }
+
+            productService.update(product);
+
             return "redirect:/admin/product";
         }
         return "admin/product/edit";
@@ -147,16 +139,21 @@ public class ProductController {
         try {
             //Catch casting exception
             Long id = Long.parseLong(idx);
-            product = productService.getProductWithImages(id);
-
+            product = productService.getProduct(id);
 
         } catch (NumberFormatException e) {
+            //for find by name
             e.printStackTrace();
             product = productService.getProductByName(idx);
-            product = productService.getProductWithImages(product.getId());
-
         }
-        //other exception will be handled in service
+        model.addAttribute("product", product);
+
+        return "admin/product/edit";
+    }
+
+    @GetMapping("edit/{id}/manage-image")
+    public String editImages(Model model, @PathVariable Long id) {
+        Product product = productService.getProductWithImages(id);
         model.addAttribute("product", product);
         List<Image> extraImages = new ArrayList<>();
         for (Image imagei : product.getImages()) {
@@ -170,9 +167,8 @@ public class ProductController {
         model.addAttribute("images", extraImages.stream()
                 .sorted(Comparator.comparingLong(Image::getId))
                 .collect(Collectors.toList()));
-//                .filter(img -> img.getIsMain() == false).collect(Collectors.toSet()));
-        return "admin/product/edit";
 
+        return "admin/product/product_images";
     }
 
     @PostMapping("api/delete/{id}")

@@ -15,11 +15,13 @@ import java.util.Map;
 @AllArgsConstructor
 public class FileRequestDto {
 
+    private String filename;
     private MultipartFile file;
     Map<String, String> uploadRs = new HashMap<>();
 
 
     public FileRequestDto(MultipartFile file) {
-        this.file= file;
+        this.file = file;
     }
+
 }
