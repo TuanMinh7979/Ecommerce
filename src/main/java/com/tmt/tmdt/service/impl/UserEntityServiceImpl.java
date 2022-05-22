@@ -1,7 +1,7 @@
 package com.tmt.tmdt.service.impl;
 
 import com.cloudinary.Cloudinary;
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Role;
 import com.tmt.tmdt.entities.UserEntity;
@@ -14,7 +14,6 @@ import com.tmt.tmdt.service.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +64,7 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     @Transactional
-    public void update(UserEntity userEntity, FileRequestDto fileRequestDto, String delImageId) throws IOException {
+    public void update(UserEntity userEntity, ImageRequestDto imageRequestDto, String delImageId) throws IOException {
 
         //delete old image if have
 
@@ -86,17 +85,17 @@ public class UserEntityServiceImpl implements UserEntityService {
             userEntity.setImageLink(userEntity.defaultImage());
             imageService.deleteById(imageIdToDel);
         }
-        if (!fileRequestDto.getFile().isEmpty()) {
+        if (!imageRequestDto.getFile().isEmpty()) {
             //add new image
-            fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
-            Image image = imageMapper.toModel(fileRequestDto);
+            imageRequestDto.setUploadRs(uploadService.simpleUpload(imageRequestDto.getFile()));
+            Image image = imageMapper.toModel(imageRequestDto);
 
             image.setUserEntity(userEntity);
             Image savedImage = imageService.save(image);
 
             userEntity.setImageLink(savedImage.getLink());
         }
-        if ((delImageId == null || delImageId.isEmpty()) && fileRequestDto.getFile().isEmpty()) {
+        if ((delImageId == null || delImageId.isEmpty()) && imageRequestDto.getFile().isEmpty()) {
             userEntity.setImage(getUserEntity(userEntity.getId()).getImage());
         }
 
@@ -115,13 +114,13 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Transactional
     @Override
-    public void add(UserEntity userEntity, FileRequestDto fileRequestDto) throws IOException {
+    public void add(UserEntity userEntity, ImageRequestDto imageRequestDto) throws IOException {
 
 
         //add image if have , imageRequestDto away !=null but for scable -> execute fully checking
-        if (fileRequestDto != null && !fileRequestDto.getFile().isEmpty()) {
-            fileRequestDto.setUploadRs(uploadService.simpleUpload(fileRequestDto.getFile()));
-            Image image = imageMapper.toModel(fileRequestDto);
+        if (imageRequestDto != null && !imageRequestDto.getFile().isEmpty()) {
+            imageRequestDto.setUploadRs(uploadService.simpleUpload(imageRequestDto.getFile()));
+            Image image = imageMapper.toModel(imageRequestDto);
 
             Image imageSaved = imageService.save(image);
             imageSaved.setUserEntity(userEntity);

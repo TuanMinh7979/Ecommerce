@@ -10,7 +10,7 @@
     </th:block>
 </head>
 <body>
-<div class="content-wrapper" layout:fragment="content">
+<div class="content-wrapper p-5" layout:fragment="content">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -29,18 +29,26 @@
     <br/>
     <div class="col-12">
         <button id="addNewImageExtraBtn" class="btn btn-info ">Add new extra image</button>
+
+        <button id="delManyBtn" class="btn btn-info float-right">Delete Many</button>
     </div>
     <br/>
-    <div id="imageWrapper" class="row col-12">
+    <div id="imageWrapper" class="row ">
         <th:block th:if="${product.id!=null} and ${mainImage!=null}">
-            <div th:id="${mainImage.id}" class="img-wrapper col-6">
-                <span>Main</span>
 
-                <span class="float-right image-color-picker">
-                    <input name="mainColor" type="text" class="color-text" th:value="${mainImage.color}">
-                     <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i>
-                     </span>
-                </span>
+            <div th:id="${mainImage.id}" class="main-img img-wrapper saved-img-wrapper col-6">
+
+                <div class="row img-wrapper-header">
+                    <span class="col-4 img-wrapper-header-name">Main</span>
+                    <div class="col-8 img-wrapper-header-opts row " style=" display:flex; justify-content: flex-end">
+                        <div class="opts-item colorpicker">
+                            <input name="mainColor" type="text" class="color-text" th:value="${mainImage.color}">
+                            <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
+                        </div>
+
+                        <div class="opts-item chb-item" style="display:none"><input type="checkbox"></div>
+                    </div>
+                </div>
                 <div class="image-preview saved-image-preview">
                     <th:block th:if="${mainImage!=null}">
                         <img th:src="${mainImage.link}" alt="alt" class="image-preview__img"/>
@@ -52,21 +60,28 @@
                     </th:block>
 
                 </div>
+                <input type="file" class="file_inp"/>
 
                 <button class="float-right" id="selectnone-btn">Select default</button>
             </div>
         </th:block>
 
         <th:block th:if="${product.id==null} or ${mainImage==null}">
-            <div class="img-wrapper col-6">
-                <span>Main</span>
-                <span class="float-right image-color-picker">
+            <div class="main-img img-wrapper col-6">
+                <div class="row img-wrapper-header">
+                    <span class="col-4 img-wrapper-header-name">Main</span>
 
-                    <input name="mainColor" type="text" class="color-text" value="no color" >
-                     <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
-                </span>
+                    <div class="col-8 img-wrapper-header-opts row " style=" display:flex; justify-content: flex-end">
+                        <div class="opts-item colorpicker">
+                            <input name="mainColor" type="text" class="color-text" value="no color"/>
+                            <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
+                        </div>
 
-                <div class="image-preview saved-image-preview">
+                        <div class="opts-item chb-item" style="display:none"><input type="checkbox"></div>
+                    </div>
+                </div>
+
+                <div class="image-preview ">
                     <th:block th:if="${product.mainImageLink!=null}">
                         <img th:src="${product.mainImageLink}" alt="alt" class="image-preview__img"/>
                     </th:block>
@@ -77,26 +92,35 @@
                     </th:block>
 
                 </div>
+                <input type="file" class="file_inp"/>
 
                 <button class="float-right" id="selectnone-btn">Select default</button>
             </div>
+
         </th:block>
 
 
         <th:block th:if="${images != null}" th:each="imagei : ${images}">
 
-            <div th:id="${imagei.id}" class="img-wrapper col-6">
+            <div th:id="${imagei.id}" class="img-wrapper saved-img-wrapper col-6">
+                <div class="row img-wrapper-header">
+                    <span class="col-4 img-wrapper-header-name">Extra</span>
 
-                <span>Extra</span>
-                <span class="float-right image-color-picker">
-                    <input name="extraColor" type="text" class="color-text" th:value="${imagei.color}">
-                    <span class="colorpicker__span"><i class="fas fa-eye-dropper"></i></span></span>
+                    <div class="col-8 img-wrapper-header-opts" style="display:flex; justify-content: flex-end">
+                        <div class="opts-item colorpicker">
+                            <input name="extraColor" type="text" class="color-text" th:value="${imagei.color}">
+                            <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
+                        </div>
+                        <div class="close-i opts-item"><i class="fas fa-trash"></i></div>
+                        <div class="opts-item chb-item" style="display:none"><input type="checkbox"></div>
+                    </div>
+                </div>
+
 
                 <div class="image-preview saved-image-preview">
-
-                    <i class="close-i fas fa-times"></i>
                     <img th:src="${imagei.link}" alt="alt" class="image-preview__img"/>
                 </div>
+                <input type="file" class="file_inp"/>
 
 
             </div>
@@ -108,11 +132,17 @@
     </div>
 
     <!--    Fragment-->
+    <div class="col-12 row mt-2" style="display: flex; justify-content: flex-start;">
+        <button id="saveChangesBtn" class="btn btn-success">Save changes</button>
+    </div>
+
+
+    <!--    Fragment-->
 
     <div th:replace="comment_fragment/commonColorPicker :: set-common-color"></div>
-    <!--    Fragment-->
-</div>
 
+    <input id="delImageIds" value="" type="hidden" name="delImageIds">
+</div>
 <th:block layout:fragment="addscript">
 
     <script th:inline="javascript">    // Enable Thymeleaf inlining
@@ -122,7 +152,7 @@
     </script>
 
     <script th:src="@{/resource/plugins/rich-text-editor/jquery.richtext.min.js}"></script>
-    <script th:src="@{/resource/js/admin/product/add-edit.js}"></script>
+    <script th:src="@{/resource/js/admin/product/edit.js}"></script>
     <script th:src="@{/resource/js/admin/category-product/category-product.js}"></script>
 </th:block>
 </body>

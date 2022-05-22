@@ -1,13 +1,13 @@
 package com.tmt.tmdt.converter;
 
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.web.multipart.MultipartFile;
 
-public class FileToImageDto implements Converter<MultipartFile, FileRequestDto> {
+public class FileToImageDto implements Converter<MultipartFile, ImageRequestDto> {
     @Override
-    public FileRequestDto convert(MultipartFile source) {
-        return new FileRequestDto(source);
+    public ImageRequestDto convert(MultipartFile source) {
+        return new ImageRequestDto(source);
     }
 
 

@@ -1,18 +1,15 @@
 package com.tmt.tmdt.controller;
 
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.entities.pojo.FilterQuery;
-import com.tmt.tmdt.repository.CategoryRepo;
 import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.service.RoleService;
 import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -111,9 +108,9 @@ public class AjaxController {
 
 //    ,  consumes = {"multipart/form-data"}
     @PostMapping(value = "/testformdata")
-    public String getdata(@ModelAttribute FileRequestDto formdata) {
-        System.out.println(formdata.getFilename());
-        System.out.println(formdata.getFile().getSize());
+    public String getdata(@ModelAttribute ImageRequestDto formdata) {
+//        System.out.println(formdata.getFilename());
+//        System.out.println(formdata.getFile().getSize());
         System.out.println("__________________________________IJIJIJIJ");
         return "thancong";
     }

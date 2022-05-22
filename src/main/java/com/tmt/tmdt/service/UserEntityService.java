@@ -1,6 +1,6 @@
 package com.tmt.tmdt.service;
 
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.entities.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +21,9 @@ public interface UserEntityService {
     List<UserEntity> getUserEntitys();
 
 
-    void add(UserEntity userEntity, FileRequestDto fileRequestDto) throws IOException;
+    void add(UserEntity userEntity, ImageRequestDto imageRequestDto) throws IOException;
 
-    void update(UserEntity userEntity, FileRequestDto fileRequestDto, String del) throws IOException;
+    void update(UserEntity userEntity, ImageRequestDto imageRequestDto, String del) throws IOException;
 
 
     public UserEntity save(UserEntity userEntity);

@@ -1,11 +1,14 @@
 package com.tmt.tmdt.controller.admin;
 
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
+import com.tmt.tmdt.mapper.ImageMapper;
 import com.tmt.tmdt.service.CategoryService;
+import com.tmt.tmdt.service.ImageService;
 import com.tmt.tmdt.service.ProductService;
+import com.tmt.tmdt.service.UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,9 @@ public class ProductController {
 
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final ImageMapper imageMapper;
+    private final UploadService uploadService;
+    private final ImageService imageService;
 
 
     @GetMapping("")
@@ -192,10 +198,70 @@ public class ProductController {
         return productService.getProduct(id).getAtbs();
     }
 
-//
+    @PostMapping("edit/{id}/manage-image/add")
+    @ResponseBody
+    public String addProductImages(Model model, @PathVariable Long id, @ModelAttribute ImageRequestDto imageDto) throws IOException {
+
+
+        System.out.println(imageDto.getFile());
+        imageDto.setUploadRs(uploadService.simpleUpload(imageDto.getFile()));
+        Image image = imageMapper.toModel(imageDto);
+        Product product = productService.getProduct(id);
+        image.setProduct(product);
+        Image savedImage = imageService.save(image);
+        if (savedImage.isMain()) {
+            product.setMainImageLink(savedImage.getLink());
+        }
+        productService.savePersistence(product);
+        return "thanh cong";
+    }
+
+    @PostMapping("edit/{id}/manage-image/update/{imgId}")
+    @ResponseBody
+    public String updateProductImages(Model model, @PathVariable Long id, @PathVariable Long imgId, @ModelAttribute ImageRequestDto imageDto) {
+
+        Image oldImage = imageService.getImage(imgId);
+        //just update some attribute ,image file alway null when save.
+        //if want
+        if (oldImage.getColor() != imageDto.getColor()) {
+            oldImage.setColor(imageDto.getColor());
+
+            imageService.save(oldImage);
+        }
+
+        return "thanh cong";
+
+    }
+
+    @PostMapping("edit/{id}/manage-image/delete")
+    @ResponseBody
+    public String deleteProductImagesByIds(@PathVariable Long id, @RequestParam("delImageIds") String delImageIds) throws IOException {
+
+
+        Product product = productService.getProduct(id);
+        delImageIds = delImageIds.trim();
+        List<String> strIds = Arrays.asList(delImageIds.split(" "));
+        Set<Long> ids = strIds.stream().map(Long::valueOf).collect(Collectors.toSet());
+        //remove image from database (orphan removeal and deleit in cloud)
+        for (Long idToDel : ids) {
+            if (imageService.getImage(idToDel).isMain()) {
+                product.setMainImageLink(product.defaultImage());
+                productService.savePersistence(product);
+            }
+            imageService.deleteById(idToDel);
+        }
+        return "thanh cong";
+
+    }
 
 
 }
+
+
+//
+
+
+
 
 
 

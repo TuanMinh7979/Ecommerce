@@ -56,6 +56,10 @@ public class Product extends BaseEntity implements Serializable {
 
     private String code;
 
+    public Product(Long id) {
+        super();
+    }
+
 
     @Transient
     public String defaultImage() {

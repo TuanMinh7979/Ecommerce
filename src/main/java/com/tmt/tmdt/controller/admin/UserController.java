@@ -1,7 +1,7 @@
 package com.tmt.tmdt.controller.admin;
 
 import com.tmt.tmdt.constant.UserStatus;
-import com.tmt.tmdt.dto.request.FileRequestDto;
+import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.dto.response.ViewResponseApi;
 import com.tmt.tmdt.entities.UserEntity;
 import com.tmt.tmdt.repository.UserRepo;
@@ -97,7 +97,7 @@ public class UserController {
 
     @PostMapping("/add")
     public String add(Model model,
-                       @RequestParam("file") FileRequestDto fileRequestDto,
+                       @RequestParam("imageRequestDto") ImageRequestDto imageRequestDto,
                        @Valid @ModelAttribute("user") UserEntity userEntity,
                        BindingResult result) throws IOException {
 
@@ -107,7 +107,7 @@ public class UserController {
         if (!result.hasErrors()) {
             //only upload if no binđing error occurs
             userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-            userEntityService.add(userEntity, fileRequestDto);
+            userEntityService.add(userEntity, imageRequestDto);
 
             return "redirect:/admin/user";
         }
@@ -134,7 +134,7 @@ public class UserController {
 
     public String update(Model model,
                          @RequestParam(value = "delImageId", required = false) String delImageId,
-                         @RequestParam("file") FileRequestDto fileRequestDto,
+                         @RequestParam("imageRequestDto") ImageRequestDto imageRequestDto,
                          @Valid @ModelAttribute("user") UserEntity userEntity,
                          BindingResult result) throws IOException {
 
@@ -144,7 +144,7 @@ public class UserController {
             result.rejectValue("username", "nameIsExist");
         }
         if (!result.hasErrors()) {
-            userEntityService.update(userEntity, fileRequestDto, delImageId);
+            userEntityService.update(userEntity, imageRequestDto, delImageId);
             return "redirect:/admin/user";
         }
         model.addAttribute("rolesForForm", roleService.getRoles());

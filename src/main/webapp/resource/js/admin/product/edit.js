@@ -1,22 +1,15 @@
-var mode = "";
 var attributesObject = {};
 
 var numOfImage = 1;
 var MAX_FILE_SIZE = 512000;
 
-var imageChgFlag = "0";
-var colorImageChgFlag = "0";
-
-var currentColorPickerImgId = 0;
+callAttributeApi(`/admin/product/api/${productId}/attributes`);
 
 $(function () {
     callCategoriesData();
 
     $("#shorDescription").richText();
     $("#fullDescription").richText();
-    if (document.getElementById("productId") != null) {
-        mode = "edit";
-    }
 
 
 })
@@ -24,57 +17,30 @@ $(function () {
 $("#selectnone-btn").on("click",
     function (event) {
         event.preventDefault();
-        handleSelectDefaultBtn(this, mode, "delImageIds", defaultImage);
+        handleSelectDefaultBtn(this, "delImageIds", defaultImage);
     })
 
 //Color picker
 $(document).on("click", ".colorpicker__span", function () {
-    currentColorPickerImgId = $(this).closest(".img-wrapper").attr('id');
-    console.log(currentColorPickerImgId);
+    $(this).parent().parent().find("input[type='checkbox']").prop('checked', true);
     $("#launch-cp-modal").modal("show");
 
 })
-
 $(".color-item").on("click", function () {
     let colorText = $(this).text();
+    let inpCb = $(document).find(".chb-item input[type='checkbox']:checked");
 
-    $("#" + currentColorPickerImgId).find(".color-text").val(colorText);
-    if (colorImageChgFlag == "0") {
-        colorImageChgFlag = "1";
-    }
-
+    $(inpCb).parent().parent().find(".color-text").val(colorText);
     $("#launch-cp-modal").modal("hide");
 });
 
-
 $("#launch-cp-modal").on("hidden.bs.modal", function () {
-    currentColorPickerImgId = 0;
+    let curCb = $(document).find(".chb-item input[type='checkbox']:checked")
+
+    $(curCb).prop("checked", false)
 });
 ///Color picker
 
-
-$(document).on("change", ".file_inp", function () {
-    if (imageChgFlag == "0") {
-        imageChgFlag = "1";
-    }
-})
-$(document).on("change", ".color-text", function () {
-    if (colorImageChgFlag == "0") {
-        colorImageChgFlag = "1";
-    }
-})
-
-$('#mainForm').submit(function () {
-    let flags = imageChgFlag + colorImageChgFlag;
-    // $(".color-text").each(function(){
-    //     console.log(this);
-    // })
-    if (flags !== "00") {
-        $(this).append('<input type="hidden" name="flags" value="' + flags + '" />');
-    }
-    // alert(flags)
-    return true;
-});
 
 //CALL CATEGORIES FOR FORM
 function callCategoriesData() {
@@ -98,21 +64,15 @@ function callCategoriesData() {
 
 function renderCatHierarchical(data) {
     let opts = "";
-    if (mode == "edit") {
-        data.map(function (cat) {
-            if (cat.id != productCategoryId) {
-                opts += `<option value="${cat.id}">${cat.name}</option> `
 
-            } else {
-                opts += `<option value="${cat.id}" selected>${cat.name}</option> `
-            }
-        })
-    } else {
-        data.map(function (cat) {
-            opts += `<option value="${cat.id}" >${cat.name}</option> `
+    data.map(function (cat) {
+        if (cat.id != productCategoryId) {
+            opts += `<option value="${cat.id}">${cat.name}</option> `
 
-        })
-    }
+        } else {
+            opts += `<option value="${cat.id}" selected>${cat.name}</option> `
+        }
+    })
 
 
     $("#category-sel").append(opts);
@@ -121,23 +81,8 @@ function renderCatHierarchical(data) {
 
 
 //DETAIL ATTRIBUTE TAB
-$(function () {
-
-    $('.nav-tabs a').on('shown.bs.tab', function (event) {
-        var editMode = $(event.target).text();
-
-        if (editMode == "Detail") {
-
-            callAttributeApi(`/admin/product/api/${productId}/attributes`);
 
 
-        }
-
-
-    });
-
-})
-//Edit mode = detail
 $("#addNewAttributeBtn").on("click", function (event) {
     event.preventDefault();
     $("#addModalBtn").click();
@@ -339,12 +284,11 @@ $('#mainForm').submit(function () {
 });
 
 
-//---Edit mode = detail
 //add image as paste way by a ordering
 window.addEventListener("paste", (e) => {
     if (e.clipboardData.files.length > 0) {
         let fileinputs = []
-        let curinp;
+
         fileinputs = document.querySelectorAll(".file_inp");
         fileinputs.forEach(function (inp) {
 
@@ -368,64 +312,169 @@ window.addEventListener("paste", (e) => {
 });
 
 
-
 //CALL CATEGORIES FOR FORM
 
 
-// $(document).on("change", ".file_inp", function (event) {
-//     event.preventDefault();
-//     changeImage(this.files[0], this, mode, "delImageIds", defaultImage)
-//
-// });
+$(document).on("change", ".file_inp", function (event) {
+    event.preventDefault();
+    changeImage(this.files[0], this, "delImageIds", defaultImage);
+    //remove id div if is old image in system.(dont update it -> add it)
+    let imageWrapperDiv = $(this).parent();
+    let idImageWrapperDiv = $(imageWrapperDiv).prop('id');
+    if (idImageWrapperDiv != undefined) {
+        $(imageWrapperDiv).prop('id', "-1");
+    }
+
+});
 
 
-// function createNewEmptyExtraImage() {
-//
-//
-//     event.preventDefault();
-//     let html = '       <div class="img-wrapper col-6">\n' +
-//         '\n' +
-//         '<span>Extra</span>    <span class="float-right image-color-picker">' +
-//         '<input name="extraColor" type="text" class="color-text" value="no color" >' +
-//         '<span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>' +
-//         '</span>' +
-//         '            <div class="image-preview">\n' +
-//         '                <i class="close-i fas fa-times"></i>\n' +
-//         `                <img  src="${defaultImage}" alt="alt" class="image-preview__img"/>\n` +
-//         '\n' +
-//         '\n' +
-//         '            </div>\n' +
-//         '            <input type="file" name="files" class="file_inp"/>\n' +
-//         '        </div>'
-//
-//
-//     $("#imageWrapper").append(html);
-//
-//
-// }
+function createNewEmptyExtraImage() {
 
 
-// $(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
+    event.preventDefault();
+    let html = `<div class="img-wrapper col-6">
+         <div class="row img-wrapper-header">
+                    <span class="col-4 img-wrapper-header-name">Extra</span>
+
+                    <div class="col-8 img-wrapper-header-opts row " style=" display:flex; justify-content: flex-end">
+                        <div class="opts-item colorpicker">
+                            <input name="mainColor" type="text" class="color-text" value="no color"/>
+                            <span class="colorpicker__span"><i class="colorpicker__i fas fa-eye-dropper"></i></span>
+                        </div>
+                        <div class="opts-item close-i"><i class="fas fa-trash"></i></div>
+                        <div class="opts-item chb-item" style="display:none"><input type="checkbox"></div>
+                    </div>
+                </div>
+        <div class="image-preview new-image-preview">
+            <img src="${defaultImage}" alt="alt" class="image-preview__img"/>
+        </div>
+         <input type="file" class="file_inp"/>
+
+    </div>`
+
+    $("#imageWrapper").append(html);
 
 
-// $(document).on("click", ".image-preview .close-i", function () {
-//     // alert(productId);
-//     if ($(this).parent().hasClass("saved-image-preview") && mode === "edit") {
-//         if (imageChgFlag == "0") {
-//             imageChgFlag = "1";
-//             //chg flag to indicate the controller updatewithimages
-//         }
-//
-//         let oldIds = document.getElementById("delImageIds").value.trim();
-//         document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.id + " ";
-//
-//         // alert(document.getElementById("delImageIds").value);
-//
-//     }
-//
-//
-//     $(this).parent().parent().remove();
-// })
+}
+
+
+$(document).on("click", "#addNewImageExtraBtn", createNewEmptyExtraImage);
+
+
+$(document).on("click", ".close-i", function () {
+    // alert(productId);
+    let imgWrapperDiv = $(this).parent().parent().parent();
+    let curId = $(imgWrapperDiv).prop('id');
+    if (curId != undefined && curId != "-1") {
+        let oldIds = document.getElementById("delImageIds").value.trim();
+        document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.parentElement.id + " ";
+        console.log("close-i nhe" + document.getElementById("delImageIds").value);
+        // alert(document.getElementById("delImageIds").value);
+    }
+    $(imgWrapperDiv).remove();
+})
+
+$("#saveChangesBtn").on("click", function () {
+    let delIds = document.getElementById("delImageIds").value;
+    let param = {"delImageIds": delIds};
+    ;
+    if (delIds != "") {
+        deleteImgs(param);
+    } else {
+        addUpdateTheRest();
+    }
+
+})
+
+function deleteImgs(param) {
+
+
+    $.ajax({
+        url: `/admin/product/edit/${productId}/manage-image/delete`,
+        type: "Post",
+        data: param,
+
+
+        success(data) {
+            console.log("XOA THANH CONG");
+            addUpdateTheRest();
+
+        },
+        error: function (request, status, error) {
+
+        }
+
+    });
+
+}
+
+function addUpdateTheRest() {
+    let allImageWrapper = $(".img-wrapper");
+    let url = "";
+    $(allImageWrapper).each(function () {
+        var formData = new FormData();
+        let fileInp = $(this).find(".file_inp");
+
+        alert($(this).find(".image-preview__img").prop('src'))
+        alert(defaultImage);
+
+
+        if ($(this).find(".image-preview__img").prop('src').includes(defaultImage)) {
+            return;
+        }
+
+
+        if ($(fileInp)[0].files[0] != undefined) {
+            if (($(this).attr('id') == undefined || $(this).attr('id') == "-1")) {
+                formData.append("file", $(fileInp)[0].files[0]);
+                console.log($(fileInp)[0].files[0]);
+                url = `/admin/product/edit/${productId}/manage-image/add`;
+                console.log("ADd NHA " + $(this).attr('id'))
+            }
+        } else {
+            console.log("UPDATE NHA " + $(this).attr('id'))
+            let curId = $(this).attr('id');
+            url = `/admin/product/edit/${productId}/manage-image/update/${curId}`;
+        }
+        formData.append("color", $(this).find(".color-text").val());
+        if ($(this).hasClass("main-img")) {
+            formData.append("isMain", "true");
+        }
+
+        $.ajax({
+            url: url,
+            enctype: 'multipart/form-data',
+            type: "Post",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+
+            success(data) {
+                console.log("scucesss...")
+
+            },
+            error: function (request, status, error) {
+                console.log("errorr occur")
+            }
+
+
+        })
+    })
+}
+
+function addOrUpdate(url, formdiv) {
+
+
+}
+
+$("#delManyBtn").on("click", function () {
+    $(".close-i").css("display", $(".close-i").css("display") == "none" ? "block" : "none");
+    $(".chb-item").css("display", $(".chb-item").css("display") == "block" ? "none" : "block");
+
+})
+
+
 
 
 

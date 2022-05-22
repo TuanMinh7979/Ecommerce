@@ -13,16 +13,16 @@ function deleteOnTable(event) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-            document.getElementById("loader").style.display="block";
+            document.getElementById("loader").style.display = "block";
             $.ajax({
                 type: "POST",
                 url: url,
                 success: function (data) {
-                    document.getElementById("loader").style.display="none";
+                    document.getElementById("loader").style.display = "none";
                     that.closest("tr").remove();
                 },
                 error: function (data) {
-                    document.getElementById("loader").style.display="none";
+                    document.getElementById("loader").style.display = "none";
 
                     // console.log(data.responseJSON);
                     Swal.fire({
@@ -67,7 +67,7 @@ function deleteManyOnTable(event) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-            document.getElementById("loader").style.display="block";
+            document.getElementById("loader").style.display = "block";
             $.ajax({
                 type: "post",
                 url: url,
@@ -76,7 +76,7 @@ function deleteManyOnTable(event) {
 
 
                 success: function (data) {
-                    document.getElementById("loader").style.display="none";
+                    document.getElementById("loader").style.display = "none";
                     for (checkbox of checkboxes) {
                         checkbox.parentElement.parentElement.remove();
 
@@ -85,7 +85,7 @@ function deleteManyOnTable(event) {
 
                 },
                 error: function (data) {
-                    document.getElementById("loader").style.display="none";
+                    document.getElementById("loader").style.display = "none";
                     Swal.fire({
                         icon: 'error',
                         title: 'Can not delete',
@@ -177,7 +177,7 @@ function checkFileSize(file, fileInp, maxsize) {
 }
 
 //SELECT DEFAULT IMAGE
-function handleSelectDefaultBtn(btn, mode, delIdsInpId, defaultImage) {
+function handleSelectDefaultBtn(btn, delIdsInpId, defaultImage) {
 
 
     let imageInputWrapper = $(btn).parent();
@@ -187,18 +187,17 @@ function handleSelectDefaultBtn(btn, mode, delIdsInpId, defaultImage) {
     let idTodel = imageInputWrapper.attr("id") != null ? imageInputWrapper.attr("id") : null;
 
 
-    if (idTodel != null && imagePreviewImg.attr("src") != defaultImage && mode === "edit") {
-        if (imageChgFlag == "0") {
-            imageChgFlag = "1";
-            //chg flag to indicate the controller updatewithimages
-        }
+    if (idTodel != null && imagePreviewImg.attr("src") != defaultImage) {
+
         addIdToDel(idTodel, delIdsInpId);
+        console.log("Default" + document.getElementById("delImageIds").value);
     }
     // alert(document.getElementById("delImageIds").value);
 
 
-    imageInputWrapper.find(".file_inp").val(null);
-    imagePreviewImg.attr("src", defaultImage)
+    $(imageInputWrapper).find(".file_inp").val(null);
+    $(imagePreviewImg).attr("src", defaultImage)
+
 }
 
 
@@ -207,6 +206,7 @@ function handleSelectDefaultBtn(btn, mode, delIdsInpId, defaultImage) {
 function addIdToDel(idToAdd, delIdsInpId) {
     let delIdsInp = $("#".concat(delIdsInpId));
     let oldVal = delIdsInp.val();
+    console.log(delIdsInp.val());
     if (delIdsInpId.charAt(delIdsInpId.length - 1) === 's') {
         oldVal = oldVal.trim();
         delIdsInp.val(oldVal.concat(" " + idToAdd));
@@ -219,7 +219,7 @@ function addIdToDel(idToAdd, delIdsInpId) {
 
 }
 
-function changeImage(file, fileInp, mode, delIdsInpId, defaultImage) {
+function changeImage(file, fileInp, delIdsInpId, defaultImage) {
 
 
     let imageInputWrapper = $(fileInp).parent();
@@ -243,8 +243,9 @@ function changeImage(file, fileInp, mode, delIdsInpId, defaultImage) {
         reader.readAsDataURL(file);
 
 
-        if (imageInputWrapper.attr('id') != undefined && imagePreviewImg.attr("src") != defaultImage && mode === "edit") {
+        if (imageInputWrapper.attr('id') != undefined && imagePreviewImg.attr("src") != defaultImage) {
             addIdToDel(imageInputWrapper.attr('id'), delIdsInpId);
+            console.log("change image" + document.getElementById("delImageIds").value);
         }
 
     } else {
