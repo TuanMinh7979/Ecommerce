@@ -219,6 +219,7 @@ public class ProductController {
     @PostMapping("edit/{id}/manage-image/update/{imgId}")
     @ResponseBody
     public String updateProductImages(Model model, @PathVariable Long id, @PathVariable Long imgId, @ModelAttribute ImageRequestDto imageDto) {
+        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 
         Image oldImage = imageService.getImage(imgId);
         //just update some attribute ,image file alway null when save.

@@ -30,7 +30,7 @@ $(".color-item").on("click", function () {
     let colorText = $(this).text();
     let inpCb = $(document).find(".chb-item input[type='checkbox']:checked");
 
-    $(inpCb).parent().parent().find(".color-text").val(colorText);
+    $(inpCb).parent().parent().find(".color-text").prop("value", colorText);
     $("#launch-cp-modal").modal("hide");
 });
 
@@ -203,7 +203,7 @@ function loadAttributeToForm(editAttributeBtn) {
     let triKeyName = tri.find(".atb-iddel-checkbox").val();
 //
     //-
-    let isactive = tri.find(".atb-active-checkbox").attr("isactive");
+    let isactive = tri.find(".atb-active-checkbox").prop("isactive");
 
     let editModal = $("#exampleModalCenter2");
     editModal.find(".atrNameInp").val(triKeyName);
@@ -276,7 +276,7 @@ $('#mainForm').submit(function () {
 
     let allHiddenInp = $(this).find('input[type="hidden"]');
     $(allHiddenInp).each(function () {
-        if ($(this).attr('name') == "atbs") {
+        if ($(this).prop('name') == "atbs") {
             $(this).val(atbString);
         }
     })
@@ -365,19 +365,23 @@ $(document).on("click", ".close-i", function () {
     // alert(productId);
     let imgWrapperDiv = $(this).parent().parent().parent();
     let curId = $(imgWrapperDiv).prop('id');
-    if (curId != undefined && curId != "-1") {
+    if (curId != "" && curId != "-1") {
         let oldIds = document.getElementById("delImageIds").value.trim();
-        document.getElementById("delImageIds").value = oldIds + " " + this.parentElement.parentElement.parentElement.id + " ";
-        console.log("close-i nhe" + document.getElementById("delImageIds").value);
+
+        document.getElementById("delImageIds").value = oldIds + " " + curId + " ";
+
         // alert(document.getElementById("delImageIds").value);
     }
     $(imgWrapperDiv).remove();
 })
 
 $("#saveChangesBtn").on("click", function () {
+    document.getElementById("loader").style.display = "block";
     let delIds = document.getElementById("delImageIds").value;
+    delIds = delIds.trim();
     let param = {"delImageIds": delIds};
-    ;
+
+
     if (delIds != "") {
         deleteImgs(param);
     } else {
@@ -396,7 +400,7 @@ function deleteImgs(param) {
 
 
         success(data) {
-            console.log("XOA THANH CONG");
+
             addUpdateTheRest();
 
         },
@@ -411,60 +415,97 @@ function deleteImgs(param) {
 function addUpdateTheRest() {
     let allImageWrapper = $(".img-wrapper");
     let url = "";
-    $(allImageWrapper).each(function () {
-        var formData = new FormData();
-        let fileInp = $(this).find(".file_inp");
-
-        alert($(this).find(".image-preview__img").prop('src'))
-        alert(defaultImage);
 
 
-        if ($(this).find(".image-preview__img").prop('src').includes(defaultImage)) {
-            return;
+    let mainImgWrapper = allImageWrapper[0];
+    let mainImagePreview = $(mainImgWrapper).find(".image-preview__img")
+    let mainFileInp = $(mainImgWrapper).find(".file_inp");
+    var mainFormData = new FormData();
+    if ($(mainImagePreview).prop('src').includes(defaultImage) == false) {
+
+        if ($(mainImgWrapper).prop('id') == "" || $(mainImgWrapper).prop('id') == "-1") {
+            //add
+            mainFormData.append("file", $(mainFileInp)[0].files[0]);
+            url = `/admin/product/edit/${productId}/manage-image/add`;
+
+
+        } else {
+            //update
+
+            let curId = $(mainImgWrapper).prop('id');
+            url = `/admin/product/edit/${productId}/manage-image/update/${curId}`;
+
         }
+        mainFormData.append("color", $(mainImgWrapper).find(".color-text").val());
+        mainFormData.append("isMain", "true");
 
+
+        let mainEndFlag = 0;
+        if (allImageWrapper.length == 1) {
+            mainEndFlag = 1;
+        }
+        // for (var value of mainFormData.values()) {
+        //     console.log(value);
+        // }
+        addOrUpdate(url, mainFormData, mainEndFlag);
+
+    }
+
+    for (let i = 1; i < allImageWrapper.length; i++) {
+
+        let curUrl = ""
+        let curImgWrapper = allImageWrapper[i];
+        var formData = new FormData();
+        let fileInp = $(curImgWrapper).find(".file_inp");
 
         if ($(fileInp)[0].files[0] != undefined) {
-            if (($(this).attr('id') == undefined || $(this).attr('id') == "-1")) {
+            if ($(curImgWrapper).prop('id') == "" || $(curImgWrapper).prop('id') == "-1") {
                 formData.append("file", $(fileInp)[0].files[0]);
-                console.log($(fileInp)[0].files[0]);
-                url = `/admin/product/edit/${productId}/manage-image/add`;
-                console.log("ADd NHA " + $(this).attr('id'))
+                curUrl = `/admin/product/edit/${productId}/manage-image/add`;
+
             }
         } else {
-            console.log("UPDATE NHA " + $(this).attr('id'))
-            let curId = $(this).attr('id');
-            url = `/admin/product/edit/${productId}/manage-image/update/${curId}`;
+
+            let curId = $(curImgWrapper).prop('id');
+            curUrl = `/admin/product/edit/${productId}/manage-image/update/${curId}`;
         }
-        formData.append("color", $(this).find(".color-text").val());
-        if ($(this).hasClass("main-img")) {
-            formData.append("isMain", "true");
+        formData.append("color", $(curImgWrapper).find(".color-text").val());
+        let endFlag = 0;
+
+        if (i == (allImageWrapper.length - 1)) {
+            endFlag = 1;
         }
-
-        $.ajax({
-            url: url,
-            enctype: 'multipart/form-data',
-            type: "Post",
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false,
-
-            success(data) {
-                console.log("scucesss...")
-
-            },
-            error: function (request, status, error) {
-                console.log("errorr occur")
-            }
+        addOrUpdate(curUrl, formData, endFlag);
 
 
-        })
-    })
+    }
+
 }
 
-function addOrUpdate(url, formdiv) {
 
+function addOrUpdate(url, formDataPar, endFlag) {
+    $.ajax({
+        url: url,
+        enctype: 'multipart/form-data',
+        type: "Post",
+        data: formDataPar,
+        cache: false,
+        processData: false,
+        contentType: false,
+
+        success(data) {
+            if (endFlag == 1) {
+
+                document.getElementById("loader").style.display = "none";
+                location.reload();
+            }
+        },
+        error: function (request, status, error) {
+            console.log("Some thing wrong")
+        }
+
+
+    })
 
 }
 
