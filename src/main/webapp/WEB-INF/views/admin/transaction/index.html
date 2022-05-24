@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Manage</title>
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/admin/transaction/index.css}">
+    </th:block>
+
+</head>
+<body>
+
+
+<div class="content-wrapper" layout:fragment="content">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Transaction</h1>
+                </div><!-- /.col -->
+
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="abc col-10 row mb-2">
+
+                <div class="col-2">
+                    <label> Sort By Field</label>
+                    <select id="by-sel" name="sortBy">
+                        <option value="id">id</option>
+                        <option value="total_price">total price</option>
+                        <option value="create_at">created time</option>
+
+
+                    </select>
+                </div>
+                <div class="col-2">
+                    <label>OrderBy</label>
+
+                    <select id="direction-sel" name="sortDirection">
+                        <option value="asc">ASC</option>
+                        <option value="desc">DESC</option>
+                    </select>
+
+                </div>
+                <div class="col-1">
+                    <label>Limit</label> <input value="5" style="width: 60px" type="number" id="limit-inp">
+                </div>
+                <div class="col-1">
+                    <button id="btn-filter" class="btn btn-success">FILTER</button>
+                </div>
+                <div class="col-2">
+                    <label>From:</label>
+                    <input data-date-format="dd/mm/yyyy" name="fromDate" type="date" id="fromDatepicker">
+                </div>
+                <div class="col-2">
+                    <label>To:</label>
+                    <input data-date-format="dd/mm/yyyy" name="toDate" type="date" id="toDatepicker">
+                </div>
+
+                <div class="col-2">
+                    <label>
+                        Status
+                    </label>
+
+                    <select id="status-sel" name="status">
+
+                        <option value="1">ALL</option>
+                        <option value="INIT">INIT</option>
+                        <option value="PROCESSING">PROCESSING</option>
+                        <option value="SUCCESS">SUCCESS</option>
+                        <option value="FAILED">FAILED</option>
+                    </select>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-2"><a th:href="@{/admin/category/add}" class="btn btn-info float-right ">Add</a></div>
+
+
+            <div class="col-12">
+                <table class="table table-bordered tableFixHeight">
+                    <thead>
+                    <tr>
+                        <th class="col-1">Id</th>
+                        <th class="col-2">Customer</th>
+                        <th class="col-3">Address</th>
+                        <th class="col-2">Created At</th>
+                        <th class="col-1">Total Price</th>
+                        <th class="col-1">Status</th>
+                        <th class="col-2">Action</th>
+
+                    </tr>
+                    </thead>
+                    <tbody id="tabledata">
+
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col-12"><a th:href="@{/admin/category/api/delete}" id="tag_delete_many"
+                                   class="btn btn-danger float-right ml-2 ">Delete Many</a></div>
+
+
+            <ul id="pagination-demo" class="pagination-sm col-12"></ul>
+        </div>
+    </div>
+
+    <!--    Loader-->
+    <div id="loader" class="loader" style="display: none"></div>
+</div>
+
+
+<th:block layout:fragment="addscript">
+    <script>
+        fromDatepicker.max = new Date().toISOString().split("T")[0];
+        toDatepicker.max = new Date().toISOString().split("T")[0];
+    </script>
+    <script th:src="@{/resource/js/admin/transaction/index.js}"></script>
+</th:block>
+</body>
+</html>

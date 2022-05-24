@@ -10,6 +10,18 @@ function categoryClick(event) {
     window.location.href = url;
 }
 
+const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0
+})
+
+$(".productlistItem__price").each(function () {
+    let price = $(this).prop('id');
+    $(this).text(formatter.format(parseInt(price)));
+});
+
+
 function loadTreeMenu(url) {
     $.ajax({
         type: "get",

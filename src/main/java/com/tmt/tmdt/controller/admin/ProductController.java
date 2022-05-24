@@ -213,14 +213,12 @@ public class ProductController {
             product.setMainImageLink(savedImage.getLink());
         }
         productService.savePersistence(product);
-        return "thanh cong";
+        return "";
     }
 
     @PostMapping("edit/{id}/manage-image/update/{imgId}")
     @ResponseBody
     public String updateProductImages(Model model, @PathVariable Long id, @PathVariable Long imgId, @ModelAttribute ImageRequestDto imageDto) {
-        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-
         Image oldImage = imageService.getImage(imgId);
         //just update some attribute ,image file alway null when save.
         //if want
@@ -230,7 +228,7 @@ public class ProductController {
             imageService.save(oldImage);
         }
 
-        return "thanh cong";
+        return "";
 
     }
 
@@ -251,7 +249,7 @@ public class ProductController {
             }
             imageService.deleteById(idToDel);
         }
-        return "thanh cong";
+        return "";
 
     }
 

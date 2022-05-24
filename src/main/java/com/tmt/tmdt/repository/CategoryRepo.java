@@ -34,8 +34,8 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
     @Query(value = "select new com.tmt.tmdt.dto.response.CategoryResponseDto(cat.id,cat.name, cat.code, cat.parent.id) from Category as cat")
     List<CategoryResponseDto> getCategoryResponseDtos();
 
-    @Query(value = "select count(child.id) as numOfDirectSubCat from categories par left outer join  categories child on child.parent_id = par.id where par.id = ?1 group by par.id", nativeQuery = true)
-    int getNofSubCatByCategoryId(Integer categoryId);
+//    @Query(value = "select count(child.id) as numOfDirectSubCat from categories par left outer join  categories child on child.parent_id = par.id where par.id = ?1 group by par.id", nativeQuery = true)
+//    int getNofSubCatByCategoryId(Integer categoryId);
 
     @Query(value = "from Category c where c.parent.id = :catId")
     List<Category> getSubCategoriesByParentId(@Param("catId") Integer parentId);
@@ -45,12 +45,4 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
 
 //    @Query(value = "select new com.tmt.tmdt.dto.response.ProductResponseDto(p.name, p.price, p.discountPercent, p.mainImageLink, p.code) from Product as p")
 //    List<ProductResponseDto> getProductDtos();
-
-
-
-
-
-
-
-
 }

@@ -48,9 +48,12 @@ public class HomeController {
     @GetMapping("category/{categoryCode}")
     public String showProductByCategory(Model model, @PathVariable String categoryCode,
 
-                                        @RequestParam(value = "sortBy", required = false) String sortBy,
-                                        @RequestParam(value = "sortDir", required = false) String sortDir,
+                                        @RequestParam(value = "sortBy", required = false) String sortByPar,
+                                        @RequestParam(value = "sortDir", required = false) String sortDirectionPar,
                                         @RequestParam(required = false) Map<String, String> allRequestParams) {
+
+        String sortBy = sortByPar != null ? sortByPar : "price";
+        String sortDirection = sortDirectionPar != null ? sortDirectionPar : "desc";
 
         String stringId = categoryCode
                 .substring(categoryCode.lastIndexOf(".") + 1, categoryCode.length());
@@ -99,15 +102,7 @@ public class HomeController {
 
         }
 
-        if (sortBy == null && sortDir == null) {
-            queryString.append(" order by price asc");
-        } else if (sortBy != null && sortDir != null) {
-            queryString.append(" order by " + sortBy + " " + sortDir);
-        } else if (sortBy != null) {
-            queryString.append(" order by " + sortBy + " asc");
-        } else {
-            queryString.append(" order by price" + " " + sortDir);
-        }
+        queryString.append("order by " + sortBy + " " + sortDirection);
         queryString.append(";");
 
         List<Product> products = entityManager.createNativeQuery(
@@ -144,7 +139,6 @@ public class HomeController {
     public String showtest() {
         return "home/test.html";
     }
-
 
 
 }

@@ -1,10 +1,15 @@
 var imageColorLinkObj = {}
+
+$(".pPriceSpan").text(formatter.format($(".pPriceSpan").prop('id')));
+$(".pricespan").text(formatter.format($(".pricespan").prop('id')));
 $(function () {
     getImageMap();
     ajaxGet(`/ajax/product/${productId}` + "/attributes", renderProductDetail);
 
 
 })
+
+// formatter.format(price)
 
 function getImageMap() {
     $.ajax({
@@ -59,7 +64,7 @@ function renderProductImagesSlide(data) {
 }
 
 var count = 1;
-var pricei = $("#pPriceSpan").text();
+var pricei = $(".pPriceSpan").prop('id');
 
 $("#buybtn").on("click", function () {
     renderImageToAddToCartModal();
@@ -85,7 +90,8 @@ $("#upbtn").click(function (e) {
     e.preventDefault();
     count++;
     $("#countInp").val(count);
-    $("#pPriceSpan").text(pricei * count);
+    console.log(pricei + "---" + count);
+    $(".pPriceSpan").text(formatter.format(pricei * count));
 
 });
 $("#downbtn").click(function (e) {
@@ -95,7 +101,8 @@ $("#downbtn").click(function (e) {
         count = 1;
     }
     $("#countInp").val(count);
-    $("#pPriceSpan").text(pricei * count);
+    // $(".pPriceSpan").prop('id', pricei * count);
+    $(".pPriceSpan").text(formatter.format(pricei * count));
 });
 
 
@@ -120,7 +127,7 @@ $('#addToCartModalBody__Submit-Btn').click(function (e) {
 
     cartObjI["productPrice"] = pricei;
     cartObjI["productCount"] = String(count);
-    cartObjI["cartItemPrice"] = $("#pPriceSpan").text();
+    cartObjI["cartItemPrice"] = pricei * count;
     //
     let cartObjKey = $("#pIdInp").val();
     let cartObj = {};

@@ -1,4 +1,4 @@
-#cart{
+#cart {
     margin-top: 10px;
     margin-bottom: 100px;
 
@@ -12,13 +12,32 @@
     margin-right: auto;
     width: 60%;
 }
-#cart tr td{
+
+#cart tr td {
     display: flex;
     align-items: center;
     align-content: center;
 }
-#cart tr th{
+
+#cart tr th {
     display: flex;
     align-items: center;
     align-content: center;
 }
+
+#buyBtn {
+    background-color: orange;
+    color: snow;
+    width: 100%;
+    border: 2px solid whitesmoke;
+    border-radius: 6px;
+    font-size: 26px;
+    font-weight: bold
+}
+
+#buyBtn:hover {
+    background-color: darkorange;
+
+
+}
+

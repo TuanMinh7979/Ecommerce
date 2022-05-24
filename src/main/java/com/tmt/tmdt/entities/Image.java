@@ -23,6 +23,7 @@ public class Image extends BaseEntity {
     private String link;
     private String publicId;
 
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -34,9 +35,8 @@ public class Image extends BaseEntity {
     private UserEntity userEntity;
     private boolean isMain;
 
+
     private String color;
-
-
 
 
 }

@@ -49,8 +49,6 @@ $(function () {
 })
 
 
-
-
 function HdleFilterBtn() {
     //load data sử dụng bộ filter
     let sortBy = document.getElementById("by-sel").value;
@@ -78,7 +76,6 @@ function renderData(data) {
 
 
         }
-
     )
 
     $("#tabledata").html(rs);
@@ -107,50 +104,32 @@ function renderData(data) {
     }
 
 
-
 }
 
-$(function () {
+$("#tag_delete_many").on("click", deleteManyOnTable);
+$("#btn-filter").on("click", HdleFilterBtn);
+$(document).on("click", '.tag_delete_one', deleteOnTable);
+$("#main-search-inp").on("change", function () {
+    activeKeyword = $(this).val();
 
-    //doi voi preventDefault nhu the a nên đặt onclick vì khi html render bằng ajax event bằng class hay id sẽ KHÔNG đc
-
-    $("#tag_delete_many").on("click", deleteManyOnTable);
-    $("#btn-filter").on("click", HdleFilterBtn);
-    $(document).on("click", '.tag_delete_one', deleteOnTable);
 
 })
 
-//Use event delegation for dynamically created elements(bind event on ajax loaded content)
 
-//Use event delegation for dynamically created elements:
+$("#main-search-inp").autocomplete({
+    source: "/ajax/autocomplete-search/category",
 
+    //can not fail
+    select: function (event, ui) {
+        window.location.href = "/admin/category/edit/" + ui.item.value;
 
-//autocomplete
-$(function () {
-    $("#main-search-inp").on("change", function () {
-        activeKeyword = $(this).val();
+    }
+})
+$("#main-search-btn").on("click", function () {
+    callViewApi(currentPage, null, null, null, activeKeyword);
 
-
-    })
-
-
-
-    $("#main-search-inp").autocomplete({
-        source: "/ajax/autocomplete-search/category",
-
-        //can not fail
-        select: function (event, ui) {
-            window.location.href = "/admin/category/edit/" + ui.item.value;
-
-        }
-    })
-    $("#main-search-btn").on("click", function () {
-        callViewApi(currentPage, null, null, null, activeKeyword);
-
-    })
 })
 
-//check form function
 
 
 

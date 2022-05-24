@@ -40,26 +40,25 @@
             <h5>Sort By:</h5>
         </div>
         <div class="row col-10 list-sort">
-            <button id=""class="col-2" onclick="sortBtn('price', 'desc')">high to low
+            <button id="" class="col-2" onclick="sortBtn('price', 'desc')">high to low
             </button>
-            <button class="col-2"onclick="sortBtn('price','asc')" >
+            <button class="col-2" onclick="sortBtn('price','asc')">
                 low to high
             </button>
-            <button class="col-2"onclick="sortBtn('price','asc')" >
+            <button class="col-2" onclick="sortBtn('price','asc')">
                 Hot sales
             </button>
 
-            <button class="col-2"onclick="sortBtn('price','asc')" >
+            <button class="col-2" onclick="sortBtn('price','asc')">
                 views
             </button>
-
 
 
         </div>
     </div>
     <br/>
     <div class="row">
-        <div class="col-3" style="margin-top: 10px" th:each="product :${products}">
+        <div  class="col-3" style="margin-top: 10px" th:each="product :${products}">
 
             <div class="pcard card" style="height: 360px; overflow-y: hidden; padding: 10px">
                 <div class="pcard-img card-body" style="background-size: cover;">
@@ -70,8 +69,8 @@
                     <h5 class="productlistItem__name" th:text="${product.name}"></h5>
                     <div class="infoFooter">
 
-                        <h6 class="productlistItem__price"  th:text="${#numbers.formatDecimal(product.price, 0, 0)}"><span>Đ</span>
-                        </h6>
+                        <span th:id="${product.price}" class="productlistItem__price" th:text="${product.price}">
+                        </span>
                         <button class="view-btn"><a th:href="@{'/product/'+${product.code}}">XEM NGAY </a></button>
                     </div>
 
@@ -88,7 +87,7 @@
     <script th:inline="javascript">    // Enable Thymeleaf inlining
     var categoryId = [[${categoryId}]]; 	// Behaves just like in HTML
 
-    var categoryFilter =[[${categoryFilter}]];
+    var categoryFilter = [[${categoryFilter}]];
 
     </script>
     <script th:src="@{/resource/js/home/index.js}"></script>

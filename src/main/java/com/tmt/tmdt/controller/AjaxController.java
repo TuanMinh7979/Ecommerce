@@ -99,21 +99,5 @@ public class AjaxController {
     }
 
 
-    //    @PostMapping("category/{id}/filter")
-//    @ResponseBody
-//    public String getSelectedTagValue(@PathVariable Integer id) {
-//        Category category = categoryService.getCategory(id);
-//        return category.getFilter();
-//    }
-
-//    ,  consumes = {"multipart/form-data"}
-    @PostMapping(value = "/testformdata")
-    public String getdata(@ModelAttribute ImageRequestDto formdata) {
-//        System.out.println(formdata.getFilename());
-//        System.out.println(formdata.getFile().getSize());
-        System.out.println("__________________________________IJIJIJIJ");
-        return "thancong";
-    }
-
 
 }

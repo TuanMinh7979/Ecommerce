@@ -184,20 +184,17 @@ function handleSelectDefaultBtn(btn, delIdsInpId, defaultImage) {
 
     let imagePreview = imageInputWrapper.find(".image-preview");
     let imagePreviewImg = imagePreview.find(".image-preview__img");
-    let idTodel = imageInputWrapper.attr("id") != null ? imageInputWrapper.attr("id") : null;
+    let idTodel = imageInputWrapper.attr("id") != undefined ? imageInputWrapper.attr("id") : "";
 
 
-    if (idTodel != null && imagePreviewImg.attr("src") != defaultImage) {
+    if (idTodel != "" && imagePreviewImg.attr("src") != defaultImage) {
 
         addIdToDel(idTodel, delIdsInpId);
-        console.log("Default" + document.getElementById("delImageIds").value);
+        $(imageInputWrapper).attr('id', "-1");
+        $(imageInputWrapper).find(".file_inp").val(null);
+        $(imagePreviewImg).attr("src", defaultImage)
+
     }
-    // alert(document.getElementById("delImageIds").value);
-
-
-    $(imageInputWrapper).find(".file_inp").val(null);
-    $(imagePreviewImg).attr("src", defaultImage)
-
 }
 
 

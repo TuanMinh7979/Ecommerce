@@ -15,9 +15,11 @@ import java.util.Map;
 @AllArgsConstructor
 public class ImageRequestDto {
 
-
     private String isMain;
+
     private String color;
+
+
     private MultipartFile file;
     Map<String, String> uploadRs = new HashMap<>();
 
