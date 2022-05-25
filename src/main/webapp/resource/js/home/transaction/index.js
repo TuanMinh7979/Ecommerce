@@ -8,6 +8,11 @@ if (localStorage.getItem("customerPhoneNumber") == undefined) {
         "    </div>";
 
     $("#transWrapper").html(rs);
+} else if (localStorage.getItem("transactionCount") == undefined || localStorage.getItem("transactionCount") == 0) {
+    let rs = ""
+    rs += " <div class='text-center'><h3 style='color: orange'>There no any transaction now, let buy some thing!</h3></div>"
+    rs += "<div class='text-center'><a class='btn btn-info' href='/' style='color: white' >Back to shop</a> </div>"
+    $("#transWrapper").html(rs);
 } else {
     getTransactions(localStorage.getItem("customerPhoneNumber"));
 }
@@ -55,12 +60,9 @@ function getTransactions(phoneNumber) {
 function render(data) {
     let rs = "";
     console.log(data.length);
-    if (data.length == 0) {
-        rs += " <div class='text-center'><h3 style='color: orange'>There no any transaction now, let buy some thing!</h3></div>"
-        rs += "<div class='text-center'><a class='btn btn-info' href='/' style='color: white' >Back to shop</a> </div>"
 
-    } else {
-        rs += `     <table id="transTable" class="col-12 tableFixHeight table table-striped">
+
+    rs += `     <table id="transTable" class="col-12 tableFixHeight table table-striped">
             <thead class="col-12">
             <th class="col-1 ">id</th>
             <th class="col-2 ">Name</th>
@@ -70,33 +72,33 @@ function render(data) {
             <th class="col-2">Action</th>
             </thead>
             <tbody id="transTableBody">`
-        data.map(function (trani) {
+    data.map(function (trani) {
 
-            rs += `<tr class="col-12" >
+        rs += `<tr class="col-12" >
             <td id=${trani.id} class="col-1 id-td">${trani.id}</td>
             <td class="col-2">${trani.customerName}</td>
             <td class="col-2">${trani.customerAddress}</td>
             <td class="col-3">`
-            trani.orderItemList.map(function (orderi) {
-                rs += `
+        trani.orderItemList.map(function (orderi) {
+            rs += `
             <img src=${orderi.avatar} style="width:60px; height:60px" alt="">
             <span> X ${orderi.qty}</span>`
 
-            })
+        })
 
 
-            let clientPrice = formatter.format(trani.totalPrice);
-            rs += `</td>
+        let clientPrice = formatter.format(trani.totalPrice);
+        rs += `</td>
             <td id=${trani.totalPrice} class="col-2 price-td">${clientPrice}</td>
             <td class="col-2"><a style="margin-right: 10px; color: white" class='payBtn btn btn-success'>Pay</a><a style="color: white" class='btn btn-danger trans-cancel-btn'>Cancel</a></td>
         </tr>`
 
 
-        })
-        rs += `</tbody>
+    })
+    rs += `</tbody>
         </table>`
-        rs += ` <div><a id="otherPhoneNumberBtn" class="btn btn-outline-info">Other phone number</a></div>`
-    }
+    rs += ` <div><a id="otherPhoneNumberBtn" class="btn btn-outline-info">Other phone number</a></div>`
+
     $("#transWrapper").html(rs);
 
 

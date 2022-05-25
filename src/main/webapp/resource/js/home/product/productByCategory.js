@@ -140,9 +140,20 @@ function renderSelectedTag(kvAtbUiName) {
     let params = new URL(document.location).searchParams;
     let keys = {};
 
-    for (let par of params.keys()) {
-        keys[par] = params.get(par);
+
+    let listPar = Array.from(params.keys());
+
+    if (listPar.indexOf('sortBy') > -1) {
+        listPar.splice(listPar.indexOf('sortBy'), 1);
     }
+
+
+    if (listPar.indexOf('sortDir') > -1) {
+        listPar.splice(listPar.indexOf('sortDir'), 1);
+    }
+    listPar.map((function (pari, index) {
+        keys[pari] = params.get(pari);
+    }))
 
 
     let filter = JSON.parse(categoryFilter);
@@ -150,7 +161,8 @@ function renderSelectedTag(kvAtbUiName) {
     for (let parK in keys) {
         rs += `<div class="filter-tag">
         ${kvAtbUiName[parK]} : ${filter[parK][keys[parK]]}
-        <button type="button" id ="${keys[parK]}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">
+<!--        <button type="button" id ="${keys[parK]}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">-->
+        <button type="button" id ="${parK}" class="filter-tag-close close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
@@ -162,40 +174,53 @@ function renderSelectedTag(kvAtbUiName) {
 
 $(document).on("click", ".filter-tag-close", function (event) {
     event.preventDefault();
-    let paramValue = $(this).attr("id");
-
-    let oldurl = window.location.href;
-    let paramToDelIdx = oldurl.indexOf(paramValue);
-
-    let subStr = oldurl.substring(0, paramToDelIdx);
-    let tmpStartIdx1 = subStr.lastIndexOf("&");
-    let tmpStartIdx2 = subStr.lastIndexOf("?");
-    let startIdx;
-    let endIdx;
-    if (tmpStartIdx2 < tmpStartIdx1) {
-        //tmp2 alway < tmp1 unless this is first param and tmp1 = -1
-        //2 case interparam and lasparam
-        startIdx = tmpStartIdx1;
-    } else {
-        startIdx = tmpStartIdx2;
-    }
-    let tmpEndIdx = startIdx + oldurl.substring(startIdx).indexOf("&");
-    endIdx =
-        oldurl.substring(startIdx + 1).indexOf("&") == -1
-            ? oldurl.length
-            : tmpEndIdx;
-
-    let removePart = oldurl.substring(startIdx, endIdx);
-
-    let newurl = oldurl.replace(removePart, "");
-
-    if (newurl.indexOf("?") == -1) {
-        newurl = newurl.replace("&", "?");
-    }
+    let param = $(this).attr("id");
+    let newurl = removeUrlPar(param);
 
     window.location.href = newurl;
 });
 
+function removeUrlPar(param) {
+    let oldurl = window.location.href;
+
+    let curSub = oldurl.substring(oldurl.indexOf(param) - 1);
+    let isInter = curSub.substring(1).indexOf("&") == -1 ? false : true
+    if (isInter) {
+        let start = oldurl.indexOf(curSub);
+        let end = start + curSub.substring(1).indexOf("&") + 1
+        let replacePart = oldurl.substring(start, end);
+        oldurl = oldurl.replace(replacePart, "");
+    } else {
+        oldurl = oldurl.replace(curSub, "");
+    }
+    if (oldurl.indexOf("?") == -1) {
+        oldurl = oldurl.replace("&", "?");
+    }
+    return oldurl
+}
+
+
 function sortBtn(sortBy, sortDir) {
     let oldurl = window.location.href;
+    if (oldurl.indexOf("sortBy") == -1) {
+        oldurl += "&sortBy=" + sortBy;
+    } else {
+        let curSub = oldurl.substring(oldurl.indexOf("sortBy"));
+        let oldSortBy = curSub.substring(curSub.indexOf("=") + 1, curSub.indexOf("&") != -1 ? curSub.indexOf("&") : curSub.length);
+        if (oldSortBy != sortBy) {
+            oldurl = oldurl.replace(oldSortBy, sortBy);
+        }
+    }
+
+    if (oldurl.indexOf("sortDir") == -1) {
+        oldurl += "&sortDir=" + sortDir;
+    } else {
+        let curSub = oldurl.substring(oldurl.indexOf("sortDir"));
+        let oldSortDir = curSub.substring(curSub.indexOf("=") + 1, curSub.indexOf("&") != -1 ? curSub.indexOf("&") : curSub.length);
+        if (oldSortDir != sortDir) {
+            oldurl = oldurl.replace(oldSortDir, sortDir);
+        }
+    }
+
+    window.location.href = oldurl;
 }

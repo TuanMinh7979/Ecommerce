@@ -104,7 +104,6 @@ public class HomeController {
 
         queryString.append("order by " + sortBy + " " + sortDirection);
         queryString.append(";");
-
         List<Product> products = entityManager.createNativeQuery(
                         queryString.toString(),
                         Product.class)
