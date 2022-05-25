@@ -6,16 +6,37 @@
     <title>Title</title>
     <th:block layout:fragment="addcss">
         <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
+        <link rel="stylesheet" th:href="@{/resource/css/home/transaction/index.css}">
 
 
     </th:block>
 </head>
 <body>
 <div class="content-wrapper container" layout:fragment="content">
-    SUCCESS
+
+    <div id="transWrapper">
+        <!--        <table id="transTable" class="col-12 tableFixHeight table table-striped">-->
+        <!--            <thead>-->
+        <!--            <th class="col-1 ">id</th>-->
+        <!--            <th class="col-2 ">Name</th>-->
+        <!--            <th class="col-2 ">Address</th>-->
+        <!--            <th class="col-5">Products</th>-->
+        <!--            <th class="col-1">Total price</th>-->
+        <!--            <th class="col-1">Action</th>-->
+        <!--            </thead>-->
+        <!--            <tbody id="transTableBody">-->
+
+        <!--            </tbody>-->
+        <!--        </table>-->
+
+
+    </div>
+
+
 </div>
 <th:block layout:fragment="addscript">
     <script th:src="@{/resource/js/home/index.js}"></script>
+    <script th:src="@{/resource/js/home/transaction/index.js}"></script>
 
 
 </th:block>

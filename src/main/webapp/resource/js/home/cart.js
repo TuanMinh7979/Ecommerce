@@ -1,5 +1,5 @@
 var cartObj = JSON.parse(localStorage.getItem("cartObj"));
-console.log(cartObj)
+
 $(function () {
 
         let rs = "";
@@ -131,7 +131,7 @@ function updateProductCounts() {
 }
 
 $("#buyBtn").on("click", function () {
-    document.getElementById("loader").style.display = "block";
+    // document.getElementById("loader").style.display = "block";
     let url = "/transaction/add";
     $(".err-msg").each(function () {
         $(this).remove();
@@ -168,6 +168,7 @@ $("#buyBtn").on("click", function () {
     data["transaction"] = JSON.stringify(transaction);
     data["orderItemList"] = JSON.stringify(orderItemList);
     console.log(data);
+    customerPhoneNumber = transaction["customerPhoneNumber"];
 
     $.ajax({
         type: "POST",
@@ -176,9 +177,12 @@ $("#buyBtn").on("click", function () {
         contentType: "application/json",
 
         success: function (res) {
+
+
+
             localStorage.removeItem("cartObj")
             localStorage.removeItem("productCounts");
-            document.getElementById("loader").style.display = "none";
+
             if (localStorage.getItem("cartObj") == undefined) {
 
                 if (confirm("Create new order with " + res + " successfully, go to order manage page") == true) {

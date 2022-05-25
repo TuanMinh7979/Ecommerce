@@ -10,10 +10,7 @@ import org.cloudinary.json.JSONArray;
 import org.cloudinary.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -59,5 +56,10 @@ public class HomeTransactionController {
         }
 
         return String.valueOf(savedTrans.getId());
+    }
+
+    @GetMapping("")
+    public String index() {
+        return "home/transaction/index";
     }
 }

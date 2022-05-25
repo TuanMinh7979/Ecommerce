@@ -2,12 +2,15 @@ package com.tmt.tmdt.controller;
 
 import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
+import com.tmt.tmdt.dto.response.TransactionResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.entities.pojo.FilterQuery;
+import com.tmt.tmdt.service.OrderService;
 import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.service.RoleService;
+import com.tmt.tmdt.service.TransactionService;
 import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,10 @@ public class AjaxController {
     private final RoleService roleService;
 
     private final FilterQuery filter;
+
+    private final TransactionService transactionService;
+
+    private final OrderService orderService;
 
 
     @GetMapping("autocomplete-search/product")
@@ -98,6 +105,15 @@ public class AjaxController {
         return kvAtbUiname;
     }
 
+    //client get transaction
+
+    @PostMapping("client-transaction")
+    public List<TransactionResponseDto> getTransactions(@RequestBody String phoneNumber) {
+        phoneNumber = phoneNumber.replaceAll("\"", "");
+        List<TransactionResponseDto> rs = transactionService.getCurTransactionWithOrdersByPhoneNumber(phoneNumber);
+        return rs;
+
+    }
 
 
 }

@@ -3,11 +3,7 @@ package com.tmt.tmdt.mapper.impl;
 import com.tmt.tmdt.dto.response.ProductResponseDto;
 import com.tmt.tmdt.entities.Product;
 import com.tmt.tmdt.mapper.ProductMapper;
-import com.tmt.tmdt.repository.ProductRepo;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 public class ProductMapperImpl implements ProductMapper {
