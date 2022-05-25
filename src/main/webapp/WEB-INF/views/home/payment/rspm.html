@@ -8,15 +8,55 @@
         <link rel="stylesheet" th:href="@{/resource/css/home/index.css}">
 
 
-
     </th:block>
 </head>
 <body>
 <div class="content-wrapper container" layout:fragment="content">
-abc
+    <div class="text-center">
+        <h2>Payment successfully</h2>
+
+
+    </div>
+    <h3>Transaction id: <span th:text="${payedTransaction.id}"></span></h3>
+    <table class="col-12  table table-striped">
+        <thead>
+        <th>Product</th>
+        <th>Quality</th>
+        <th>UnitPrice</th>
+        <th>SalePercent</th>
+        <th>Options</th>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${payedTransaction.orderItemList}">
+
+            <td><img th:src="${item.avatar}" style="width: 100px; height: 100px"/></td>
+            <td><span>X</span> <span th:text="${item.qty}"></span></td>
+            <td><span th:text="${item.unitPrice}"></span></td>
+            <td><span th:text="${item.salePercent}"></span>%</td>
+            <td><span th:text="${item.options}"></span></td>
+
+
+        </tr>
+        </tbody>
+    </table>
+    <div class="col-12  ">
+        <div id="price-div" class="col-3 float-right"><span class="price-span" th:id="${payedTransaction.totalPrice}"
+                                                            style="color: #1c7430; font-weight: bold; font-size: 1.6rem"></span>
+        </div>
+    </div>
+    <div class="row">
+        <a href="/" class="btn btn-success">Back to shop</a>
+    </div>
+
+</div>
 </div>
 <th:block layout:fragment="addscript">
     <script th:src="@{/resource/js/home/index.js}"></script>
+    <script>
+        let sumPrice = $("#price-div .price-span").prop('id');
+        $("#price-div .price-span").text(formatter.format(sumPrice));
+
+    </script>
 
 
 

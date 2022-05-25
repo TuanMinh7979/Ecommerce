@@ -2,10 +2,17 @@
 
 
 updateCartCountNumber();
+updateTransactionCount();
 
 function updateCartCountNumber() {
     $("#homeCartCounter").html(localStorage.getItem("productCounts") == undefined ? 0
         : localStorage.getItem("productCounts"));
+
+}
+
+function updateTransactionCount() {
+    $("#homeListOrderNumber").html(localStorage.getItem("transactionCount") == undefined ? 0
+        : localStorage.getItem("transactionCount"));
 
 }
 

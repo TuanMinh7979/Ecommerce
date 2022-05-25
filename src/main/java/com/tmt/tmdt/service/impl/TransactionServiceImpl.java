@@ -4,14 +4,12 @@ import com.tmt.tmdt.dto.response.OrderResponseDto;
 import com.tmt.tmdt.dto.response.TransactionResponseDto;
 import com.tmt.tmdt.entities.Order;
 import com.tmt.tmdt.entities.Transaction;
+import com.tmt.tmdt.exception.ResourceNotFoundException;
 import com.tmt.tmdt.mapper.OrderMapper;
 import com.tmt.tmdt.mapper.TransactionMapper;
 import com.tmt.tmdt.repository.TransactionRepo;
-import com.tmt.tmdt.service.ProductService;
 import com.tmt.tmdt.service.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,5 +50,22 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction save(Transaction transaction) {
         return transactionRepo.save(transaction);
+    }
+
+    @Override
+    public Transaction getTransactionWithOrders(Long id) {
+        return transactionRepo.getTransactionWithOrders(id).orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + id + " is not found"));
+    }
+
+    @Override
+    public Transaction getTransaction(Long id) {
+        return transactionRepo.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + id + " is not found"));
+
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        transactionRepo.deleteById(id);
     }
 }

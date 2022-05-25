@@ -28,6 +28,9 @@ public class Transaction extends BaseEntity implements Serializable {
     private String customerGender;
 
 
+    private String paidInfo;
+
+
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)

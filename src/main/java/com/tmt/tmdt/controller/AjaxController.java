@@ -1,11 +1,13 @@
 package com.tmt.tmdt.controller;
 
+import com.tmt.tmdt.constant.TransactionStatus;
 import com.tmt.tmdt.dto.request.ImageRequestDto;
 import com.tmt.tmdt.dto.response.CategoryResponseDto;
 import com.tmt.tmdt.dto.response.TransactionResponseDto;
 import com.tmt.tmdt.entities.Category;
 import com.tmt.tmdt.entities.Image;
 import com.tmt.tmdt.entities.Product;
+import com.tmt.tmdt.entities.Transaction;
 import com.tmt.tmdt.entities.pojo.FilterQuery;
 import com.tmt.tmdt.service.OrderService;
 import com.tmt.tmdt.service.ProductService;
@@ -13,6 +15,8 @@ import com.tmt.tmdt.service.RoleService;
 import com.tmt.tmdt.service.TransactionService;
 import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -115,5 +119,14 @@ public class AjaxController {
 
     }
 
-
+    @PostMapping("client-transaction/cancel/{id}")
+    public ResponseEntity<String> cancelRequire(@PathVariable("id") Long id) {
+        Transaction tran = transactionService.getTransaction(id);
+        if (tran.getStatus().equals(TransactionStatus.INIT)) {
+            transactionService.deleteById(id);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("failed", HttpStatus.BAD_REQUEST);
+        }
+    }
 }

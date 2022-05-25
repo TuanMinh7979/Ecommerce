@@ -33,7 +33,8 @@ function getTransactions(phoneNumber) {
             // if (document.getElementById("loader").style.display == "block") {
             //     document.getElementById("loader").style.display = "none";
             // }
-            console.log(res);
+            localStorage.setItem("transactionCount", res.length);
+            updateTransactionCount();
             render(res);
 
         },
@@ -54,7 +55,12 @@ function getTransactions(phoneNumber) {
 function render(data) {
     let rs = "";
     console.log(data.length);
-    rs += `     <table id="transTable" class="col-12 tableFixHeight table table-striped">
+    if (data.length == 0) {
+        rs += " <div class='text-center'><h3 style='color: orange'>There no any transaction now, let buy some thing!</h3></div>"
+        rs += "<div class='text-center'><a class='btn btn-info' href='/' style='color: white' >Back to shop</a> </div>"
+
+    } else {
+        rs += `     <table id="transTable" class="col-12 tableFixHeight table table-striped">
             <thead class="col-12">
             <th class="col-1 ">id</th>
             <th class="col-2 ">Name</th>
@@ -64,39 +70,83 @@ function render(data) {
             <th class="col-2">Action</th>
             </thead>
             <tbody id="transTableBody">`
-    data.map(function (trani) {
+        data.map(function (trani) {
 
-        rs += `<tr class="col-12" >
-            <td class="col-1">${trani.id}</td>
+            rs += `<tr class="col-12" >
+            <td id=${trani.id} class="col-1 id-td">${trani.id}</td>
             <td class="col-2">${trani.customerName}</td>
             <td class="col-2">${trani.customerAddress}</td>
             <td class="col-3">`
-        trani.orderItemList.map(function (orderi) {
-            rs += `
+            trani.orderItemList.map(function (orderi) {
+                rs += `
             <img src=${orderi.avatar} style="width:60px; height:60px" alt="">
             <span> X ${orderi.qty}</span>`
 
-        })
+            })
 
 
-        let clientPrice = formatter.format(trani.totalPrice);
-        rs += `</td>
+            let clientPrice = formatter.format(trani.totalPrice);
+            rs += `</td>
             <td id=${trani.totalPrice} class="col-2 price-td">${clientPrice}</td>
-            <td class="col-2"><a style="margin-right: 30px; color: white" class='btn btn-success'>Pay</a><a style="color: white" class='btn btn-danger'>Cancel</a></td>
+            <td class="col-2"><a style="margin-right: 10px; color: white" class='payBtn btn btn-success'>Pay</a><a style="color: white" class='btn btn-danger trans-cancel-btn'>Cancel</a></td>
         </tr>`
 
 
-    })
-    rs += `</tbody>
+        })
+        rs += `</tbody>
         </table>`
-    rs += ` <div><a id="otherPhoneNumberBtn" class="btn btn-outline-info">Other phone number</a></div>`
-
+        rs += ` <div><a id="otherPhoneNumberBtn" class="btn btn-outline-info">Other phone number</a></div>`
+    }
     $("#transWrapper").html(rs);
+
 
 }
 
 $(document).on("click", "#otherPhoneNumberBtn", function () {
     localStorage.removeItem("customerPhoneNumber");
+    localStorage.removeItem("transactionCount");
     location.reload();
 
+})
+
+$(document).on("click", ".payBtn", function (event) {
+    event.preventDefault();
+    let data = {}
+    let tranId = $(this).parent().parent().find('.id-td').prop('id');
+    data["price"] = $(this).parent().parent().find('.price-td').prop('id');
+    data["tranId"] = tranId;
+
+    let url = `/payment/redirect-vnpay-checkout`
+    // console.log(url);
+    $.ajax({
+        url: url,
+        type: "post",
+        data: data,
+        success: function (response) {
+            window.location.href = response;
+        },
+        error: function (err) {
+            alert("Something wrong")
+        }
+    });
+
+
+})
+
+$(document).on("click", ".trans-cancel-btn", function () {
+
+    let tranId = $(this).parent().parent().find('.id-td').prop('id');
+    let url = `/ajax/client-transaction/cancel/${tranId}`
+    $.ajax({
+        url: url,
+        type: "post",
+        success: function (response) {
+            alert("Cancel the transaction successfully!");
+            location.reload();
+        },
+        error: function (err) {
+            alert("Can not cancel this transaction!")
+            location.reload()
+        }
+    });
 })

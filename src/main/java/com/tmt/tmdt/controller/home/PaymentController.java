@@ -1,14 +1,16 @@
 package com.tmt.tmdt.controller.home;
 
 import com.tmt.tmdt.config.PaymentConfig;
+import com.tmt.tmdt.constant.TransactionStatus;
+import com.tmt.tmdt.entities.Transaction;
+import com.tmt.tmdt.service.TransactionService;
 import com.tmt.tmdt.util.PaymentHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -20,17 +22,23 @@ import java.util.*;
 @Slf4j
 @Controller
 public class PaymentController {
+    @Autowired
+    private TransactionService transactionService;
+
+
     @PostMapping("/payment/redirect-vnpay-checkout")
     @ResponseBody
     public String redirectVnPayCheckout(HttpServletRequest req) throws UnsupportedEncodingException {
+        int price = Integer.valueOf(req.getParameter("price"));
+        int tranId = Integer.valueOf(req.getParameter("tranId"));
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_OrderInfo = "thong tin don hang";
-        String vnp_TxnRef = PaymentHelper.getRandomNumber(8);
+        String vnp_OrderInfo = "Info";
+        String vnp_TxnRef = PaymentHelper.getRandomNumber(5) + tranId;
         String vnp_IpAddr = PaymentHelper.getIpAddress(req);
         String vnp_TmnCode = PaymentConfig.vnp_TmnCode;
 
-        int amount = Integer.valueOf(req.getParameter("price"))*100;
+        int amount = price * 100;
         Map vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
@@ -95,18 +103,33 @@ public class PaymentController {
 //        return vnp_Params;
     }
 
-    @GetMapping("/payment/showPmBtn")
-    public String showPmbutton() {
-        return "home/payment/showPmBtn";
-    }
-
 
     @GetMapping("/payment/vnpay-checkout-result")
     public String showVnpayCheckoutResult(Model model, @RequestParam Map<String, String> fields) {
-        System.out.println("_____________________________________++++_____________________________________");
+
+        String vnpTxnRef = fields.get("vnp_TxnRef");
+
+        String tranIdstr = vnpTxnRef.substring(5);
+        Long tranId = Long.valueOf(tranIdstr);
+
+        Transaction paidTransaction = transactionService.getTransactionWithOrders(tranId);
+        paidTransaction.setStatus(TransactionStatus.SUCCESS);
+
+        StringBuilder paidInfo = new StringBuilder();
         for (String key : fields.keySet()) {
-            System.out.println(key + " : " + fields.get(key));
+            System.out.println("_____" + key + " : " + fields.get(key));
+            paidInfo.append(key + ":" + fields.get(key));
+            paidInfo.append(",");
         }
+
+        paidInfo.deleteCharAt(paidInfo.length() - 1);
+
+
+        paidTransaction.setPaidInfo(paidInfo.toString());
+        transactionService.save(paidTransaction);
+
+        model.addAttribute("payedTransaction", paidTransaction);
+
 
         return "home/payment/rspm";
     }
