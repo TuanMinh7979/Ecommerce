@@ -222,5 +222,9 @@ function sortBtn(sortBy, sortDir) {
         }
     }
 
+    if (oldurl.indexOf("?") == -1) {
+        oldurl = oldurl.replace("&", "?");
+    }
+
     window.location.href = oldurl;
 }
