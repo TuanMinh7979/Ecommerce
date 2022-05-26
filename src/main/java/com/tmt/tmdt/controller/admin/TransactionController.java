@@ -1,21 +1,22 @@
 package com.tmt.tmdt.controller.admin;
 
 import com.tmt.tmdt.dto.response.ViewResponseApi;
+import com.tmt.tmdt.entities.Order;
 import com.tmt.tmdt.entities.Transaction;
+import com.tmt.tmdt.repository.OrderRepo;
 import com.tmt.tmdt.repository.TransactionRepo;
+import com.tmt.tmdt.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @Slf4j
@@ -24,6 +25,8 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionRepo transactionRepo;
+    private final OrderRepo orderRepo;
+    private final TransactionService transactionService;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -98,4 +101,28 @@ public class TransactionController {
 
         return new ViewResponseApi<>(totalPage, transactions);
     }
+
+    @GetMapping("edit/{idx}")
+    public String showUpdateForm(Model model, @PathVariable("idx") Long id) {
+        Transaction transaction = transactionService.getTransaction(id);
+        model.addAttribute("tran", transaction);
+        return "admin/transaction/edit";
+    }
+
+    @GetMapping("{tid}/orders")
+    @ResponseBody
+    public Set<Order> getListOrderByTranId(@PathVariable("tid") Long tid) {
+        Set<Order> orders = orderRepo.getOrdersByTransactionId(tid);
+        return orders;
+    }
+
+    @PostMapping("update/{id}")
+    public String update(@PathVariable("id") Long id, @ModelAttribute Transaction transaction) {
+        Transaction oldTransaction = transactionService.getTransaction(id);
+        transaction.setOrderItemList(oldTransaction.getOrderItemList());
+        transaction.setPaidInfo(oldTransaction.getPaidInfo());
+        transactionService.save(transaction);
+        return "redirect:/admin/transaction";
+    }
 }
+

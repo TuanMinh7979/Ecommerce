@@ -98,7 +98,7 @@ function renderData(data) {
       <td class="col-1">${trai.totalPrice}</td>
       <td class="col-1">${trai.status}</td>
       <td class="col-2">
-      <a class="btn btn-default"  href="/admin/transaction/update/${trai.id}">Edit</a>
+      <a class="btn btn-default"  href="/admin/transaction/edit/${trai.id}">Edit</a>
       <a class="btn btn-danger"  href="/admin/transaction/api/delete${trai.id}">Delete</a>
       
       </td>

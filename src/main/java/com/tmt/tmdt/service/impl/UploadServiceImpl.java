@@ -28,12 +28,7 @@ public class UploadServiceImpl implements UploadService {
 
     }
 
-    @Override
-    public void deleteFromCloud(Long id) throws IOException {
-        Image image = imageService.getImage(id);
-        String publicId = image.getPublicId();
-        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-    }
+
 
 
 }

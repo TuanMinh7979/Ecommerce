@@ -115,37 +115,33 @@ function renderData(data) {
 
 }
 
-$(function () {
-    $("#tag_delete_many").on("click", deleteManyOnTable);
-    $("#btn-filter").on("click", HdleFilterBtn);
-    $(document).on("click", '.tag_delete_one', deleteOnTable);
-
-})
+$("#tag_delete_many").on("click", deleteManyOnTable);
+$("#btn-filter").on("click", HdleFilterBtn);
+$(document).on("click", '.tag_delete_one', deleteOnTable);
 
 
 //autocomplete
-$(function () {
-    $("#main-search-inp").on("change", function () {
-        activeKeyword = $(this).val();
-    })
 
-    $("#role-sel").on("change", function () {
-        role = $(this).val();
-    })
+$("#main-search-inp").on("change", function () {
+    activeKeyword = $(this).val();
+})
 
-    $("#main-search-inp").autocomplete({
-        source: "/ajax/autocomplete-search/user",
+$("#role-sel").on("change", function () {
+    role = $(this).val();
+})
 
-        //can not fail
-        select: function (event, ui) {
-            window.location.href = "/admin/user/edit/" + ui.item.value;
+$("#main-search-inp").autocomplete({
+    source: "/ajax/autocomplete-search/user",
 
-        }
-    })
-    $("#main-search-btn").on("click", function () {
-        callViewApi(currentPage, null, null, null, activeKeyword, role);
+    //can not fail
+    select: function (event, ui) {
+        window.location.href = "/admin/user/edit/" + ui.item.value;
 
-    })
+    }
+})
+$("#main-search-btn").on("click", function () {
+    callViewApi(currentPage, null, null, null, activeKeyword, role);
+
 })
 
 

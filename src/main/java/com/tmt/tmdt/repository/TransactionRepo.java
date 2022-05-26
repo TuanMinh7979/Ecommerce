@@ -19,5 +19,8 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     @Query("select t from Transaction t left join fetch t.orderItemList where t.id= :id")
     Optional<Transaction> getTransactionWithOrders(@Param("id") Long id);
 
+    @Query("select t from Transaction t left join fetch t.orderItemList o join fetch o.product where t.id = :id")
+    Optional<Transaction> getTransactionWithOrderWithProduct(@Param("id") Long id);
+
 
 }

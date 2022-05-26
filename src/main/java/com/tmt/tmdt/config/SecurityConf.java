@@ -39,18 +39,13 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.rememberMe().key("uniqueAndSecret").tokenValiditySeconds(1296000);
         http
 
                 .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers(HttpMethod.GET, "/admin/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/admin/**").permitAll()
-                .antMatchers("/**").permitAll()
-//                .antMatchers("/register").permitAll()
-//
-//                .antMatchers("/ajax/**").permitAll()
-//                .antMatchers("/payment/**").permitAll()
+                .antMatchers("/admin/role**", "/admin/user**").hasRole("ADMIN")
+                .antMatchers("/admin/product**", "/admin/category**", "/admin/transaction**").hasAnyRole("ADMIN", "EMPLOYEE")
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()

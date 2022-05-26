@@ -37,6 +37,11 @@ public class HomeController {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @GetMapping("/403")
+    public String permissionDenied() {
+        return "admin/error/403Err";
+    }
+
 
     @GetMapping("")
     public String index(Model model) {

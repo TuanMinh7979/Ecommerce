@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin/admin_layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Detail</title>
+
+    <th:block layout:fragment="addcss">
+
+        <link rel="stylesheet" th:href="@{/resource/css/admin/transaction/progress-bar.css}">
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Transaction Detail</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/transaction/}">Transaction index</a></li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div>
+
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="container-fluid row">
+        <form class="col-6" id="mainForm" th:action="@{/admin/transaction/update/{id}(id=${tran.id})}"
+              th:object="${tran}"
+              method="post">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>id:</label>
+                        <input th:field="*{id}" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer:</label>
+                        <input th:field="*{customerName}" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Address:</label>
+                        <input th:field="*{customerAddress}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer PhoneNumber:</label>
+                        <input th:field="*{customerPhoneNumber}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Create At:</label>
+                        <input th:field="*{createAt}" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Modify At:</label>
+                        <input th:field="*{updateAt}" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Total Price:</label>
+                        <input th:field="*{totalPrice}" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <input id="tStatusInp" th:field="*{status}" class="form-control">
+                        </div>
+
+                        <div id="stepProgressBar">
+                            <div class="step">
+                                <p class="step-text">INIT</p>
+                                <div class="bullet">1</div>
+                            </div>
+                            <div class="step">
+                                <p class="step-text">PROCESSING</p>
+                                <div class="bullet">2</div>
+                            </div>
+                            <div class="step">
+                                <p class="step-text">SUCCESS</p>
+                                <div class="bullet">3</div>
+                            </div>
+                            <div class="step">
+                                <p class="step-text" style="color: red">FAILED</p>
+                                <div class="bullet " style="color: red; border-radius: 100%; border: 1px solid red">4
+                                </div>
+                            </div>
+                        </div>
+                        <div id="main">
+
+                            <button id="previousBtn">Previous</button>
+                            <button id="nextBtn">Next</button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label>Paid Info:</label>
+                            <textarea rows="8" cols="50" th:text="*{paidInfo}" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <input type="submit" class="btn btn-success" id="submit-btn" value="Save">
+                <a style="margin-left: 100px" th:href="@{/admin/transaction/edit/{id}(id=${tran.id})}"
+                   type="reset" class="btn btn-default">
+                    RESET
+                </a>
+            </div>
+        </form>
+
+        <div class="col-6" id="orderSection">
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<th:block layout:fragment="addscript">
+    <script th:inline="javascript">
+        var tranId = [[${tran.id}]];
+    </script>
+
+    <script th:src="@{/resource/js/admin/transaction/progress-bar.js}"></script>
+    <script th:src="@{/resource/js/admin/transaction/edit.js}"></script>
+
+
+</th:block>
+
+</body>
+</html>

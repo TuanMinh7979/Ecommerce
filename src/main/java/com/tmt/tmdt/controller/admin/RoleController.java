@@ -106,9 +106,7 @@ public class RoleController {
     @PostMapping("update")
     public String update(Model model, @Valid @ModelAttribute("role") Role role, BindingResult result) {
         //client just send name what is active("if no checkbox checked no param named permission been send")
-        if (roleService.existByName(role.getName())) {
-            result.rejectValue("name", "nameIsExist");
-        }
+
         if (!result.hasErrors()) {
             roleService.save(role);
             return "redirect:/admin/role/";
@@ -144,8 +142,6 @@ public class RoleController {
 
         return permissionService.getPermissionIdsByRoleId(roleId);
     }
-
-
 
 
 }

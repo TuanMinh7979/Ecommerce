@@ -97,9 +97,9 @@ public class UserController {
 
     @PostMapping("/add")
     public String add(Model model,
-                       @RequestParam("imageRequestDto") ImageRequestDto imageRequestDto,
-                       @Valid @ModelAttribute("user") UserEntity userEntity,
-                       BindingResult result) throws IOException {
+                      @RequestParam(value = "file", required = false) ImageRequestDto imageRequestDto,
+                      @Valid @ModelAttribute("user") UserEntity userEntity,
+                      BindingResult result) throws IOException {
 
         if (userEntityService.existByUsername(userEntity.getUsername())) {
             result.rejectValue("username", "nameIsExist");
@@ -128,13 +128,12 @@ public class UserController {
     }
 
 
-
     @Transactional
     @PostMapping("/update")
 
     public String update(Model model,
                          @RequestParam(value = "delImageId", required = false) String delImageId,
-                         @RequestParam("imageRequestDto") ImageRequestDto imageRequestDto,
+                         @RequestParam(value = "file", required = false) ImageRequestDto imageRequestDto,
                          @Valid @ModelAttribute("user") UserEntity userEntity,
                          BindingResult result) throws IOException {
 

@@ -68,4 +68,9 @@ public class TransactionServiceImpl implements TransactionService {
     public void deleteById(Long id) {
         transactionRepo.deleteById(id);
     }
+
+    @Override
+    public Transaction getTransactionWithOrderWithProduct(Long id) {
+        return transactionRepo.getTransactionWithOrderWithProduct(id).orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + id + " is not found"));
+    }
 }

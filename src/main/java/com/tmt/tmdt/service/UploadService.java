@@ -8,9 +8,4 @@ import java.util.Map;
 public interface UploadService {
     Map<String, String> simpleUpload(MultipartFile file) throws IOException;
 
-    void deleteFromCloud(Long id) throws IOException;
-
-
-
-
 }

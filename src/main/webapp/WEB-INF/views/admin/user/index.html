@@ -73,27 +73,27 @@
             <div class="col-4"><a th:href="@{/admin/user/add}" class="btn btn-info float-right ">Add</a></div>
 
 
-<!--            <div class="col-12">-->
-                <table class="table table-bordered tableFixHeight">
-                    <thead>
-                    <tr>
-                        <th class="col-1"></th>
-                        <th class="col-3">Avatar</th>
-                        <th class="col-2">Username</th>
-                        <th class="col-2">Email</th>
-                        <th class="col-2">Roles</th>
-                        <th class="col-1">Enable</th>
-                        <th class="col-1"></th>
+            <!--            <div class="col-12">-->
+            <table class="table table-bordered tableFixHeight">
+                <thead>
+                <tr>
+                    <th class="col-1"></th>
+                    <th class="col-3">Avatar</th>
+                    <th class="col-2">Username</th>
+                    <th class="col-2">Email</th>
+                    <th class="col-2">Roles</th>
+                    <th class="col-1">Enable</th>
+                    <th class="col-1"></th>
 
 
-                    </tr>
-                    </thead>
-                    <tbody id="tabledata" >
+                </tr>
+                </thead>
+                <tbody id="tabledata">
 
-                    </tbody>
+                </tbody>
 
-                </table>
-<!--            </div>-->
+            </table>
+            <!--            </div>-->
             <div class="col-12"><a th:href="@{/admin/user/api/delete}" id="tag_delete_many"
                                    class="btn btn-danger float-right ml-2 ">Delete Many</a></div>
 
@@ -101,6 +101,8 @@
             <ul id="pagination-demo" class="pagination-sm col-12"></ul>
         </div>
     </div>
+
+    <div id="loader" style="display: none" class="loader"></div>
 </div>
 
 

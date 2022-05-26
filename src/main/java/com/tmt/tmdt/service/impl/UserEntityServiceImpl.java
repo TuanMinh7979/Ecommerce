@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,18 +31,14 @@ public class UserEntityServiceImpl implements UserEntityService {
     private final UserRepo userRepo;
     private final UploadService uploadService;
     private final ImageMapper imageMapper;
-    private final Cloudinary cloudinary;
     private final ImageService imageService;
-    private final PasswordEncoder passwordEncoder;
 
 
     private List<String> setRoleNameListHelper(List<String> currentRoleNameList, Set<Role> roles) {
         //use for 2 case add new or remove all
         if (!currentRoleNameList.isEmpty()) {
             //if currentRoleNameListNotEmpty clear it first
-            for (String rolenamei : currentRoleNameList) {
-                currentRoleNameList.remove(rolenamei);
-            }
+            currentRoleNameList = new ArrayList<>();
         }
         if (roles != null && !roles.isEmpty()) {
             for (Role role : roles) {
@@ -79,8 +77,6 @@ public class UserEntityServiceImpl implements UserEntityService {
             //delete old imag
             delImageId = delImageId.trim();
             Long imageIdToDel = Long.parseLong(delImageId);
-
-            uploadService.deleteFromCloud(imageIdToDel);
             userEntity.setImage(null);
             userEntity.setImageLink(userEntity.defaultImage());
             imageService.deleteById(imageIdToDel);
@@ -105,33 +101,27 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     public UserEntity save(UserEntity userEntity) {
-
         userEntity.setRoleNameList(setRoleNameListHelper(userEntity.getRoleNameList(), userEntity.getRoles()));
         return userRepo.save(userEntity);
 
     }
 
 
-    @Transactional
     @Override
     public void add(UserEntity userEntity, ImageRequestDto imageRequestDto) throws IOException {
-
-
         //add image if have , imageRequestDto away !=null but for scable -> execute fully checking
+        UserEntity savedUser = save(userEntity);
         if (imageRequestDto != null && !imageRequestDto.getFile().isEmpty()) {
             imageRequestDto.setUploadRs(uploadService.simpleUpload(imageRequestDto.getFile()));
             Image image = imageMapper.toModel(imageRequestDto);
-
+            image.setUserEntity(savedUser);
             Image imageSaved = imageService.save(image);
-            imageSaved.setUserEntity(userEntity);
             //persistence
-            userEntity.setImageLink(imageSaved.getLink());
+            savedUser.setImageLink(imageSaved.getLink());
+            savedUser.setImage(imageSaved);
+            userRepo.save(savedUser);
         }
 
-
-
-//        userEntity.setImage(null);
-        save(userEntity);
 
     }
 
