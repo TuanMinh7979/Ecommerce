@@ -203,7 +203,6 @@ public class ProductController {
     public String addProductImages(Model model, @PathVariable Long id, @ModelAttribute ImageRequestDto imageDto) throws IOException {
 
 
-        System.out.println(imageDto.getFile());
         imageDto.setUploadRs(uploadService.simpleUpload(imageDto.getFile()));
         Image image = imageMapper.toModel(imageDto);
         Product product = productService.getProduct(id);

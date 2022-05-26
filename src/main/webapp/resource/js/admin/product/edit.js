@@ -422,6 +422,8 @@ function addUpdateTheRest() {
     let mainFileInp = $(mainImgWrapper).find(".file_inp");
     var mainFormData = new FormData();
     if ($(mainImagePreview).prop('src').includes(defaultImage) == false) {
+        mainFormData.append("color", $(mainImgWrapper).find(".color-text").val());
+        mainFormData.append("isMain", "true");
 
         if ($(mainImgWrapper).prop('id') == "" || $(mainImgWrapper).prop('id') == "-1") {
             //add
@@ -436,8 +438,7 @@ function addUpdateTheRest() {
             url = `/admin/product/edit/${productId}/manage-image/update/${curId}`;
 
         }
-        mainFormData.append("color", $(mainImgWrapper).find(".color-text").val());
-        mainFormData.append("isMain", "true");
+
 
 
         let mainEndFlag = 0;

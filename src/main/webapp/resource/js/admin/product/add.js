@@ -1,4 +1,5 @@
 callCategoriesData()
+
 function callCategoriesData() {
     $.ajax({
         type: "get",
@@ -17,6 +18,14 @@ function callCategoriesData() {
         }
     });
 }
+
+$(function () {
+
+    $("#shorDescription").richText();
+    $("#fullDescription").richText();
+
+
+})
 
 function renderCatHierarchical(data) {
     let opts = "";

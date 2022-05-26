@@ -74,7 +74,42 @@
 
 <th:block layout:fragment="addscript">
 
-    <script th:src="@{/resource/js/admin/category/edit.js}"></script>
+    <script>
+        function renderCatHierarchical(data) {
+            let opts = "";
+            data.map(function (cat) {
+                if (typeof categoryParentId !== "undefined") {
+                    if (cat.id != categoryParentId) {
+                        opts += `<option value="${cat.id}">${cat.name}</option> `;
+                    } else {
+                        opts += `<option value="${cat.id}" selected>${cat.name}</option> `;
+                    }
+                } else {
+                    opts += `<option value="${cat.id}">${cat.name}</option> `;
+                }
+            });
+            $(".parent-sel").append(opts);
+        }
+
+        $(function () {
+            $.ajax({
+                type: "get",
+                url: "/ajax/hierarchical-category",
+                success: function (data) {
+                    renderCatHierarchical(data);
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Can not load this categories in hierarchical",
+                        // text: 'Something went wrong!',
+                    });
+                },
+            });
+
+
+        });
+    </script>
     <script th:src="@{/resource/js/admin/category-product/category-product.js}"></script>
 </th:block>
 </body>
