@@ -20,6 +20,8 @@ import java.util.Set;
 @Entity
 @Table(name = "permissions")
 public class Permission extends BaseEntity implements Serializable {
+
+    //Max 2 Level permission
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +36,12 @@ public class Permission extends BaseEntity implements Serializable {
     @ManyToMany(mappedBy = "permissions")
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "parent_id")
     private Permission parent;
 
-    @OneToMany(mappedBy = "parent", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Permission> childs = new HashSet<>();
 
     public Permission(String name) {
@@ -56,7 +58,7 @@ public class Permission extends BaseEntity implements Serializable {
     }
 
     public Permission(String name, Permission parent) {
-        this.name=name;
-        this.parent=parent;
+        this.name = name;
+        this.parent = parent;
     }
 }

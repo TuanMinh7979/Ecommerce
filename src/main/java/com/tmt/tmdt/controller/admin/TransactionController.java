@@ -8,6 +8,7 @@ import com.tmt.tmdt.repository.TransactionRepo;
 import com.tmt.tmdt.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -117,6 +118,7 @@ public class TransactionController {
     }
 
     @PostMapping("update/{id}")
+    @PreAuthorize("hasAuthority('Transaction:write')")
     public String update(@PathVariable("id") Long id, @ModelAttribute Transaction transaction) {
         Transaction oldTransaction = transactionService.getTransaction(id);
         transaction.setOrderItemList(oldTransaction.getOrderItemList());

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,6 +88,7 @@ public class UserController {
     }
 
     @GetMapping("add")
+    @PreAuthorize("hasAuthority('User:write')")
     public String add(Model model) {
         model.addAttribute("user", new UserEntity());
         model.addAttribute("rolesForForm", roleService.getRoles());
@@ -96,6 +98,7 @@ public class UserController {
 
 
     @PostMapping("/add")
+
     public String add(Model model,
                       @RequestParam(value = "file", required = false) ImageRequestDto imageRequestDto,
                       @Valid @ModelAttribute("user") UserEntity userEntity,
@@ -118,6 +121,7 @@ public class UserController {
     }
 
     @GetMapping("edit/{id}")
+    @PreAuthorize("hasAuthority('User:write')")
     public String showUpdateForm(Model model, @PathVariable("id") Long id) {
         UserEntity userEntity = userEntityService.getUserEntity(id);
         model.addAttribute("user", userEntity);
@@ -162,14 +166,16 @@ public class UserController {
     @PostMapping("api/delete/{id}")
     @ResponseBody
     //call by ajax
-    public ResponseEntity<Long> deleteCategory(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('User:write')")
+    public ResponseEntity<Long> deleteUser(@PathVariable Long id) {
         userEntityService.delete(id);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @PostMapping("api/delete")
-    public ResponseEntity<Long[]> deleteCategories(@RequestBody Long[] ids) {
+    @PreAuthorize("hasAuthority('User:write')")
+    public ResponseEntity<Long[]> deleteUsers(@RequestBody Long[] ids) {
         userEntityService.deletes(ids);
         return new ResponseEntity<>(ids, HttpStatus.OK);
     }

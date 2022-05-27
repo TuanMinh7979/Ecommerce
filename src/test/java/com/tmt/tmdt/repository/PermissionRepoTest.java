@@ -14,20 +14,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rollback(false)
 class PermissionRepoTest {
 
-//    @Autowired
-//    private PermissionRepo permissionRepo;
-//
-//    @Test
-//    public void addMasterPermission() {
-//        Permission masterPermission = new Permission(1,"All");
-//
-//
-//
-//        Permission savedPermission = permissionRepo.save(masterPermission);
-//
-//        assertThat(savedPermission.getId() > 0);
-//
-//    }
+    @Autowired
+    private PermissionRepo permissionRepo;
+
+    @Test
+    public void addMasterPermission() {
+        Permission masterPermission = new Permission("Transaction:write");
+        Permission savedPermission = permissionRepo.save(masterPermission);
+
+        assertThat(savedPermission.getId() > 0);
+
+    }
 //
 //    @Test
 //    public void addSubPermission() {

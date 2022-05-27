@@ -23,10 +23,12 @@ public interface RoleRepo extends JpaRepository<Role, Integer> {
     Page<Role> getRolesByNameLike(String searchNameTerm, Pageable pageable);
 
 
-    @Query("select r from Role r left join fetch r.permissions  where r.id= :id")
+    //role only have leaf permission
+    @Query("select r from Role r left join fetch r.permissions where r.id= :id")
     Optional<Role> getRoleWithPermissions(@Param("id") Integer id);
 
-    @Query("select r from Role r left join fetch r.permissions  where r.name= :name")
+    //role only have leaf permission
+    @Query("select r from Role r left join fetch r.permissions where r.name= :name")
     Optional<Role> getRoleByNameWithPermissions(@Param("name") String name);
 
     @Query("select name from Role where name like :kw% ")

@@ -126,6 +126,11 @@ public class AjaxController {
         if (tran.getStatus().equals(TransactionStatus.INIT)) {
             transactionService.deleteById(id);
             return new ResponseEntity<>("success", HttpStatus.OK);
+        } else if (tran.getStatus().equals(TransactionStatus.CHECKED)) {
+            //still cancel but annouce to admin before
+            tran.setStatus(TransactionStatus.FAILED);
+            tran.setCancelInProcessing(true);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("failed", HttpStatus.BAD_REQUEST);
         }

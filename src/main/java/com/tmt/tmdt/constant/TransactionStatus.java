@@ -1,5 +1,5 @@
 package com.tmt.tmdt.constant;
 
 public enum TransactionStatus {
-    INIT, PROCESSING, SUCCESS, FAILED
+    INIT, CHECKED, SHIPPING, SUCCESS, FAILED
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +32,16 @@ public class PermissionServiceImpl implements PermissionService {
                 );
     }
 
-    @Override
-    public List<Permission> getPermissionByParent(Integer parentId) {
-        return permissionRepo.getPermissionsByParent(parentId);
-    }
 
     //for api
     @Override
     public List<Integer> getPermissionIdsByRoleId(Integer roleId) {
         return permissionRepo.getPermissionIdsByRoleId(roleId);
+    }
+
+    @Override
+    public Set<Permission> getPermissionByParent(Integer i) {
+        return permissionRepo.getPermissionsByParent(1);
     }
 
 

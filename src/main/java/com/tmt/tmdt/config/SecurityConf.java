@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConf extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -43,11 +44,9 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/admin/role**", "/admin/user**").hasRole("ADMIN")
-
-                .antMatchers( "/admin/product**", "/admin/transaction**").hasAnyRole("ADMIN", "EMPLOYEE","categoryMg")
-                .antMatchers("/admin/category**","/admin/category").hasAuthority("Category:read")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/admin/role**").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.POST, "/admin/category/add").hasAuthority("Category:write")
+                .antMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()
                 .and()

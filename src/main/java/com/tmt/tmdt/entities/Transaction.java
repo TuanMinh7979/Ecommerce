@@ -1,5 +1,6 @@
 package com.tmt.tmdt.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tmt.tmdt.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -28,10 +30,17 @@ public class Transaction extends BaseEntity implements Serializable {
     private String customerGender;
 
 
+    private String promiseTime;
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime paidTime;
+
     private String paidInfo;
 
-
     private BigDecimal totalPrice;
+
+    private boolean cancelInProcessing;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;

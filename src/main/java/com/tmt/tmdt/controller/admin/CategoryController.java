@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,6 +68,7 @@ public class CategoryController {
 
     // ADD
     @GetMapping("add")
+    @PreAuthorize("hasAuthority('Category:write')")
     public String showAddForm(Model model) {
         Category category = new Category();
         model.addAttribute("category", category);
@@ -74,7 +76,9 @@ public class CategoryController {
     }
 
 
+
     @PostMapping("add")
+
     // rest api save => add(post), edit(put)
     public String add(Model model, @Valid @ModelAttribute("category") Category category, BindingResult result) {
         if (categoryService.existByName(category.getName())) {
@@ -93,6 +97,7 @@ public class CategoryController {
     // UPDATE
     @GetMapping("update/{idx}")
     // rest api : showUpdateForm , showAddForm => getCategory(get)(just for update)
+    @PreAuthorize("hasAuthority('Category:write')")
     public String showUpdateForm(Model model, @PathVariable("idx") String idx) {
         Category category = null;
         try {
@@ -111,6 +116,7 @@ public class CategoryController {
     @PostMapping("update")
     // rest api save => add(post), update(put)
     // FOR UPDATE: update in rest api must a id in path. but in mvc dont need it
+
     public String update(Model model, @Valid @ModelAttribute("category") Category category, BindingResult result) {
 
         if (!result.hasErrors()) {
@@ -125,12 +131,14 @@ public class CategoryController {
     // DELETE
     @PostMapping("api/delete/{id}")
     // call by ajax
+    @PreAuthorize("hasAuthority('Category:write')")
     public ResponseEntity<Integer> deleteCategory(@PathVariable Integer id) {
         categoryService.deleteById(id);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @PostMapping("api/delete")
+    @PreAuthorize("hasAuthority('Category:write')")
     public ResponseEntity<Integer[]> deleteCategories(@RequestBody Integer[] ids) {
         categoryService.deleteCategories(ids);
         return new ResponseEntity<>(ids, HttpStatus.OK);

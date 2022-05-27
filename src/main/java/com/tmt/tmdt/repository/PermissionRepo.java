@@ -7,12 +7,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface PermissionRepo extends JpaRepository<Permission, Integer> {
 
-    @Query("from  Permission  where parent.id = :parent ")
-    List<Permission> getPermissionsByParent(@Param("parent") Integer parentId);
+    @Query("from Permission p left join fetch p.childs where p.parent.id = :id ")
+    Set<Permission> getPermissionsByParent(@Param("id") Integer id);
 
     //for api
     @Query("select p.id from Permission p join p.roles r where r.id = :roleId")
