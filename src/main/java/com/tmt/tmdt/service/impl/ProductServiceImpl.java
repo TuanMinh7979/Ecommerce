@@ -177,5 +177,15 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.getProductDtos();
     }
 
+    @Override
+    public String getCodeByName(String name) {
+        return productRepo.getCodeByName(name);
+    }
+
+    @Override
+    public List<ProductResponseDto> getProductResDtosByNameLike(String name) {
+        return productRepo.getProductResDtosByNameLike(name);
+    }
+
 
 }

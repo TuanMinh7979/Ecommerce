@@ -11,10 +11,7 @@ import com.tmt.tmdt.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -139,9 +136,22 @@ public class HomeController {
         return "home/cart";
     }
 
-    @GetMapping("test")
-    public String showtest() {
-        return "home/test.html";
+
+
+    @PostMapping("product-by-name")
+    @ResponseBody
+    public String showProductDetailUrlByName(@RequestParam("name") String name) {
+        String code = productService.getCodeByName(name);
+        String newUrl = "/product/" + code;
+
+        return newUrl;
+    }
+
+    @GetMapping("product")
+    public String showProductResDtoDetailByName(Model model, @RequestParam("name") String name) {
+        List<ProductResponseDto> rs = productService.getProductResDtosByNameLike(name);
+        model.addAttribute("products", rs);
+        return "home/home";
     }
 
 

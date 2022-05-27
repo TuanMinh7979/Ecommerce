@@ -53,7 +53,9 @@ public interface ProductService {
 
     List<ProductResponseDto> getProductDtos();
 
+    String getCodeByName(String name);
 
+    List<ProductResponseDto> getProductResDtosByNameLike(String name);
 
 
 }

@@ -191,7 +191,9 @@ function handleSelectDefaultBtn(btn, delIdsInpId, defaultImage) {
 
         addIdToDel(idTodel, delIdsInpId);
         $(imageInputWrapper).attr('id', "-1");
-        $(imageInputWrapper).find(".file_inp").val(null);
+        $(imageInputWrapper).find(".file_inp").val(
+            ""
+        );
         $(imagePreviewImg).attr("src", defaultImage)
 
     }

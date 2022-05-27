@@ -44,16 +44,17 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/admin/role**", "/admin/user**").hasRole("ADMIN")
-                .antMatchers("/admin/product**", "/admin/category**", "/admin/transaction**").hasAnyRole("ADMIN", "EMPLOYEE")
-                .antMatchers("/admin/**").authenticated()
-                .antMatchers( "/**").permitAll()
-                .anyRequest().authenticated()
+
+                .antMatchers( "/admin/product**", "/admin/transaction**").hasAnyRole("ADMIN", "EMPLOYEE","categoryMg")
+                .antMatchers("/admin/category**","/admin/category").hasAuthority("Category:read")
+                .antMatchers("/**").permitAll()
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/403");
+                .exceptionHandling().accessDeniedPage("/403")
+                .and().authorizeRequests().anyRequest().authenticated();
 
     }
 

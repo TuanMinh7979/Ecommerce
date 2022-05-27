@@ -44,6 +44,7 @@ public class AjaxController {
         return productService.getNamesByKw(kw);
     }
 
+
     @GetMapping("autocomplete-search/category")
     public List<String> getCategoryNamesByKw(@RequestParam("term") String kw) {
         return categoryService.getCategoryNamesByKw(kw);

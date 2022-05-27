@@ -440,7 +440,6 @@ function addUpdateTheRest() {
         }
 
 
-
         let mainEndFlag = 0;
         if (allImageWrapper.length == 1) {
             mainEndFlag = 1;
@@ -485,6 +484,9 @@ function addUpdateTheRest() {
 
 
 function addOrUpdate(url, formDataPar, endFlag) {
+    for (let value of formDataPar.values()) {
+        console.log(value);  // Return all value s
+    }
     $.ajax({
         url: url,
         enctype: 'multipart/form-data',

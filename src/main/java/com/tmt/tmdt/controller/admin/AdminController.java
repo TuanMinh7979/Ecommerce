@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,17 +29,28 @@ public class AdminController {
     @GetMapping("")
     public String index() {
 
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String username = "";
-//        if (principal instanceof UserDetails) {
-//            username = ((UserDetails) principal).getUsername();
-//        } else {
-//            username = principal.toString();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = "";
+        if (principal instanceof UserDetails) {
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAA");
+            username = ((UserDetails) principal).getUsername();
 //            List<SimpleGrantedAuthority> authorityList = (List<SimpleGrantedAuthority>) ((UserDetails) principal).getAuthorities();
-//        }
-//
+            ArrayList<GrantedAuthority> authorityList = new ArrayList<GrantedAuthority>(((UserDetails) principal).getAuthorities());
+            for (GrantedAuthority sa : authorityList) {
+                System.out.print(sa.getAuthority()+"---");
+            }
+        } else {
+            username = principal.toString();
+            System.out.println("BBBBBBBBBBBBBBBBBBBBBBBB");
+            List<SimpleGrantedAuthority> authorityList = (List<SimpleGrantedAuthority>) ((UserDetails) principal).getAuthorities();
+            for (SimpleGrantedAuthority sa : authorityList) {
+                System.out.print(sa.getAuthority()+":");
+            }
+        }
+
 
         return "admin/admin";
+
     }
 
 

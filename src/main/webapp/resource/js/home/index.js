@@ -55,6 +55,38 @@ function loadTreeMenu(url) {
 
 }
 
+$("#mainHomeSearchBtn").on("click", function () {
+    let text = $("#mainHomeSearchInp").val();
+    let url = "/product?name=" + text;
+    window.location.href = url;
+})
+
+$("#mainHomeSearchInp").autocomplete({
+    source: "/ajax/autocomplete-search/product",
+
+    //can not fail
+    select: function (event, ui) {
+
+        $.ajax({
+            type: "Post",
+            url: "/product-by-name",
+            data: {name: ui.item.value},
+
+            success: function (res) {
+                window.location.href = res;
+            },
+            error: function () {
+                alert("Some thing wrong")
+            }
+
+
+        })
+
+    }
+});
+
+
+
 
 
 
