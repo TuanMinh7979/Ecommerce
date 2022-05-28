@@ -62,4 +62,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     @Query(value = "select p.code from Product p where p.name= :name")
     String getCodeByName(@Param("name") String name);
+
+
+
 }

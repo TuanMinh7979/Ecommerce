@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,10 +31,10 @@ public class Transaction extends BaseEntity implements Serializable {
     private String customerPhoneNumber;
     private String customerGender;
 
-
     private String promiseTime;
 
-
+    @UpdateTimestamp
+    @Column(name = "paid_time", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paidTime;
 
@@ -40,7 +42,7 @@ public class Transaction extends BaseEntity implements Serializable {
 
     private BigDecimal totalPrice;
 
-    private boolean cancelInProcessing;
+    private int customerCancel;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;

@@ -44,6 +44,7 @@ public class HomeTransactionController {
             JSONObject orderi = orderItemListJArr.getJSONObject(i);
             Order newOrder = new Order();
             newOrder.setTransaction(savedTrans);
+            newOrder.setProductName((String)orderi.get("productName"));
             newOrder.setProduct(productService.getProduct(Long.valueOf((String) orderi.get("product_id"))));
 
             newOrder.setUnitPrice(new BigDecimal((String) orderi.get("unitPrice")));

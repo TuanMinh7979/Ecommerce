@@ -59,6 +59,10 @@
                         <label>Last Modify At:</label>
                         <input th:field="*{updateAt}" class="form-control" readonly>
                     </div>
+                    <div class="form-group">
+                        <label>PaidTime</label>:</label>
+                        <input th:field="*{paidTime}" class="form-control" readonly>
+                    </div>
                 </div>
                 <div class="col-6">
                     <div class="form-group">
@@ -77,16 +81,16 @@
                                 <div class="bullet">1</div>
                             </div>
                             <div class="step">
-                                <p class="step-text">PROCESSING</p>
+                                <p class="step-text">CHECKED</p>
                                 <div class="bullet">2</div>
                             </div>
                             <div class="step">
-                                <p class="step-text">SUCCESS</p>
+                                <p class="step-text">SHIPPING</p>
                                 <div class="bullet">3</div>
                             </div>
                             <div class="step">
-                                <p class="step-text" style="color: red">FAILED</p>
-                                <div class="bullet " style="color: red; border-radius: 100%; border: 1px solid red">4
+                                <p class="step-text">SUCCESS</p>
+                                <div class="bullet ">4
                                 </div>
                             </div>
                         </div>
@@ -95,6 +99,13 @@
                             <button id="previousBtn">Previous</button>
                             <button id="nextBtn">Next</button>
                         </div>
+                        <div >
+                            <label style="color:red">FAILED</label><input id="failedInp" type="checkbox"  >
+                        </div>
+                        <div><label style="color:orange">Customer cancel</label>
+                            <input id="cancelInProcessingCb" th:value="*{customerCancel}" type="checkbox" disabled >
+                        </div>
+
                     </div>
                     <div class="col-6">
                         <div class="form-group">

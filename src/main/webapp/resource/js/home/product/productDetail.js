@@ -120,6 +120,7 @@ $('#addToCartModalBody__Submit-Btn').click(function (e) {
     let cartObjI = {};
     let selectedColorRadio = $(addToCartModalBodySection).find('input:radio[name="color"]:checked');
 
+    cartObjI["productName"] = $("#productNameSpan").text();
     cartObjI["productId"] = $("#pIdInp").val();
     cartObjI["color"] = $(selectedColorRadio).val();
     let choosedImg = $(selectedColorRadio).parent().parent().find(".item-img");

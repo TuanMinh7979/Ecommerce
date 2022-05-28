@@ -20,6 +20,7 @@ $(function () {
                 let viewCartItemPrice = formatter.format(cartObjI.cartItemPrice);
                 rs += `<tr id=${productIdKey} class="col-12">
              <td  class="col-4">
+             <p class="pName">${cartObjI.productName}</p>
                  <img class="product-img"
                       src="${cartObjI.imageLink}"
                       alt=""/>
@@ -146,6 +147,7 @@ $("#buyBtn").on("click", function () {
     for (let cartItemId in finalCartObj) {
         let curCartItem = finalCartObj[cartItemId];
         let orderi = {};
+        orderi["productName"] = curCartItem["productName"]
         orderi["product_id"] = curCartItem["productId"];
         orderi["unitPrice"] = curCartItem["productPrice"];
         orderi["qty"] = curCartItem["productCount"];
@@ -177,7 +179,6 @@ $("#buyBtn").on("click", function () {
         contentType: "application/json",
 
         success: function (res) {
-
 
 
             localStorage.removeItem("cartObj")

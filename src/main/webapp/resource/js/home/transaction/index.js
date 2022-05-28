@@ -89,6 +89,7 @@ function render(data) {
             <td class="col-3">`
             trani.orderItemList.map(function (orderi) {
                 rs += `
+            <p>${orderi.productName}</p>
             <img src=${orderi.avatar} style="width:60px; height:60px" alt="">
             <span> X ${orderi.qty}</span>`
 

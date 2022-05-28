@@ -31,7 +31,6 @@ function callViewApi(page, limit, sortBy, sortDirection, fromDate, toDate, statu
     if (status != null) {
         url += `&status=${status}`;
     }
-    console.log(url);
 
 
     $.ajax({
@@ -75,7 +74,7 @@ function HdleFilterBtn() {
     let status = document.getElementById("status-sel").value;
     let fromDate = document.getElementById("fromDatepicker").value;
     let toDate = document.getElementById("toDatepicker").value;
-    if (validateDatePicker(fromDate, toDate)){
+    if (validateDatePicker(fromDate, toDate)) {
         $("input[type=date]").val("")
         alert("Invalid choosed time, please choose again!");
     } else {
@@ -90,23 +89,27 @@ function HdleFilterBtn() {
 function renderData(data) {
     let rs = "";
     data.data.map(function (trai) {
+
             rs += `    <tr>
       <td class="col-1">${trai.id}</td>
       <td class="col-2">${trai.customerName}</td>
       <td class="col-3">${trai.customerAddress}</td>
       <td class="col-2">${trai.createAt}</td>
       <td class="col-1">${trai.totalPrice}</td>
-      <td class="col-1">${trai.status}</td>
+      <td class="status-td col-1">${trai.status}</td>
       <td class="col-2">
       <a class="btn btn-default"  href="/admin/transaction/edit/${trai.id}">Edit</a>
-      <a class="btn btn-danger"  href="/admin/transaction/api/delete${trai.id}">Delete</a>
+      <a class="btn btn-danger tag_delete_one"  href="/admin/transaction/api/delete/${trai.id}">Delete</a>
       
       </td>
     </tr>`
+
         }
     )
 
+
     $("#tabledata").html(rs);
+    styleOnLoaded();
     let newTotalPage = data.totalPage;
     if (newTotalPage != GlobalTotalPage) {
 
@@ -147,12 +150,22 @@ function renderData(data) {
 $("#tag_delete_many").on("click", deleteManyOnTable);
 $("#btn-filter").on("click", HdleFilterBtn);
 $(document).on("click", '.tag_delete_one', deleteOnTable);
-$("#customername-search-inp").on("change", function () {
-    customerName = $(this).val();
-})
-$("#customername-search-btn").on("click", function () {
-    console.log("");
-})
+
+
+function styleOnLoaded() {
+    $(".status-td").each(function () {
+        if ($(this).text() == 'FAILED') {
+            $(this).css("color", "red")
+            $(this).css("font-weight", "bold")
+
+        }
+        if ($(this).text() == 'SUCCESS') {
+            $(this).css("color", "green")
+            $(this).css("font-weight", "bold")
+
+        }
+    })
+}
 
 
 //check form function

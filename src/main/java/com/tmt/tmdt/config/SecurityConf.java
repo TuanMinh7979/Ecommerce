@@ -47,7 +47,9 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/role**").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.POST, "/admin/category/add").hasAuthority("Category:write")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                .antMatchers("/**").permitAll()
                 .and()
+
                 .formLogin().loginPage("/login").defaultSuccessUrl("/", true).permitAll()
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()

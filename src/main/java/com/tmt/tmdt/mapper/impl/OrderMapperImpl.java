@@ -15,6 +15,7 @@ public class OrderMapperImpl implements OrderMapper {
         dto.setSalePercent(order.getSalePercent());
         dto.setQty(order.getQty());
         dto.setOptions(order.getOptions());
+        dto.setProductName(order.getProductName());
         return dto;
 
     }

@@ -66,3 +66,37 @@
     max-width: 160px;
 }
 
+/*ADMIN PAGE CSS*/
+
+.wrapper {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+/*ADMIN PAGE CSS*/
+#stat-menu-ul {
+    padding: 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#stat-menu-ul li {
+    list-style-type: none;
+    background-color: white;
+    color: black;
+    width: 100%;
+    border: 2px solid #134070;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-item:hover {
+    color: blue;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+
+

@@ -13,7 +13,7 @@ import java.util.Set;
 public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 
-    @Query("select t from Transaction t left join fetch t.orderItemList o where t.customerPhoneNumber = :phoneNumber and t.status <> 'SUCCESS' and t.status <> 'FAILED' ")
+    @Query("select t from Transaction t left join fetch t.orderItemList o where t.customerPhoneNumber = :phoneNumber and t.status <> 'SUCCESS' and t.customerCancel = 0")
     Set<Transaction> getCurTransactionWithOrdersByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
     @Query("select t from Transaction t left join fetch t.orderItemList where t.id= :id")

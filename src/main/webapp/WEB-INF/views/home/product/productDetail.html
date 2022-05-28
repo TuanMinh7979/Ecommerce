@@ -15,7 +15,9 @@
 
 <div class="content-wrapper container" layout:fragment="content">
     <br/>
+    <div class="row"><span id="productNameSpan" th:text="${product.name}"></span></div>
     <div id="productDetail" class="row">
+
         <div id="productDetailImageWrapper" style="overflow-x: hidden"
              class="col-xs-5 col-sm-5 col-md-5 col-lg-5 productDetail__div"
              th:insert="comment_fragment/swiper :: slide">

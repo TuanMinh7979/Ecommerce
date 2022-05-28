@@ -17,6 +17,7 @@ import com.tmt.tmdt.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -122,14 +123,16 @@ public class AjaxController {
 
     @PostMapping("client-transaction/cancel/{id}")
     public ResponseEntity<String> cancelRequire(@PathVariable("id") Long id) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(principal);
         Transaction tran = transactionService.getTransaction(id);
         if (tran.getStatus().equals(TransactionStatus.INIT)) {
             transactionService.deleteById(id);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } else if (tran.getStatus().equals(TransactionStatus.CHECKED)) {
             //still cancel but annouce to admin before
-            tran.setStatus(TransactionStatus.FAILED);
-            tran.setCancelInProcessing(true);
+            tran.setCustomerCancel(1);
+            transactionService.save(tran);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("failed", HttpStatus.BAD_REQUEST);

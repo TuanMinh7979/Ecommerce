@@ -27,6 +27,8 @@ public class Order extends BaseEntity implements Serializable {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    private String productName;
+
     private BigDecimal unitPrice;
 
     private int qty;
@@ -36,6 +38,7 @@ public class Order extends BaseEntity implements Serializable {
     private String options;
 
     private String avatar;
+
 
 
     @JsonIgnore

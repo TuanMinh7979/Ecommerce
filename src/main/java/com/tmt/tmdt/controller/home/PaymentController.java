@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -123,9 +124,8 @@ public class PaymentController {
         }
 
         paidInfo.deleteCharAt(paidInfo.length() - 1);
-
-
         paidTransaction.setPaidInfo(paidInfo.toString());
+        paidTransaction.setPaidTime(LocalDateTime.now());
         transactionService.save(paidTransaction);
 
         model.addAttribute("payedTransaction", paidTransaction);

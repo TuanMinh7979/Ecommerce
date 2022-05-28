@@ -3,15 +3,70 @@
       layout:decorate="~{layout/admin/admin_layout.html}">
 <head>
 
+    <th:block layout:fragment="addcss">
+        <link rel="stylesheet" th:href="@{/resource/css/admin/styles.css}">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </th:block>
+    <title>stat</title>
 
 </head>
 <body>
 <div class="content-wrapper" layout:fragment="content">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">DASHBOARD</h1>
+                </div><!-- /.col -->
+
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
     <div class="container-fluid">
+        <div class="row p-5">
+            <ul id="stat-menu-ul" class="col-2 sidebar wrapper ">
+                <li class="stat-item"><button class="btn " id="turnOverByProductBtn"></button>Turnover
+                    by Product
+                </li>
+
+            </ul>
+            <div class="col-9 data wrapper p-2">
+                <div class="col-12 row" id="options">
+                    <div class="col-2">
+                        <label>From:</label>
+                        <input data-date-format="dd/mm/yyyy" name="fromDate" type="date" id="afromDatepicker">
+                    </div>
+                    <div class="col-2">
+                        <label>To:</label>
+                        <input data-date-format="dd/mm/yyyy" name="toDate" type="date" id="atoDatepicker">
+                    </div>
+                    <div class="col-2">
+
+                        <a id="statDateViewBtn" href="/admin/stat/product-stat" class="btn btn-success"> VIEW</a>
+                    </div>
+                </div>
+                <div>
+                    <canvas id="myChart1"></canvas>
+                    <canvas id="myChart2"></canvas>
+                </div>
+
+
+            </div>
+        </div>
+        <div id="loader" class="loader" style="display: none"></div>
     </div>
 
 </div>
 
 
+<th:block layout:fragment="addscript">
+    <script>
+        afromDatepicker.max = new Date().toISOString().split("T")[0];
+        atoDatepicker.max = new Date().toISOString().split("T")[0];
+    </script>
+
+    <script th:src="@{/resource/js/admin/adminindex.js}"></script>
+</th:block>
 </body>
 </html>

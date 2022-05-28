@@ -8,6 +8,8 @@ import com.tmt.tmdt.repository.TransactionRepo;
 import com.tmt.tmdt.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,6 +100,8 @@ public class TransactionController {
 //        System.out.println(cnt + " " + totalPage + " " + startIdx);
         builder.append(" offset " + startIdx + " limit " + limit);
         query = builder.toString();
+        System.out.println("_______________)_)_)_)_)_)______________");
+        System.out.println(query);
         List<Transaction> transactions = entityManager.createNativeQuery(query, Transaction.class).getResultList();
 
         return new ViewResponseApi<>(totalPage, transactions);
@@ -121,10 +125,20 @@ public class TransactionController {
     @PreAuthorize("hasAuthority('Transaction:write')")
     public String update(@PathVariable("id") Long id, @ModelAttribute Transaction transaction) {
         Transaction oldTransaction = transactionService.getTransaction(id);
-        transaction.setOrderItemList(oldTransaction.getOrderItemList());
-        transaction.setPaidInfo(oldTransaction.getPaidInfo());
+        if (transaction.getOrderItemList() == null){
+            transaction.setOrderItemList(oldTransaction.getOrderItemList());
+        }
         transactionService.save(transaction);
         return "redirect:/admin/transaction";
     }
+
+    @PostMapping("api/delete/{id}")
+    @ResponseBody
+    //call with ajax
+    public ResponseEntity<Long> deleteRole(@PathVariable Long id) {
+        transactionService.deleteById(id);
+        return new ResponseEntity<>(id, HttpStatus.OK);
+    }
+
 }
 

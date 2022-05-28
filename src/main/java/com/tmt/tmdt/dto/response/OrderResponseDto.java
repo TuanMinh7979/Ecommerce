@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class OrderResponseDto {
 
+    private String productName;
     private BigDecimal unitPrice;
 
     private int qty;
@@ -28,7 +29,8 @@ public class OrderResponseDto {
 //    addtionnal attribute aboutproduct
 
 
-    public OrderResponseDto(BigDecimal unitPrice, int qty, int salePercent, String options, String avatar) {
+    public OrderResponseDto(String productName, BigDecimal unitPrice, int qty, int salePercent, String options, String avatar) {
+        this.productName = productName;
         this.unitPrice = unitPrice;
         this.qty = qty;
         this.salePercent = salePercent;
@@ -36,5 +38,4 @@ public class OrderResponseDto {
         this.avatar = avatar;
     }
 
-    private String productName;
 }
